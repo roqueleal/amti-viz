@@ -49,20 +49,19 @@ var nationSQL = {};
 var nationStyle = {};
 var nationLayer = {};
 var featureHover = L.popup({ closeButton: false });
-
+var svgUrL = "https://csis-ilab.github.io/amti-viz/features-map/images";
 Object.keys(nations).forEach(nation => {
   nationSQL[nation] = new carto.source.SQL(
     `SELECT * FROM ${nation}_scs_islands`
   );
   nationStyle[nation] = new carto.style.CartoCSS(`
     #layer {
-    marker-width: 12;
-    marker-fill: ${nations[nation]};
-    marker-fill-opacity: 1;
-    marker-allow-overlap: true;
-    marker-line-width: 1;
-    marker-line-color: #000000;
-    marker-line-opacity: 1;
+      marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
+      marker-width: 12;
+      marker-fill: ${nations[nation]};
+      marker-line-color: #ffffff;
+      marker-line-width: 1;
+      marker-allow-overlap: true;
     }
 `);
 

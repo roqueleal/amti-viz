@@ -35,34 +35,56 @@ div#results {
   cursor: pointer;
 }
 
-.colorKey {
-  height: 10px;
-  width: 10px;
+.colorKey,
+.shapeKey {
   display: inline-block;
+  height: 12px;
+  width: 12px;
   margin: 3px 5px 0 5px;
-  vertical-align: middle;
+}
+.colorKey {
   border-radius: 20px;
-  border: black solid 0.5px;
 }
 
 .statuses,
 .occupiers {
   display: flex;
-}
 
-.occupiers {
   flex-wrap: wrap;
 }
 
 .occupiers li {
   flex-basis: 50%;
 }
+
 .statuses li {
-  font: 11px/16px "Open Sans";
+  flex-basis: 100%;
 }
 
 .occupiers li:nth-child(even) {
   margin-left: 6px;
+}
+
+.statuses label,
+.occupiers label {
+  display: flex;
+  align-items: center;
+}
+
+.shapeKey {
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.submerged.shapeKey {
+  background-image: url(../images/submerged.svg);
+  height: 15px;
+  width: 15px;
+}
+.rock.shapeKey {
+  background-image: url(../images/rock.svg);
+}
+.low-tide.shapeKey {
+  background-image: url(../images/low_tide.svg);
 }
 
 .popupHeaderStyle {
