@@ -75,7 +75,12 @@ Object.keys(nations).forEach(nation => {
     nationStyle[nation],
     {
       featureOverColumns: [
-        `${lang ? `name_${languages[lang]}` : `name`}`,
+        "name",
+        "name_taiwan",
+        "name_china",
+        "name_vietnam",
+        "name_malaysia",
+        "name_philippines",
         "status",
         "date_of_occupation"
       ]
@@ -87,14 +92,10 @@ Object.keys(nations).forEach(nation => {
   ) {
     featureHover.setLatLng(blockFeatureEvent.latLng);
 
-    var allowed = [
-      `${lang ? `name_${languages[lang]}` : `name`}`,
-      "status",
-      "date_of_occupation"
-    ];
+    var allowed = nationLayer[nation]["_featureOverColumns"];
     var data = blockFeatureEvent.data;
     var content = Object.keys(data)
-      .filter(d => allowed.includes(d) && data[d].trim())
+      .filter(d => allowed.includes(d) && data[d])
       .map(d => {
         return `<div class="popupHeaderStyle">${d.replace(
           /_/g,
@@ -122,6 +123,8 @@ client
   .addTo(map);
 
 document.querySelector("#query").addEventListener("keyup", function() {
+  if (featureHover.isOpen()) featureHover.removeFrom(map);
+
   var q = document.querySelector("#query").value;
   var filterArray = [];
 
@@ -193,7 +196,7 @@ document.querySelector(".occupiers").addEventListener("click", e => {
 });
 
 document.querySelector(".statuses").addEventListener("click", e => {
-  featureHover.removeFrom(map);
+  if (featureHover.isOpen()) featureHover.removeFrom(map);
 
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox) {
