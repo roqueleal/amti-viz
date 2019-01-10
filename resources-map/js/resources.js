@@ -1,38 +1,12 @@
-function getCountryData() {
-  var values = [];
-
-  Array.from(document.querySelectorAll("#controls input")).forEach(function(
-    input
-  ) {
-    return input.checked ? values.push(input.value) : null;
-  });
-  return values;
-}
-
-function applyFilters() {
-  countryDataFilter.set("in", getCountryData());
-}
-
-function registerListeners() {
-  Array.from(document.querySelectorAll("#controls input")).forEach(function(
-    input
-  ) {
-    return input.addEventListener("click", function() {
-      applyFilters();
-    });
-  });
-}
-
-// Layer switcher
+var resourceLayer;
+var countryDataFilter;
+var resources;
+var claim_style;
 
 var basemap = L.tileLayer(
   "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
   {}
 );
-
-//const satellite = L.tileLayer('https://api.mapbox.com/styles/v1/ilabmedia/cjkjzuir10v132rq8qqxefi6g/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw', {});
-
-// Intitiate the map container parameters
 
 var map = L.map("map", {
   center: [13.7237264, 110.6814572],
@@ -41,158 +15,252 @@ var map = L.map("map", {
   scrollWheelZoom: false,
   minZoom: 1,
   zoomControl: false,
-  layers: [basemap]
+  layers: [basemap],
+  attributionControl: false
 });
 
-// Hide layer switcher – bug with category filter not overlaying data
-
-// const baseLayers = {
-//	"Street Map": basemap,
-//	"Satellite Image": satellite
-// };
-
-// L.control.layers(baseLayers, null, {collapsed: false, autoZIndex: false}).setPosition('topleft').addTo(map);
+L.control
+  .attribution({ position: "bottomleft" })
+  .setPrefix(
+    ' © <a href="https://amti.csis.org" target="_blank">AMTI</a> and <a href="https://www.csis.org" target="_blank">CSIS</a> | 2018'
+  )
+  .addTo(map);
 
 L.control.zoomslider().addTo(map);
 
 var client = new carto.Client({
-  apiKey: "VIKGbtgYDbaBvbByM9W8gg",
+  apiKey: "VI4pmtqRAufq-dba2RF2xQ",
   username: "csis"
 });
 
-// Add country datasets
+var spreadsheetID = "1k3NtTK79jZpXK3qzg53-wQFM_KeF6qhXSXzwh8E1IVk";
 
-var countryDataFilter = new carto.filter.Category("country1", {
-  in: getCountryData()
-});
+var URL =
+  "https://spreadsheets.google.com/feeds/list/" +
+  spreadsheetID +
+  "/1/public/values?alt=json";
 
-var resources = new carto.source.SQL(
-  "SELECT * FROM table_2018_allcountries_oilandgas_production ORDER BY country1 DESC"
-);
-resources.addFilter(countryDataFilter);
+var translations;
+var sortedTranslations;
 
-var resourceStyle = new carto.style.CartoCSS(
-  '#layer {polygon-fill: ramp([country1], (#7F3C8D, #11A579, #3969AC, #F2B701, #E73F74, #80BA5A, #A5AA99), ("Malaysia", "Vietnam", "China", "Brunei", "Philippines", "Indonesia"), "=");polygon-opacity: 0.7;}#layer::outline {line-width: 1;line-color: #FFFFFF;line-opacity: 0.5;}'
-);
+var href = /lang=([^&]+)/.exec(window.location.href);
+var lang = href ? href[1] : null;
 
-var resourceLayer = new carto.layer.Layer(resources, resourceStyle, {
-  featureClickColumns: [
-    "name",
-    "resource",
-    "status",
-    "production",
-    "operator",
-    "partner1",
-    "partner2",
-    "partner3"
-  ]
-});
+if (lang) {
+  fetch(URL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(json) {
+      translations = parseData(json.feed.entry);
+      sortedTranslations = Object.keys(translations).sort(function(a, b) {
+        return b.length - a.length;
+      });
 
-client.addLayer(resourceLayer);
-client.getLeafletLayer().addTo(map);
+      Array.from(document.querySelectorAll(".translate")).forEach(function(
+        el,
+        i
+      ) {
+        sortedTranslations.forEach(function(t) {
+          if (Object.keys(translations[t]).length) {
+            var re = new RegExp("\\b(" + t + ")", "gi");
+            el.innerHTML = el.innerHTML.replace(re, translations[t]);
+          }
+        });
+      });
 
-var resourcePopup = L.popup({ closeButton: true });
+      initResources();
+      initClaims();
 
-resourceLayer.on(carto.layer.events.FEATURE_CLICKED, function(
-  blockFeatureEvent
-) {
-  resourcePopup.setLatLng(blockFeatureEvent.latLng);
-  if (!resourcePopup.isOpen()) {
-    var data = blockFeatureEvent.data;
-    resourcePopup.setContent(
-      "<div class='popupHeaderStyle'>BLOCK NAME</div><div class='popupEntryStyle'>" +
-        data.name +
-        "</div><br /><div class='popupHeaderStyle'>RESOURCE TYPE</div><div class='popupEntryStyle'>" +
-        data.resource +
-        "</div><br /><div class='popupHeaderStyle'>LICENSE STATUS</div><div class='popupEntryStyle'>" +
-        data.status +
-        "</div><br /><div class='popupHeaderStyle'>PRODUCTION STATUS</div><div class='popupEntryStyle'>" +
-        data.production +
-        "</div><br /><div class='popupHeaderStyle'>OPERATOR</div><div class='popupEntryStyle'>" +
-        data.operator +
-        "</div><br /><div class='popupHeaderStyle'>STAKEHOLDERS</div><div class='popupEntryStyle'>" +
-        formatStakeholders(data) +
-        "</div>"
-    );
-    resourcePopup.openOn(map);
-  }
-});
+      client
+        .getLeafletLayer()
+        .bringToFront()
+        .addTo(map);
 
-var resourceHover = L.popup({ closeButton: false });
+      return json;
+    })
+    .catch(function(ex) {
+      console.log("mm parsing failed", ex);
+    });
+} else {
+  initResources();
+  initClaims();
 
-resourceLayer.on(carto.layer.events.FEATURE_OVER, function(blockFeatureEvent) {
-  resourceHover.setLatLng(blockFeatureEvent.latLng);
-  if (!resourcePopup.isOpen()) {
-    var data = blockFeatureEvent.data;
-    resourceHover.setContent(
-      "<div class='popupHeaderStyle'>BLOCK NAME</div><div class='popupEntryStyle'>" +
-        data.name +
-        "</div>"
-    );
-    resourceHover.openOn(map);
-  }
-});
-
-resourceLayer.on(carto.layer.events.FEATURE_OUT, function(blockFeatureEvent) {
-  resourceHover.removeFrom(map);
-});
-
-registerListeners();
-
-// Query the claims data
-
-var claimLines = new carto.source.SQL("SELECT * FROM cs_claims");
-var claim_style = new carto.style.CartoCSS(
-  "#layer {line-width: 0;line-color: #7F3C8D;line-opacity: 1;}"
-);
-
-var claimsLayer = new carto.layer.Layer(claimLines, claim_style, {
-  featureClickColumns: ["name"]
-});
-
-// Add the claim lines to map
-
-client.addLayer(claimsLayer);
-client
-  .getLeafletLayer()
-  .bringToFront()
-  .addTo(map);
-
-function setClaims() {
-  claim_style.setContent(
-    ' #layer {line-width: 4;line-color: ramp([country], (#12eba9, #98c1ff, #e671ff, #405e2c, #fdc006, #83203f), ("Vietnam", "China", "Malaysia", "Indonesia", "Brunei", "Philisppines"), "="); } '
-  );
+  client
+    .getLeafletLayer()
+    .bringToFront()
+    .addTo(map);
 }
 
-function setNone() {
-  claim_style.setContent(
+function parseData(data) {
+  var languageData = {};
+
+  data.forEach(function(row) {
+    var key;
+    Object.keys(row).forEach(function(column, i) {
+      if (column.indexOf("gsx$") > -1) {
+        var columnName = column.replace("gsx$", "");
+        if (columnName === "en") {
+          key = row[column]["$t"];
+          languageData[key] = {};
+        }
+
+        // if (languageData[key]) {
+        //   languageData[key][columnName] = row[column]["$t"];
+        // }
+
+        if (columnName === lang) {
+          languageData[key] = row[column]["$t"];
+        }
+      }
+    });
+  });
+
+  return languageData;
+}
+
+function initResources() {
+  countryDataFilter = new carto.filter.Category("country1", {
+    in: getCountryData()
+  });
+
+  resources = new carto.source.SQL(
+    "SELECT * FROM oil_and_gas_data_sheet1 ORDER BY country1 DESC"
+  );
+
+  resources.addFilter(countryDataFilter);
+
+  var resourceStyle = new carto.style.CartoCSS(
+    '#layer {polygon-fill: ramp([country1], (#7F3C8D, #11A579, #3969AC, #F2B701, #E73F74, #80BA5A, #A5AA99), ("Malaysia", "Vietnam", "China", "Brunei", "Philippines", "Indonesia"), "=");polygon-opacity: 0.7;}#layer::outline {line-width: 1;line-color: #FFFFFF;line-opacity: 0.5;}'
+  );
+
+  resourceLayer = new carto.layer.Layer(resources, resourceStyle, {
+    featureClickColumns: [
+      "block_name",
+      "resource_type",
+      "license_status",
+      "production_status",
+      "operator",
+      "partner1",
+      "partner2",
+      "partner3"
+    ]
+  });
+
+  var resourcePopup = L.popup({ closeButton: true });
+
+  resourceLayer.on(carto.layer.events.FEATURE_CLICKED, function(
+    blockFeatureEvent
+  ) {
+    resourcePopup.setLatLng(blockFeatureEvent.latLng);
+
+    var allowed = [
+      "block_name",
+      "resource_type",
+      "license_status",
+      "production_status",
+      "operator"
+    ];
+    if (!resourcePopup.isOpen()) {
+      var data = blockFeatureEvent.data;
+
+      var stakeHolders = formatStakeholders(data);
+      var content = Object.keys(data)
+        .filter(function(d) {
+          return allowed.includes(d) && data[d].trim();
+        })
+        .map(function(d) {
+          return (
+            '<div class="popupHeaderStyle">' +
+            capitalize(d.replace(/_/g, " ")) +
+            '</div><div class="popupEntryStyle">' +
+            data[d] +
+            "</div>"
+          );
+        })
+        .join("");
+
+      content += "" + stakeHolders;
+      if (lang) {
+        sortedTranslations.forEach(function(t) {
+          content = content.replace(t, translations[t]);
+        });
+      }
+
+      resourcePopup.setContent("" + content);
+      resourcePopup.openOn(map);
+    }
+  });
+
+  var resourceHover = L.popup({ closeButton: false });
+
+  resourceLayer.on(carto.layer.events.FEATURE_OVER, function(
+    blockFeatureEvent
+  ) {
+    resourceHover.setLatLng(blockFeatureEvent.latLng);
+    if (!resourcePopup.isOpen()) {
+      var data = blockFeatureEvent.data;
+
+      var sectionTitle = lang ? translations["Block name"] : "Block name";
+
+      resourceHover.setContent(
+        "<div class='popupHeaderStyle'>" +
+          sectionTitle +
+          "</div><div class='popupEntryStyle'>" +
+          data.block_name +
+          "</div>"
+      );
+      resourceHover.openOn(map);
+    }
+  });
+
+  resourceLayer.on(carto.layer.events.FEATURE_OUT, function(blockFeatureEvent) {
+    resourceHover.removeFrom(map);
+  });
+
+  client.addLayer(resourceLayer);
+}
+
+function initClaims() {
+  var claimLines = new carto.source.SQL("SELECT * FROM cs_claims");
+  claim_style = new carto.style.CartoCSS(
     "#layer {line-width: 0;line-color: #7F3C8D;line-opacity: 1;}"
   );
+
+  var claimsLayer = new carto.layer.Layer(claimLines, claim_style, {
+    featureClickColumns: ["name"]
+  });
+
+  var claimsPopup = L.popup({ closeButton: false });
+
+  claimsLayer.on(carto.layer.events.FEATURE_OVER, function(claimFeatureEvent) {
+    claimsPopup.setLatLng(claimFeatureEvent.latLng);
+    if (!claimsPopup.isOpen()) {
+      var sectionTitle = lang ? translations["Claim"] : "Claim";
+
+      claimsPopup.setContent(
+        "<div class='popupHeaderStyle'>" +
+          sectionTitle +
+          "</div><div class='popupEntryStyle'>" +
+          claimFeatureEvent.data.name +
+          "</div>"
+      );
+      claimsPopup.openOn(map);
+    }
+  });
+
+  claimsLayer.on(carto.layer.events.FEATURE_OUT, function(claimFeatureEvent) {
+    claimsPopup.removeFrom(map);
+  });
+
+  client.addLayer(claimsLayer);
 }
 
-// Set hover tooltips for claim lines
+function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
-var claimsPopup = L.popup({ closeButton: false });
-
-claimsLayer.on(carto.layer.events.FEATURE_OVER, function(claimFeatureEvent) {
-  claimsPopup.setLatLng(claimFeatureEvent.latLng);
-  if (!claimsPopup.isOpen()) {
-    claimsPopup.setContent(
-      "<div class='popupHeaderStyle'>CLAIM</div><div class='popupEntryStyle'>" +
-        claimFeatureEvent.data.name +
-        "</div>"
-    );
-    claimsPopup.openOn(map);
-  }
-});
-
-claimsLayer.on(carto.layer.events.FEATURE_OUT, function(claimFeatureEvent) {
-  claimsPopup.removeFrom(map);
-});
-
-// Format null strings for partner cols and add comma-separation for multiples
-
-var formatStakeholders = function formatStakeholders(data) {
+function formatStakeholders(data) {
   var partnerColKeys = Object.keys(data).filter(function(k) {
     return k.indexOf("partner") > -1;
   });
@@ -210,20 +278,62 @@ var formatStakeholders = function formatStakeholders(data) {
   });
   switch (true) {
     case stakeholderArray.length === 1:
-      return stakeholderArray[0];
+      return (
+        '<div class="popupHeaderStyle">Stakeholders</div>\n      <div class="popupEntryStyle">' +
+        stakeholderArray[0] +
+        "</div>"
+      );
       break;
     case stakeholderArray.length > 1:
       stakeholderLIs = stakeholderArray.map(function(s) {
         return "<li>" + s + "</li>";
       });
-      return "<ul>" + stakeholderLIs.join("") + "</ul>";
+      return (
+        '<div class="popupHeaderStyle">Stakeholders</div>\n      <div class="popupEntryStyle">\n      <ul>' +
+        stakeholderLIs.join("") +
+        "</ul>\n      </div>"
+      );
+
       break;
     default:
       return "";
   }
-};
+}
 
-registerListeners();
+function getCountryData() {
+  var values = [];
+
+  Array.from(document.querySelectorAll("#controls input")).forEach(function(
+    input
+  ) {
+    return input.checked ? values.push(input.value) : null;
+  });
+  return values;
+}
+
+function applyFilters() {
+  countryDataFilter.set("in", getCountryData());
+}
+
+function setClaims() {
+  claim_style.setContent(
+    ' #layer {line-width: 4;line-color: ramp([country], (#12eba9, #98c1ff, #e671ff, #405e2c, #fdc006, #83203f), ("Vietnam", "China", "Malaysia", "Indonesia", "Brunei", "Philisppines"), "="); } '
+  );
+}
+
+function setNone() {
+  claim_style.setContent(
+    "#layer {line-width: 0;line-color: #7F3C8D;line-opacity: 1;}"
+  );
+}
+
+Array.from(document.querySelectorAll("#controls input")).forEach(function(
+  input
+) {
+  return input.addEventListener("click", function() {
+    applyFilters();
+  });
+});
 
 document.querySelector("#query").addEventListener("keyup", function() {
   var q = document.querySelector("#query").value;
@@ -261,12 +371,14 @@ document.querySelector("#query").addEventListener("keyup", function() {
   }
 
   var filters = new carto.filter.OR(filterArray);
+
   resources
     .getFilters()
     .slice(1)
     .forEach(function(f) {
       return resources.removeFilter(f);
     });
+
   resources.addFilter(filters);
 });
 
