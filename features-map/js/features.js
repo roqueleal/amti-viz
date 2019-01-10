@@ -26,7 +26,12 @@ var client = new carto.Client({
   username: "csis"
 });
 
-var href = /lang=([^&]+)/.exec(window.location.href);
+var url =
+  window.location != window.parent.location
+    ? document.referrer
+    : document.location.href;
+
+var href = /lang=([^&]+)/.exec(url);
 var lang = href ? href[1] : null;
 
 var languages = {

@@ -35,7 +35,7 @@ var client = new carto.Client({
 
 var spreadsheetID = "1k3NtTK79jZpXK3qzg53-wQFM_KeF6qhXSXzwh8E1IVk";
 
-var URL =
+var translationsURL =
   "https://spreadsheets.google.com/feeds/list/" +
   spreadsheetID +
   "/1/public/values?alt=json";
@@ -43,11 +43,16 @@ var URL =
 var translations;
 var sortedTranslations;
 
-var href = /lang=([^&]+)/.exec(window.location.href);
+var url =
+  window.location != window.parent.location
+    ? document.referrer
+    : document.location.href;
+
+var href = /lang=([^&]+)/.exec(url);
 var lang = href ? href[1] : null;
 
 if (lang) {
-  fetch(URL)
+  fetch(translationsURL)
     .then(function(response) {
       return response.json();
     })
