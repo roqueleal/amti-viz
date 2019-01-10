@@ -62,7 +62,7 @@ Object.keys(nations).forEach(nation => {
   nationStyle[nation] = new carto.style.CartoCSS(`
     #layer {
       marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
-      marker-width: 12;
+      marker-width: ramp([status],(12,9,12),("Low-tide elevation","Rock","Submerged"),"=");
       marker-fill: ${nations[nation]};
       marker-line-color: #ffffff;
       marker-line-width: 1;
