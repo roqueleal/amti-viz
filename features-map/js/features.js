@@ -62,7 +62,7 @@ Object.keys(nations).forEach(nation => {
   nationStyle[nation] = new carto.style.CartoCSS(`
     #layer {
       marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
-      marker-width: ramp([status],(12,9,12),("Low-tide elevation","Rock","Submerged"),"=");
+      marker-width: ramp([status],(15,12,15),("Low-tide elevation","Rock","Submerged"),"=");
       marker-fill: ${nations[nation]};
       marker-line-color: #ffffff;
       marker-line-width: 1;
@@ -176,15 +176,14 @@ document.querySelector(".occupiers").addEventListener("click", e => {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox && checkbox.checked) {
     nationStyle[checkbox.name].setContent(`
-          #layer {
-          marker-width: 12;
-          marker-fill: ${nations[checkbox.name]};
-          marker-fill-opacity: 1;
-          marker-allow-overlap: true;
-          marker-line-width: 1;
-          marker-line-color: #000000;
-          marker-line-opacity: 1;
-          }
+      #layer {
+        marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
+        marker-width: ramp([status],(15,12,15),("Low-tide elevation","Rock","Submerged"),"=");
+        marker-fill: ${nations[checkbox.name]};
+        marker-line-color: #ffffff;
+        marker-line-width: 1;
+        marker-allow-overlap: true;
+      }
     `);
   } else if (checkbox) {
     nationStyle[checkbox.name].setContent(`
