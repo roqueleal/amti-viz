@@ -24,14 +24,10 @@
       <!-- Include Leaflet -->
       <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
       <link href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" rel="stylesheet">
-      <!-- Include markerCluster plugin -->
-      <link href='https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css' rel='stylesheet' />
-      <script src='https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js'></script>
       <!-- Include Zoom Slider plugin -->
       <script src="zoom_slider/zoomslider.js"></script>
-      <!-- Include Diacritics plugin -->
-      <script src="js/latinize.js"></script>
       <!-- Include CARTO.js -->
+      <script src="https://libs.cartocdn.com/carto.js/v4.1.1/carto.min.js"></script>
       <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
       <!-- Include local styles and scripts -->
       <link href="css/carto_style.css" rel="stylesheet">
@@ -119,7 +115,7 @@ gtag("config", "UA-55717458-1");
                         <label for="un">
                         <input type="checkbox" name="unoccupied" id="un" checked>
                         Unoccupied
-                        <span class="colorKey" style="background-color: #888888;"></span>
+                        <span class="colorKey" style="background-color: #ccc;"></span>
                         </label>
                      </li>
                   </ul>
@@ -130,21 +126,21 @@ gtag("config", "UA-55717458-1");
                      <ul class="statuses">
                         <li>
                            <label for="s">
-                           <input type="checkbox" name="submerged" id="s"  checked>
+                           <input type="checkbox" name="Submerged" id="s"  checked>
                            Submerged
                            <span class="shapeKey submerged"></span>
                            </label>
                         </li>
                         <li>
                            <label for="r">
-                           <input type="checkbox" name="rock" id="r"  checked>
+                           <input type="checkbox" name="Rock" id="r"  checked>
                            Rock
                            <span class="shapeKey rock"></span>
                            </label>
                         </li>
                         <li>
                            <label for="lte">
-                           <input type="checkbox" name="low-tide elevation" id="lte" checked>
+                           <input type="checkbox" name="Low-tide elevation" id="lte" checked>
                            Low-tide Elevation
                            <span class="shapeKey low-tide"></span>
                            </label>

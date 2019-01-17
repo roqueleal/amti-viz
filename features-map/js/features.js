@@ -1,8 +1,32 @@
-var basemap = L.tileLayer(
-  "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-  {}
-);
+"use strict";
 
+var url =
+  window.location != window.parent.location
+    ? document.referrer
+    : document.location.href;
+
+var href = /lang=([^&]+)/.exec(url);
+var lang = href ? href[1] : null;
+
+var languages = {
+  "zh-hant": "china",
+  "zh-hans": "china",
+  vi: "vietnam",
+  ms: "malaysia"
+};
+
+var basemap;
+if (!lang) {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+} else if (lang.indexOf("zh-") > -1) {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/citui3waw00162jo1zcsf1urj/wmts?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+}
 var map = L.map("map", {
   center: [14, 115],
   zoom: 6,
@@ -21,28 +45,10 @@ L.control
 
 L.control.zoomslider().addTo(map);
 
-var client = new carto.Client({
-  apiKey: "wSX_v1e4-P45ernhjNuLgg",
-  username: "csis"
-});
-
-var url =
-  window.location != window.parent.location
-    ? document.referrer
-    : document.location.href;
-
-var href = /lang=([^&]+)/.exec(url);
-var lang = href ? href[1] : null;
-
-var languages = {
-  "zh-hant": "china",
-  "zh-hans": "china",
-  vi: "vietnam",
-  ms: "malaysia"
-};
+var apiKey = "wSX_v1e4-P45ernhjNuLgg";
 
 var nations = {
-  unoccupied: "#CCCCCC",
+  unoccupied: "#888888",
   taiwan: "#F2B701",
   philippines: "#E73F74",
   china: "#3969AC",
@@ -50,167 +56,246 @@ var nations = {
   malaysia: "#7F3C8D"
 };
 
-var nationSQL = {};
-var nationStyle = {};
-var nationLayer = {};
-var featureHover = L.popup({ closeButton: false });
-var svgUrL = "https://csis-ilab.github.io/amti-viz/features-map/images";
-Object.keys(nations).forEach(nation => {
-  nationSQL[nation] = new carto.source.SQL(
-    `SELECT * FROM ${nation}_scs_islands`
-  );
-  nationStyle[nation] = new carto.style.CartoCSS(`
-    #layer {
-      marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
-      marker-width: ramp([status],(15,12,15),("Low-tide elevation","Rock","Submerged"),"=");
-      marker-fill: ${nations[nation]};
-      marker-line-color: #ffffff;
-      marker-line-width: 1;
-      marker-allow-overlap: true;
+var filters = [];
+
+var nation_geoJson = {};
+var nation_marker_clusters = {};
+
+var ignoredHeaders = ["cartodb_id", "latitude", "longitude"];
+resetFilters();
+makeClusters();
+
+function resetFilters() {
+  filters = [
+    function() {
+      return true;
+    },
+    function() {
+      return true;
     }
-`);
+  ];
+}
 
-  nationLayer[nation] = new carto.layer.Layer(
-    nationSQL[nation],
-    nationStyle[nation],
-    {
-      featureOverColumns: [
-        "name",
-        "name_taiwan",
-        "name_china",
-        "name_vietnam",
-        "name_malaysia",
-        "name_philippines",
-        "status",
-        "date_of_occupation"
-      ]
-    }
-  );
-
-  nationLayer[nation].on(carto.layer.events.FEATURE_OVER, function(
-    blockFeatureEvent
-  ) {
-    featureHover.setLatLng(blockFeatureEvent.latLng);
-
-    var allowed = nationLayer[nation]["_featureOverColumns"];
-    var data = blockFeatureEvent.data;
-    var content = Object.keys(data)
-      .filter(d => allowed.includes(d) && data[d])
-      .map(d => {
-        return `<div class="popupHeaderStyle">${d.replace(
-          /_/g,
-          " "
-        )}</div><div class="popupEntryStyle">${data[d]}</div>`;
-      })
-      .join("");
-
-    featureHover.setContent(`${content}`);
-    featureHover.openOn(map);
-  });
-
-  nationLayer[nation].on(carto.layer.events.FEATURE_OUT, function(
-    blockFeatureEvent
-  ) {
-    // featureHover.removeFrom(map);
-  });
-
-  client.addLayer(nationLayer[nation]);
-});
-
-client
-  .getLeafletLayer()
-  .bringToFront()
-  .addTo(map);
-
-document.querySelector("#query").addEventListener("keyup", function() {
-  if (featureHover.isOpen()) featureHover.removeFrom(map);
-
-  var q = document.querySelector("#query").value;
-  var filterArray = [];
-
-  Object.keys(nations).forEach(nation => {
-    var columnArray = nationLayer[nation]["_featureOverColumns"];
-
-    columnArray = columnArray.filter(ca => ca !== "date_of_occupation"); //exclude numeric data
-
-    columnArray.forEach(function(c) {
-      filterArray.push(capital(c, q), lower(c, q), upper(c, q));
-    });
-
-    var filters = new carto.filter.OR(filterArray);
-
-    nationSQL[nation].getFilters().forEach(function(f) {
-      return nationSQL[nation].removeFilter(f);
-    });
-
-    nationSQL[nation].addFilter(filters);
-  });
-});
-
-var capital = function capital(c, q) {
-  return new carto.filter.Category(c, {
-    like: "%" + (q.charAt(0).toUpperCase() + q.slice(1)) + "%"
-  });
-};
-var lower = function lower(c, q) {
-  return new carto.filter.Category(c, {
-    like: "%" + q.toLowerCase() + "%"
-  });
-};
-var upper = function upper(c, q) {
-  return new carto.filter.Category(c, {
-    like: "%" + q.toUpperCase() + "%"
-  });
-};
+document.querySelector("#query").addEventListener("keyup", searchFeatures);
 
 document.querySelector("#resetButton").addEventListener("click", function(e) {
   document.querySelector("#query").value = "";
-
-  Object.keys(nations).forEach(nation => {
-    nationSQL[nation].getFilters().forEach(function(f) {
-      return nationSQL[nation].removeFilter(f);
-    });
-  });
+  removeClusters();
+  resetFilters();
+  makeClusters();
 });
 
-document.querySelector(".occupiers").addEventListener("click", e => {
-  featureHover.removeFrom(map);
+function searchFeatures(e) {
+  removeClusters();
+  var q = e.target.value.toLowerCase();
+  filters[0] = function(feature) {
+    var bool = false;
+    var withDiacritics = Object.values(feature.properties)
+      .join("")
+      .toLowerCase();
+    var withoutDiacritics = Object.values(feature.properties)
+      .join("")
+      .toLowerCase()
+      .latinise();
 
+    if (withDiacritics.indexOf(q) > -1 || withoutDiacritics.indexOf(q) > -1) {
+      bool = true;
+    }
+
+    return bool;
+  };
+
+  makeClusters();
+}
+
+document.querySelector(".occupiers").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox && checkbox.checked) {
-    nationStyle[checkbox.name].setContent(`
-      #layer {
-        marker-file: ramp([status],(url(${svgUrL}/low_tide.svg),url(${svgUrL}/rock.svg),url(${svgUrL}/submerged.svg)),("Low-tide elevation","Rock","Submerged"),"=");
-        marker-width: ramp([status],(15,12,15),("Low-tide elevation","Rock","Submerged"),"=");
-        marker-fill: ${nations[checkbox.name]};
-        marker-line-color: #ffffff;
-        marker-line-width: 1;
-        marker-allow-overlap: true;
-      }
-    `);
+    map.addLayer(nation_marker_clusters[checkbox.name]);
   } else if (checkbox) {
-    nationStyle[checkbox.name].setContent(`
-        #layer {}
-          `);
+    map.removeLayer(nation_marker_clusters[checkbox.name]);
   }
 });
 
-document.querySelector(".statuses").addEventListener("click", e => {
-  if (featureHover.isOpen()) featureHover.removeFrom(map);
-
+document.querySelector(".statuses").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox) {
+    removeClusters();
+
     var checkboxes = Array.from(
       document.querySelectorAll(".statuses input:checked")
     );
 
-    var names = checkboxes.map(c => `'${c.name}'`).join(",");
-    names = names ? names : `' '`;
-
-    Object.keys(nations).forEach(nation => {
-      nationSQL[nation].setQuery(
-        `SELECT * FROM ${nation}_scs_islands WHERE status IN (${names})`
-      );
+    var names = checkboxes.map(function(c) {
+      return c.name;
     });
+
+    filters[1] = function(features, layers) {
+      var bool = false;
+
+      if (names.indexOf(features.properties.status.toLowerCase()) > -1) {
+        bool = true;
+      }
+
+      return bool;
+    };
+
+    makeClusters();
   }
 });
+
+function removeClusters() {
+  Object.keys(nations).forEach(function(nation) {
+    map.removeLayer(nation_marker_clusters[nation]);
+  });
+}
+
+function makeClusters() {
+  Object.keys(nations).forEach(function(nation) {
+    if (Object.keys(nation_marker_clusters) > 0) {
+      map.removeLayer(nation_marker_clusters[nation]);
+    }
+
+    fetch(
+      "https://csis.carto.com/api/v2/sql?api_key=" +
+        apiKey +
+        "&format=geojson&q=SELECT%20*%20FROM%20" +
+        nation +
+        "_scs_islands"
+    )
+      .then(function(resp) {
+        return resp.json();
+      })
+      .then(function(json) {
+        makeMarkers(nation, json, filters);
+      });
+  });
+}
+
+function makeMarkers(nation, json, filters) {
+  nation_marker_clusters[nation] = new L.MarkerClusterGroup({
+    showCoverageOnHover: false,
+    zoomToBoundsOnClick: false,
+    maxClusterRadius: 10,
+    iconCreateFunction: function iconCreateFunction(cluster) {
+      return L.divIcon({
+        className: "icon-" + nation,
+        html: '<span class="text">' + cluster.getChildCount() + "</span>"
+      });
+    }
+  });
+
+  var geoJsonLayer = L.geoJson(json, {
+    filter: function filter(feature) {
+      var bool = filters.map(function(f) {
+        return f(feature);
+      });
+
+      return bool[0] && bool[1];
+    },
+    pointToLayer: function pointToLayer(feature, latlng) {
+      var CustomIcon = L.Icon.extend({
+        options: {
+          iconSize: [20, 20]
+        }
+      });
+
+      var svg;
+      switch (feature.properties.status.toLowerCase()) {
+        case "low-tide elevation":
+          svg =
+            "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' fill='" +
+            nations[nation] +
+            "'></polygon></svg>";
+          break;
+        case "rock":
+          svg =
+            "<svg xmlns='http://www.w3.org/2000/svg'><rect width='12' height='12' stroke=\"#ffffff\" fill='" +
+            nations[nation] +
+            "'></rect></svg>";
+          break;
+        case "submerged":
+          svg =
+            "<svg xmlns='http://www.w3.org/2000/svg'><rect x='4' y='2' width='9' height='9' transform='translate(6 -3) rotate(45)' stroke=\"#ffffff\" fill='" +
+            nations[nation] +
+            "' paint-order='stroke'></rect></svg>";
+          break;
+        default:
+          svg =
+            "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\" fill='" +
+            nations[nation] +
+            "' /></svg>";
+      }
+
+      var iconUrl = encodeURI("data:image/svg+xml," + svg).replace("#", "%23");
+
+      var icon = new CustomIcon({ iconUrl: iconUrl });
+
+      return L.marker(latlng, {
+        icon: icon
+      });
+    },
+    onEachFeature: function onEachFeature(feature, layer) {
+      var description;
+
+      if (window.innerWidth > 768) {
+        description = Object.keys(feature.properties)
+          .map(function(p) {
+            if (feature.properties[p])
+              return ignoredHeaders.indexOf(p) < 0
+                ? '<div class=\n            "popupHeaderStyle">' +
+                    p
+                      .toUpperCase()
+                      .replace(/_/g, " ")
+                      .replace("NUMBER", "#") +
+                    '</div><div class="popupEntryStyle">' +
+                    feature.properties[p] +
+                    "</div>"
+                : "";
+          })
+          .filter(function(p) {
+            return p;
+          })
+          .join("");
+      } else {
+        Object.keys(feature.properties).map(function(p) {
+          description =
+            '<div class=\n      "popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
+            feature.properties["name"] +
+            "</div>";
+        });
+      }
+
+      var link =
+        "https://amti.csis.org/" +
+        feature.properties.name.toLowerCase().replace(/ /g, "-");
+
+      var islandTracker =
+        '<div class=\n  "popupHeaderStyle">Link</div><div class="islandTracker popupEntryStyle"><a href="https://amti.csis.org/' +
+        link +
+        '">' +
+        link.replace("https://", " ") +
+        "</a>" +
+        externalLink +
+        "</div>";
+
+      layer.bindPopup(description + islandTracker);
+    }
+  });
+
+  nation_marker_clusters[nation].addLayer(geoJsonLayer);
+
+  map.addLayer(nation_marker_clusters[nation]);
+
+  nation_marker_clusters[nation].on("clustermouseover", function(a) {
+    map._layers[a.layer._leaflet_id].spiderfy();
+    Object.keys(map._layers).forEach(function(layer, i) {
+      if (parseInt(layer, 10) !== a.layer._leaflet_id) {
+        if (map._layers[layer].unspiderfy) map._layers[layer].unspiderfy();
+      }
+    });
+  });
+}
+
+var externalLink =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15">><path d="M7.49,0V1.67H1.68V13.32H13.32V7.52H15v5.72a1.76,1.76,0,0,1-.42,1.19,1.64,1.64,0,0,1-1.13.56H1.74a1.67,1.67,0,0,1-1.16-.41A1.61,1.61,0,0,1,0,13.48v-.27C0,9.4,0,5.6,0,1.8A1.83,1.83,0,0,1,.58.4a1.53,1.53,0,0,1,1-.39h6Z" transform="translate(0 0)"/><path d="M9.17,1.67V0H15V5.84H13.34v-3h0c-.05.05-.11.1-.16.16l-.45.46-1.3,1.29-.84.84-.89.9-.88.87-.89.9c-.28.29-.57.57-.86.86L6.16,10l-.88.87a1.83,1.83,0,0,1-.13.16L4,9.86l0,0L5.36,8.47l.95-1,.75-.75,1-1L8.87,5l1-.94.85-.86.92-.91.56-.58Z" transform="translate(0 0)"/></svg>';
