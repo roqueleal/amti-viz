@@ -304,7 +304,7 @@ function makeMarkers(nation, json, filters) {
           ? '<div class="separator"></div><div class="islandTracker popupEntryStyle"><a href=' +
             link +
             ' target="_blank">' +
-            link.replace("https://", " ") +
+            "View on the Island Tracker" +
             "</a>" +
             externalLink +
             "</div>"
