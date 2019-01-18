@@ -21,6 +21,12 @@
   transition: all 0.3s ease-in-out;
 }
 
+.separator {
+  min-height: 1px;
+  background-color: rgba(46, 60, 67, 0.08);
+  margin: 8px 0;
+}
+
 .islandTracker:hover a {
   color: #17b39a;
 }

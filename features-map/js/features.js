@@ -60,7 +60,7 @@ var filters = [];
 var nation_geoJson = {};
 var nation_marker_clusters = {};
 
-var ignoredHeaders = ["cartodb_id", "latitude", "longitude"];
+var ignoredHeaders = ["cartodb_id", "latitude", "longitude", "occupier"];
 resetFilters();
 makeClusters();
 
@@ -301,7 +301,7 @@ function makeMarkers(nation, json, filters) {
 
       var islandTracker =
         nation !== "unoccupied"
-          ? '<div class=\n  "popupHeaderStyle">Link</div><div class="islandTracker popupEntryStyle"><a href=' +
+          ? '<div class="separator"></div><div class="islandTracker popupEntryStyle"><a href=' +
             link +
             ' target="_blank">' +
             link.replace("https://", " ") +
