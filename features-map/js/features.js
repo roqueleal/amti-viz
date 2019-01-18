@@ -241,9 +241,7 @@ function makeMarkers(nation, json, filters) {
 
           if (!layer._popupHandlersAdded) {
             Object.keys(map._layers).forEach(function(l, i) {
-              if (true) {
-                if (map._layers[l].unspiderfy) map._layers[l].unspiderfy();
-              }
+              if (map._layers[l].unspiderfy) map._layers[l].unspiderfy();
             });
 
             Object.keys(nations).forEach(function(n) {
@@ -367,6 +365,20 @@ function makeMarkers(nation, json, filters) {
     });
   });
 }
+
+map.on("click", function() {
+  Array.from(document.querySelectorAll("div.leaflet-marker-icon")).forEach(
+    function(d) {
+      return (d.style.opacity = 1);
+    }
+  );
+  Array.from(document.querySelectorAll("img.leaflet-marker-icon")).forEach(
+    function(d) {
+      return (d.style.opacity = 1);
+    }
+  );
+});
+
 function flattenDeep(arr1) {
   return arr1.reduce(function(acc, val) {
     return Array.isArray(val) ? acc.concat(flattenDeep(val)) : acc.concat(val);
