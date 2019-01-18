@@ -1,5 +1,3 @@
-"use strict";
-
 var url =
   window.location != window.parent.location
     ? document.referrer
@@ -8,6 +6,19 @@ var url =
 var href = /lang=([^&]+)/.exec(url);
 var lang = href ? href[1] : null;
 
+var basemap;
+if (lang && lang.indexOf("zh-") > -1) {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/citui3waw00162jo1zcsf1urj/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+} else {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+}
+
 var languages = {
   "zh-hant": "china",
   "zh-hans": "china",
@@ -15,18 +26,6 @@ var languages = {
   ms: "malaysia"
 };
 
-var basemap;
-if (!lang) {
-  basemap = L.tileLayer(
-    "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-    {}
-  );
-} else if (lang.indexOf("zh-") > -1) {
-  basemap = L.tileLayer(
-    "https://api.mapbox.com/styles/v1/ilabmedia/citui3waw00162jo1zcsf1urj/wmts?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-    {}
-  );
-}
 var map = L.map("map", {
   center: [14, 115],
   zoom: 6,

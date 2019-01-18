@@ -1,12 +1,28 @@
+var url =
+  window.location != window.parent.location
+    ? document.referrer
+    : document.location.href;
+
+var href = /lang=([^&]+)/.exec(url);
+var lang = href ? href[1] : null;
+
+var basemap;
+if (lang && lang.indexOf("zh-") > -1) {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/citui3waw00162jo1zcsf1urj/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+} else {
+  basemap = L.tileLayer(
+    "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+    {}
+  );
+}
+
 var resourceLayer;
 var countryDataFilter;
 var resources;
 var claim_style;
-
-var basemap = L.tileLayer(
-  "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-  {}
-);
 
 var map = L.map("map", {
   center: [13.7237264, 110.6814572],
@@ -42,14 +58,6 @@ var translationsURL =
 
 var translations;
 var sortedTranslations;
-
-var url =
-  window.location != window.parent.location
-    ? document.referrer
-    : document.location.href;
-
-var href = /lang=([^&]+)/.exec(url);
-var lang = href ? href[1] : null;
 
 if (lang) {
   fetch(translationsURL)
