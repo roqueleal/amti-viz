@@ -60,7 +60,13 @@ var filters = [];
 var nation_geoJson = {};
 var nation_marker_clusters = {};
 
-var ignoredHeaders = ["cartodb_id", "latitude", "longitude", "occupier"];
+var ignoredHeaders = [
+  "cartodb_id",
+  "latitude",
+  "longitude",
+  "occupier",
+  "hyperlink"
+];
 resetFilters();
 makeClusters();
 
@@ -203,13 +209,13 @@ function makeMarkers(nation, json, filters) {
       switch (feature.properties.status.toLowerCase()) {
         case "low-tide elevation":
           svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' fill='" +
+            "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' stroke=\"#ffffff\" fill='" +
             nations[nation] +
-            "'></polygon></svg>";
+            "' paint-order='stroke'></polygon></svg>";
           break;
         case "rock":
           svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><rect width='12' height='12' stroke=\"#ffffff\" fill='" +
+            "<svg xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' stroke=\"#ffffff\" fill='" +
             nations[nation] +
             "'></rect></svg>";
           break;
@@ -295,9 +301,7 @@ function makeMarkers(nation, json, filters) {
         });
       }
 
-      var link =
-        "https://amti.csis.org/" +
-        feature.properties.name.toLowerCase().replace(/ /g, "-");
+      var link = feature.properties.hyperlink;
 
       var islandTracker =
         nation !== "unoccupied"
