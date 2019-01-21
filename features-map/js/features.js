@@ -304,7 +304,7 @@ function makeMarkers(nation, json, filters) {
       var link = feature.properties.hyperlink;
 
       var islandTracker =
-        nation !== "unoccupied"
+        feature.properties.hyperlink.trim().length > 1
           ? '<div class="separator"></div><div class="islandTracker popupEntryStyle"><a href=' +
             link +
             ' target="_blank">' +
