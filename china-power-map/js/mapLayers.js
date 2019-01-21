@@ -19,9 +19,11 @@ if (lang && lang.indexOf("zh-") > -1) {
   );
 }
 
+var language = lang ? lang.replace("-", "_") : "name";
+
 var map = L.map("map", {
   center: [14, 115],
-  zoom: 6,
+  zoom: 5,
   scrollWheelZoom: false,
   zoomControl: false,
   layers: [basemap],
@@ -37,47 +39,28 @@ L.control
 
 L.control.zoomslider().addTo(map);
 
-var apiKey = "wSX_v1e4-P45ernhjNuLgg";
+var apiKey = "X1A67o9_DcmpMX2RAYQ15g";
 
-var nations = {
-  china: "#3969AC",
-  vietnam: "#11A579",
-  malaysia: "#7F3C8D",
-  philippines: "#E73F74",
-  taiwan: "#F2B701",
-  unoccupied: "#888888"
+var mapLayers = {
+  cpp_anti_cruise_ship: {
+    label: "Anti-Ship Cruise Missiles",
+    color: "#11A579"
+  },
+  cpp_sam_ranges: { label: "SAM Sites", color: "#7F3C8D" },
+  cpp_fighter_ranges: { label: "Fighter Aircraft", color: "#E73F74" },
+  cpp_bomber_ranges: { label: "Bomber Aircraft", color: "orange" },
+  cpp_radar_ranges: { label: "Radar", color: "yellow" },
+  cpp_nine_dash_line: { label: "Chinese Maritime Claims", color: "black" },
+  cpp_chinese_outposts: { label: "Chinese Outposts", color: "#245381" }
 };
 
 var filters = [];
 
-var nation_geoJson = {};
-var nation_marker_clusters = {};
+var mapLayer_geoJson = {};
+var mapLayer_marker_clusters = {};
 
-var ignoredHeaders = [
-  "cartodb_id",
-  "latitude",
-  "longitude",
-  "occupier",
-  "hyperlink"
-];
-
-Object.keys(nations).forEach(function(nation) {
-  document.querySelector(".occupiers").innerHTML +=
-    '<li>\n     <label for="' +
-    nation +
-    '">\n     <input type="checkbox" name="' +
-    nation +
-    '" id="' +
-    nation +
-    '"  checked>\n     ' +
-    (nation.charAt(0).toUpperCase() + nation.slice(1)) +
-    '\n     <span class="colorKey" style="background-color: ' +
-    nations[nation] +
-    ';"></span>\n     </label>\n  </li>';
-});
-
+var allowedHeaders = [language, "description", "launcher"];
 resetFilters();
-
 makeClusters();
 
 function resetFilters() {
@@ -91,130 +74,67 @@ function resetFilters() {
   ];
 }
 
-document.querySelector("#query").addEventListener("keyup", searchFeatures);
-
-document.querySelector("#resetButton").addEventListener("click", function(e) {
-  document.querySelector("#query").value = "";
-  removeClusters();
-  resetFilters();
-  makeClusters();
-});
-
-function searchFeatures(e) {
-  removeClusters();
-  var q = e.target.value.toLowerCase();
-  filters[0] = function(feature) {
-    var bool = false;
-    var withDiacritics = Object.values(feature.properties)
-      .join("")
-      .toLowerCase();
-    var withoutDiacritics = Object.values(feature.properties)
-      .join("")
-      .toLowerCase()
-      .latinise();
-
-    if (withDiacritics.indexOf(q) > -1 || withoutDiacritics.indexOf(q) > -1) {
-      bool = true;
-    }
-
-    return bool;
-  };
-
-  makeClusters();
-}
-
-document.querySelector(".occupiers").addEventListener("click", function(e) {
+document.querySelector(".mapLayers").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox && checkbox.checked) {
-    map.addLayer(nation_marker_clusters[checkbox.name]);
-
-    var icons = document.querySelectorAll(
-      ".icon-" + checkbox.name + ":not(.marker-cluster-small)"
-    );
-    Array.from(icons).forEach(function(icon) {
-      icon.style.color = nations[checkbox.name];
-      icon.style.borderColor = nations[checkbox.name];
-      icon.style.borderWidth = 1;
-      icon.style.borderStyle = "solid";
-    });
+    map.addLayer(mapLayer_marker_clusters[checkbox.name]);
   } else if (checkbox) {
-    map.removeLayer(nation_marker_clusters[checkbox.name]);
-  }
-});
-
-document.querySelector(".statuses").addEventListener("click", function(e) {
-  var checkbox = e.target.type === "checkbox" ? e.target : undefined;
-  if (checkbox) {
-    removeClusters();
-
-    var checkboxes = Array.from(
-      document.querySelectorAll(".statuses input:checked")
-    );
-
-    var names = checkboxes.map(function(c) {
-      return c.name;
-    });
-
-    filters[1] = function(features, layers) {
-      var bool = false;
-
-      if (names.indexOf(features.properties.status.toLowerCase()) > -1) {
-        bool = true;
-      }
-
-      return bool;
-    };
-
-    makeClusters();
+    map.removeLayer(mapLayer_marker_clusters[checkbox.name]);
   }
 });
 
 function removeClusters() {
-  Object.keys(nations).forEach(function(nation) {
-    map.removeLayer(nation_marker_clusters[nation]);
+  Object.keys(mapLayers).forEach(function(mapLayer) {
+    map.removeLayer(mapLayer_marker_clusters[mapLayer]);
   });
 }
+
+Object.keys(mapLayers).forEach(function(mapLayer) {
+  document.querySelector(".mapLayers").innerHTML +=
+    '<li>\n     <label for="' +
+    mapLayer +
+    '">\n     <input type="checkbox" name="' +
+    mapLayer +
+    '" id="' +
+    mapLayer +
+    '"  checked>\n     ' +
+    mapLayers[mapLayer].label +
+    '\n     <span class="colorKey" style="background-color: ' +
+    mapLayers[mapLayer].color +
+    ';"></span>\n     </label>\n  </li>';
+});
 
 function makeClusters() {
-  Object.keys(nations).forEach(function(nation) {
-    if (Object.keys(nation_marker_clusters) > 0) {
-      map.removeLayer(nation_marker_clusters[nation]);
-    }
+  Object.keys(mapLayers)
+    .reverse()
+    .forEach(function(mapLayer) {
+      if (Object.keys(mapLayer_marker_clusters) > 0) {
+        map.removeLayer(mapLayer_marker_clusters[mapLayer]);
+      }
 
-    fetch(
-      "https://csis.carto.com/api/v2/sql?api_key=" +
-        apiKey +
-        "&format=geojson&q=SELECT%20*%20FROM%20" +
-        nation +
-        "_scs_islands"
-    )
-      .then(function(resp) {
-        return resp.json();
-      })
-      .then(function(json) {
-        makeMarkers(nation, json, filters);
-
-        var icons = document.querySelectorAll(
-          ".icon-" + nation + ":not(.marker-cluster-small)"
-        );
-        Array.from(icons).forEach(function(icon) {
-          icon.style.color = nations[nation];
-          icon.style.borderColor = nations[nation];
-          icon.style.borderWidth = 1;
-          icon.style.borderStyle = "solid";
+      fetch(
+        "https://csis.carto.com/api/v2/sql?api_key=" +
+          apiKey +
+          "&format=geojson&q=SELECT%20*%20FROM%20" +
+          mapLayer
+      )
+        .then(function(resp) {
+          return resp.json();
+        })
+        .then(function(json) {
+          makeMarkers(mapLayer, json, filters);
         });
-      });
-  });
+    });
 }
 
-function makeMarkers(nation, json, filters) {
-  nation_marker_clusters[nation] = new L.MarkerClusterGroup({
+function makeMarkers(mapLayer, json, filters) {
+  mapLayer_marker_clusters[mapLayer] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
-    maxClusterRadius: 10,
+    maxClusterRadius: 0,
     iconCreateFunction: function iconCreateFunction(cluster) {
       return L.divIcon({
-        className: "icon-" + nation,
+        className: "icon-" + mapLayer,
         html: '<span class="text">' + cluster.getChildCount() + "</span>"
       });
     }
@@ -235,32 +155,10 @@ function makeMarkers(nation, json, filters) {
         }
       });
 
-      var svg;
-      switch (feature.properties.status.toLowerCase()) {
-        case "low-tide elevation":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
-            "' paint-order='stroke'></polygon></svg>";
-          break;
-        case "rock":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
-            "'></rect></svg>";
-          break;
-        case "submerged":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><rect x='4' y='2' width='9' height='9' transform='translate(6 -3) rotate(45)' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
-            "' paint-order='stroke'></rect></svg>";
-          break;
-        default:
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
-            "' /></svg>";
-      }
+      var svg =
+        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\"  fill='" +
+        mapLayers[mapLayer].color +
+        "' /></svg>";
 
       var iconUrl = encodeURI("data:image/svg+xml," + svg).replace("#", "%23");
 
@@ -269,6 +167,15 @@ function makeMarkers(nation, json, filters) {
       return L.marker(latlng, {
         icon: icon
       });
+    },
+    style: function style(feature) {
+      var isRadar = feature.properties.name.toLowerCase().indexOf("radar") > -1;
+      return {
+        color: mapLayers[mapLayer].color,
+        weight: isRadar ? 0 : 4,
+        dashArray: feature.properties.observed === false ? "12 18" : null,
+        fill: isRadar ? true : false
+      };
     },
     onEachFeature: function onEachFeature(feature, layer) {
       layer.on({
@@ -280,9 +187,9 @@ function makeMarkers(nation, json, filters) {
               if (map._layers[l].unspiderfy) map._layers[l].unspiderfy();
             });
 
-            Object.keys(nations).forEach(function(n) {
+            Object.keys(mapLayers).forEach(function(n) {
               Object.values(
-                nation_marker_clusters[n]._featureGroup._layers
+                mapLayer_marker_clusters[n]._featureGroup._layers
               ).forEach(function(v) {
                 if (v._group && v._group._spiderfied) isSpiderfied = true;
               });
@@ -307,7 +214,7 @@ function makeMarkers(nation, json, filters) {
         description = Object.keys(feature.properties)
           .map(function(p) {
             if (feature.properties[p])
-              return ignoredHeaders.indexOf(p) < 0
+              return allowedHeaders.indexOf(p) > -1
                 ? '<div class=\n            "popupHeaderStyle">' +
                     p
                       .toUpperCase()
@@ -331,28 +238,15 @@ function makeMarkers(nation, json, filters) {
         });
       }
 
-      var link = feature.properties.hyperlink;
-
-      var islandTracker =
-        feature.properties.hyperlink.trim().length > 1
-          ? '<div class="separator"></div><div class="islandTracker popupEntryStyle"><a href=' +
-            link +
-            ' target="_blank">' +
-            "View on the Island Tracker" +
-            "</a>" +
-            externalLink +
-            "</div>"
-          : "";
-
-      layer.bindPopup(description + islandTracker);
+      layer.bindPopup(description);
     }
   });
 
-  nation_marker_clusters[nation].addLayer(geoJsonLayer);
+  mapLayer_marker_clusters[mapLayer].addLayer(geoJsonLayer);
 
-  map.addLayer(nation_marker_clusters[nation]);
+  map.addLayer(mapLayer_marker_clusters[mapLayer]);
 
-  nation_marker_clusters[nation].on("clusterclick", function(a) {
+  mapLayer_marker_clusters[mapLayer].on("clusterclick", function(a) {
     map._layers[a.layer._leaflet_id].spiderfy();
 
     Object.keys(map._layers).forEach(function(layer, i) {
@@ -363,14 +257,14 @@ function makeMarkers(nation, json, filters) {
 
     var isSpiderfied = false;
 
-    Object.keys(nations).forEach(function(n) {
-      Object.values(nation_marker_clusters[n]._featureGroup._layers).forEach(
+    Object.keys(mapLayers).forEach(function(n) {
+      Object.values(mapLayer_marker_clusters[n]._featureGroup._layers).forEach(
         function(v) {
           if (v._group && v._group._spiderfied) isSpiderfied = true;
         }
       );
     });
-    Object.keys(nations).forEach(function(n) {
+    Object.keys(mapLayers).forEach(function(n) {
       Array.from(document.querySelectorAll("div.leaflet-marker-icon")).forEach(
         function(d) {
           return (d.style.opacity = isSpiderfied ? 0.2 : 1);
@@ -381,7 +275,7 @@ function makeMarkers(nation, json, filters) {
           return (d.style.opacity = isSpiderfied ? 0.2 : 1);
         }
       );
-      Object.values(nation_marker_clusters[n]._featureGroup._layers).filter(
+      Object.values(mapLayer_marker_clusters[n]._featureGroup._layers).filter(
         function(v) {
           a.layer
             .getAllChildMarkers()
@@ -398,6 +292,8 @@ function makeMarkers(nation, json, filters) {
       );
     });
   });
+
+  // mapLayer_marker_clusters.cpp_radar_ranges.bringToBack();
 }
 
 map.on("click", function() {

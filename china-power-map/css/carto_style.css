@@ -68,6 +68,36 @@
   background-color: transparent;
 }
 
+.icon-china:not(.marker-cluster-small) {
+  border: 1px solid rgba(57, 105, 172, 1);
+  color: rgba(57, 105, 172, 1);
+}
+
+.icon-vietnam:not(.marker-cluster-small) {
+  border: 1px solid rgba(17, 165, 121, 1);
+  color: rgba(17, 165, 121, 1);
+}
+
+.icon-malaysia:not(.marker-cluster-small) {
+  border: 1px solid rgba(127, 60, 141, 1);
+  color: rgba(127, 60, 141, 1);
+}
+
+.icon-philippines:not(.marker-cluster-small) {
+  border: 1px solid rgba(231, 63, 116, 1);
+  color: rgba(231, 63, 116, 1);
+}
+
+.icon-taiwan:not(.marker-cluster-small) {
+  border: 1px solid rgba(242, 183, 1, 1);
+  color: rgba(242, 183, 1, 1);
+}
+
+.icon-unoccupied:not(.marker-cluster-small) {
+  border: 1px solid rgba(136, 136, 136, 1);
+  color: rgba(136, 136, 136, 1);
+}
+
 body {
   font-family: "Open Sans Condensed", sans-serif;
 }
