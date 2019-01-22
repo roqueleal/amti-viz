@@ -51,7 +51,7 @@ var mapLayers = {
   cpp_bomber_ranges: { label: "Bomber Aircraft", color: "orange" },
   cpp_radar_ranges: { label: "Radar", color: "yellow" },
   cpp_nine_dash_line: { label: "Chinese Maritime Claims", color: "black" },
-  cpp_chinese_outposts: { label: "Chinese Outposts", color: "#245381" }
+  cpp_chinese_outposts: { label: "Chinese Outposts", color: "#3969AC" }
 };
 
 var filters = [];
