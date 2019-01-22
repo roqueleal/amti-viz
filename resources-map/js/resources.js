@@ -28,7 +28,7 @@ var map = L.map("map", {
   center: [13.7237264, 110.6814572],
   zoom: 6,
   maxZoom: 18,
-  scrollWheelZoom: false,
+  scrollWheelZoom: window.innerWidth < 768 ? false : true,
   minZoom: 1,
   zoomControl: false,
   layers: [basemap],

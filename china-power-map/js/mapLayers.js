@@ -24,7 +24,7 @@ var language = lang ? lang.replace("-", "_") : "name";
 var map = L.map("map", {
   center: [14, 115],
   zoom: 5,
-  scrollWheelZoom: false,
+  scrollWheelZoom: window.innerWidth < 768 ? false : true,
   zoomControl: false,
   layers: [basemap],
   attributionControl: false

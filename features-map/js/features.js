@@ -22,7 +22,7 @@ if (lang && lang.indexOf("zh-") > -1) {
 var map = L.map("map", {
   center: [14, 115],
   zoom: 6,
-  scrollWheelZoom: false,
+  scrollWheelZoom: window.innerWidth < 768 ? false : true,
   zoomControl: false,
   layers: [basemap],
   attributionControl: false
@@ -211,7 +211,7 @@ function makeMarkers(nation, json, filters) {
   nation_marker_clusters[nation] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
-    maxClusterRadius: 10,
+    maxClusterRadius: 0,
     iconCreateFunction: function iconCreateFunction(cluster) {
       return L.divIcon({
         className: "icon-" + nation,
