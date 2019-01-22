@@ -134,7 +134,7 @@ document.querySelector(".occupiers").addEventListener("click", function(e) {
     Array.from(icons).forEach(function(icon) {
       icon.style.color = nations[checkbox.name];
       icon.style.borderColor = nations[checkbox.name];
-      icon.style.borderWidth = 1;
+      icon.style.borderWidth = "1px";
       icon.style.borderStyle = "solid";
     });
   } else if (checkbox) {
