@@ -68,36 +68,6 @@
   background-color: transparent;
 }
 
-.icon-china:not(.marker-cluster-small) {
-  border: 1px solid rgba(57, 105, 172, 1);
-  color: rgba(57, 105, 172, 1);
-}
-
-.icon-vietnam:not(.marker-cluster-small) {
-  border: 1px solid rgba(17, 165, 121, 1);
-  color: rgba(17, 165, 121, 1);
-}
-
-.icon-malaysia:not(.marker-cluster-small) {
-  border: 1px solid rgba(127, 60, 141, 1);
-  color: rgba(127, 60, 141, 1);
-}
-
-.icon-philippines:not(.marker-cluster-small) {
-  border: 1px solid rgba(231, 63, 116, 1);
-  color: rgba(231, 63, 116, 1);
-}
-
-.icon-taiwan:not(.marker-cluster-small) {
-  border: 1px solid rgba(242, 183, 1, 1);
-  color: rgba(242, 183, 1, 1);
-}
-
-.icon-unoccupied:not(.marker-cluster-small) {
-  border: 1px solid rgba(136, 136, 136, 1);
-  color: rgba(136, 136, 136, 1);
-}
-
 body {
   font-family: "Open Sans Condensed", sans-serif;
 }
@@ -136,53 +106,24 @@ div#results {
 }
 
 .colorKey,
-.shapeKey {
+.shapeKey,
+.typeKey {
   display: inline-block;
   height: 12px;
-  width: 24px;
   margin: 3px 5px 0 5px;
   background-size: contain;
 }
 
-.statuses,
-.occupiers {
-  display: flex;
-
-  flex-wrap: wrap;
+.colorKey,
+.shapeKey {
+  width: 24px;
 }
-
-.occupiers li {
-  flex-basis: 50%;
+.typeKey {
+  width: 48px;
 }
-
-.statuses li {
-  flex-basis: 100%;
-}
-
-.occupiers li:nth-child(even) {
-  margin-left: 6px;
-}
-
-.statuses label,
-.occupiers label {
-  display: flex;
-  align-items: center;
-}
-
 .shapeKey {
   background-size: contain;
   background-repeat: no-repeat;
-}
-.submerged.shapeKey {
-  background-image: url(../images/submerged.svg);
-  height: 15px;
-  width: 15px;
-}
-.rock.shapeKey {
-  background-image: url(../images/rock.svg);
-}
-.low-tide.shapeKey {
-  background-image: url(../images/low_tide.svg);
 }
 
 .popupHeaderStyle {

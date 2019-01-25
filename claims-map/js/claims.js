@@ -55,16 +55,16 @@ var nations = {
   Cambodia: { label: "Cambodia" },
 
   "Democratic People''s Republic of Korea (North Korea)": {
-    label: "Democratic People's Republic of Korea (North Korea)"
+    label: "North Korea"
   },
   Indonesia: { label: "Indonesia" },
   Japan: { label: "Japan" },
 
   "People''s Republic of China": {
-    label: "People's Republic of China"
+    label: " China"
   },
   "Republic of China (Taiwan)": {
-    label: "Republic of China (Taiwan)"
+    label: "Taiwan"
   },
   Singapore: { label: "Singapore" },
   "Sri Lanka": { label: "Sri Lanka" },
@@ -134,7 +134,68 @@ function removeClusters() {
   });
 }
 
-Object.keys(nations).forEach(function(nation, i) {
+var types = [
+  "Territorial Baseline",
+  "Territorial Sea",
+  "Exclusive Economic Zone",
+  "Continental Shelf",
+  "Nine-Dash/U-Shaped-Line"
+];
+types.forEach(function(type) {
+  var defaultColor = d3.color("#cad2d3");
+  var svg;
+  switch (type) {
+    case "Territorial Baseline":
+      svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor.darker() +
+        "' stroke-width='3' stroke-dasharray='9, 3'/></svg>";
+      break;
+    case "Territorial Sea":
+      svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor.darker().darker() +
+        "' stroke-width='5' /><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor +
+        "' stroke-width='1' /></svg>";
+      break;
+    case "Exclusive Economic Zone":
+      svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        "#000000" +
+        "' stroke-width='3' stroke-linecap='square'/><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor +
+        "' stroke-width='3' stroke-linecap='square' stroke-dasharray='6, 9'/></svg>";
+      break;
+    case "Continental Shelf":
+      svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor.darker() +
+        "' stroke-width='3' stroke-linecap='square'/></svg>";
+      break;
+    default:
+      svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+        defaultColor.darker() +
+        "' stroke-width='3' stroke-linecap='square' stroke-dasharray='18, 12'/></svg>";
+  }
+
+  document.querySelector(".types").innerHTML +=
+    '<li><label for="' +
+    type.toLowerCase() +
+    '"><input type="checkbox" name="' +
+    type.toLowerCase() +
+    '" id="' +
+    type.toLowerCase() +
+    '"  checked><span class="typeKey" ' +
+    "style=\"background-image: url('data:image/svg+xml;base64," +
+    window.btoa(svg) +
+    '")></span>' +
+    type +
+    "</label></li>";
+});
+
+Object.keys(nations).forEach(function(nation) {
   var svg = true
     ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
       nations[nation].color +
@@ -154,12 +215,12 @@ Object.keys(nations).forEach(function(nation, i) {
     nation +
     '" id="' +
     nation +
-    '"  checked>' +
-    nations[nation].label +
-    '<span class="colorKey" ' +
+    '"  checked><span class="colorKey" ' +
     "style=\"background-image: url('data:image/svg+xml;base64," +
     window.btoa(svg) +
-    '")></span></label></li>';
+    '")></span>' +
+    nations[nation].label +
+    "</label></li>";
 });
 
 function makeClusters() {
@@ -317,6 +378,7 @@ function makeMarkers(nation, json, filters) {
       default:
         return {
           color: nations[nation].color,
+          lineCap: "square",
           weight: 4
         };
     }
@@ -351,6 +413,7 @@ function makeMarkers(nation, json, filters) {
       default:
         return {
           color: nations[nation].color,
+          lineCap: "square",
           weight: 4
         };
     }
