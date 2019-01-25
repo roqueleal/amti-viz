@@ -187,8 +187,6 @@ function makeClusters() {
 }
 
 function makeMarkers(nation, json, filters) {
-  console.log(nation, json);
-
   nation_marker_clusters[nation] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
@@ -201,7 +199,7 @@ function makeMarkers(nation, json, filters) {
     }
   });
 
-  var geoJsonLayer = L.geoJson(json, {
+  var geoJsonOptions = {
     filter: function filter(feature) {
       var bool = filters.map(function(f) {
         return f(feature);
@@ -221,7 +219,7 @@ function makeMarkers(nation, json, filters) {
         nations[nation].color +
         "' /></svg>";
 
-      var iconUrl = encodeURI("data:image/svg+xml," + svg).replace("#", "%23");
+      var iconUrl = encodeURI("data:image/svg+xml," + svg).sreplace("#", "%23");
 
       var icon = new CustomIcon({ iconUrl: iconUrl });
 
@@ -229,14 +227,7 @@ function makeMarkers(nation, json, filters) {
         icon: icon
       });
     },
-    style: function style(feature) {
-      return {
-        color: nations[nation].color,
-        lineCap: "square",
-        dashArray: "12,18",
-        weight: 4
-      };
-    },
+
     onEachFeature: function onEachFeature(feature, layer) {
       layer.on({
         click: function click(e) {
@@ -297,9 +288,87 @@ function makeMarkers(nation, json, filters) {
 
       layer.bindPopup(description);
     }
+  };
+
+  var styleLayerA = function style(feature) {
+    switch (feature.properties.type) {
+      case "Territorial Baseline":
+        return {
+          color: nations[nation].color,
+          weight: 4,
+          lineCap: "square",
+          dashArray: "12,18"
+        };
+      case "Territorial Sea":
+        return {
+          color: nations[nation].color,
+          weight: 4
+        };
+      case "Exclusive Economic Zone":
+        return {
+          color: "#000000",
+          weight: 4
+        };
+      case "Continental Shelf":
+        return {
+          color: "#ffffff",
+          weight: 4
+        };
+      default:
+        return {
+          color: nations[nation].color,
+          weight: 4
+        };
+    }
+  };
+
+  var styleLayerB = function style(feature) {
+    switch (feature.properties.type) {
+      case "Territorial Baseline":
+        return {
+          color: nations[nation].color,
+          weight: 4,
+          lineCap: "square",
+          dashArray: "12,18"
+        };
+      case "Territorial Sea":
+        return {
+          color: "#cad2d3",
+          weight: 1.5
+        };
+      case "Exclusive Economic Zone":
+        return {
+          color: nations[nation].color,
+          weight: 4,
+          lineCap: "square",
+          dashArray: "12,18"
+        };
+      case "Continental Shelf":
+        return {
+          color: nations[nation].color,
+          weight: 1.5
+        };
+      default:
+        return {
+          color: nations[nation].color,
+          weight: 4
+        };
+    }
+  };
+
+  var geoJsonLayerA = L.geoJson(json, {
+    ...geoJsonOptions,
+    style: styleLayerA
   });
 
-  nation_marker_clusters[nation].addLayer(geoJsonLayer);
+  var geoJsonLayerB = L.geoJson(json, {
+    ...geoJsonOptions,
+    style: styleLayerB
+  });
+
+  nation_marker_clusters[nation].addLayer(geoJsonLayerA);
+
+  nation_marker_clusters[nation].addLayer(geoJsonLayerB);
 
   map.addLayer(nation_marker_clusters[nation]);
 
