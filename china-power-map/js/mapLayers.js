@@ -102,9 +102,9 @@ Object.keys(mapLayers).forEach(function(mapLayer, i) {
   var svg = mapLayers[mapLayer].line
     ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
       mapLayers[mapLayer].color +
-      "' stroke-width='3' stroke-linecap='round'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
+      "' stroke-width='3' stroke-linecap='square'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
       mapLayers[mapLayer].color +
-      "' stroke-width='3' stroke-linecap='round' stroke-dasharray='4, 6'/></svg>"
+      "' stroke-width='3' stroke-linecap='square' stroke-dasharray='4, 6'/></svg>"
     : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
       mapLayers[mapLayer].color +
       "'  fill='" +
@@ -200,6 +200,7 @@ function makeMarkers(mapLayer, json, filters) {
       return {
         color: mapLayers[mapLayer].color,
         weight: isRadar ? 0 : 4,
+        lineCap: "square",
         dashArray: feature.properties.observed === false ? "12 18" : null,
         fill: isRadar ? true : false
       };
@@ -243,10 +244,7 @@ function makeMarkers(mapLayer, json, filters) {
             if (feature.properties[p])
               return allowedHeaders.indexOf(p) > -1
                 ? '<div class="popupHeaderStyle">' +
-                    p
-                      .toUpperCase()
-                      .replace(/_/g, " ")
-                      .replace("NUMBER", "#") +
+                    p.toUpperCase().replace(/_/g, " ") +
                     '</div><div class="popupEntryStyle">' +
                     feature.properties[p] +
                     "</div>"

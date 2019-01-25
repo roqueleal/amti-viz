@@ -19,9 +19,17 @@ if (lang && lang.indexOf("zh-") > -1) {
   );
 }
 
+var language = lang ? lang.replace("zh-", "") : lang;
+
+var allowedHeaders = [
+  lang ? "name_" + lang : "name",
+  lang ? "description_" + lang : "description",
+  "link"
+];
+
 var map = L.map("map", {
-  center: [14, 115],
-  zoom: 6,
+  center: [20, 120],
+  zoom: 4,
   scrollWheelZoom: window.innerWidth < 768 ? false : true,
   zoomControl: false,
   layers: [basemap],
@@ -37,60 +45,67 @@ L.control
 
 L.control.zoomslider().addTo(map);
 
-var apiKey = "wSX_v1e4-P45ernhjNuLgg";
+var apiKey = "buPBMXbElVsLJ_AYQ3VA4w";
 
 var nations = {
-  china: { color: "#3969AC" },
-  vietnam: { color: "#11A579" },
-  malaysia: { color: "#7F3C8D" },
-  philippines: { color: "#E73F74" },
-  taiwan: { color: "#F2B701" },
-  unoccupied: { color: "#888888" }
+  India: { label: "India" },
+  Bangladesh: { label: "Bangladesh" },
+  Brunei: { label: "Brunei" },
+  Thailand: { label: "Thailand" },
+  Cambodia: { label: "Cambodia" },
+
+  "Democratic People''s Republic of Korea (North Korea)": {
+    label: "Democratic People's Republic of Korea (North Korea)"
+  },
+  Indonesia: { label: "Indonesia" },
+  Japan: { label: "Japan" },
+
+  "People''s Republic of China": {
+    label: "People's Republic of China"
+  },
+  "Republic of China (Taiwan)": {
+    label: "Republic of China (Taiwan)"
+  },
+  Singapore: { label: "Singapore" },
+  "Sri Lanka": { label: "Sri Lanka" },
+  Vietnam: { label: "Vietnam" },
+  "South Korea": { label: "South Korea" },
+  Maldives: { label: "Maldives" },
+  Malaysia: { label: "Malaysia" },
+  Myanmar: { label: "Myanmar" },
+  Philippines: { label: "Philippines" }
 };
+
+var nationsLength = Object.keys(nations).length;
+
+var scaleOne = d3
+  .scaleSequential(d3.interpolateCubehelixDefault)
+  .domain(d3.range(0, nationsLength));
+
+var scaleTwo = d3
+  .scaleSequential(d3.interpolateRainbow)
+  .domain(d3.range(0, nationsLength));
+
+Object.keys(nations).forEach((nation, i) => {
+  var color =
+    i % 2 === 0
+      ? d3.color(
+          scaleOne((Math.abs(nationsLength - i + -1) / nationsLength) * 1)
+        )
+      : d3.color(scaleTwo((i / nationsLength) * 1));
+
+  nations[nation] = {
+    ...nations[nation],
+    color: color.hex()
+  };
+});
 
 var filters = [];
 
 var nation_geoJson = {};
 var nation_marker_clusters = {};
 
-var ignoredHeaders = [
-  "cartodb_id",
-  "latitude",
-  "longitude",
-  "occupier",
-  "hyperlink"
-];
-
-Object.keys(nations).forEach(function(nation) {
-  var svg = nations[nation].line
-    ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
-      nations[nation].color +
-      "' stroke-width='3' stroke-linecap='round'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
-      nations[nation].color +
-      "' stroke-width='3' stroke-linecap='round' stroke-dasharray='4, 6'/></svg>"
-    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
-      nations[nation].color +
-      "'  fill='" +
-      nations[nation].color +
-      "' /></svg>";
-
-  document.querySelector(".occupiers").innerHTML +=
-    '<li><label for="' +
-    nation +
-    '"><input type="checkbox" name="' +
-    nation +
-    '" id="' +
-    nation +
-    '"checked>' +
-    (nation.charAt(0).toUpperCase() + nation.slice(1)) +
-    '<span class="colorKey" ' +
-    "style=\"background-image: url('data:image/svg+xml;base64," +
-    window.btoa(svg) +
-    '")></span></label></li>';
-});
-
 resetFilters();
-
 makeClusters();
 
 function resetFilters() {
@@ -104,81 +119,12 @@ function resetFilters() {
   ];
 }
 
-document.querySelector("#query").addEventListener("keyup", searchFeatures);
-
-document.querySelector("#resetButton").addEventListener("click", function(e) {
-  document.querySelector("#query").value = "";
-  removeClusters();
-  resetFilters();
-  makeClusters();
-});
-
-function searchFeatures(e) {
-  removeClusters();
-  var q = e.target.value.toLowerCase();
-  filters[0] = function(feature) {
-    var bool = false;
-    var withDiacritics = Object.values(feature.properties)
-      .join("")
-      .toLowerCase();
-    var withoutDiacritics = Object.values(feature.properties)
-      .join("")
-      .toLowerCase()
-      .latinise();
-
-    if (withDiacritics.indexOf(q) > -1 || withoutDiacritics.indexOf(q) > -1) {
-      bool = true;
-    }
-
-    return bool;
-  };
-
-  makeClusters();
-}
-
-document.querySelector(".occupiers").addEventListener("click", function(e) {
+document.querySelector(".nations").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
   if (checkbox && checkbox.checked) {
     map.addLayer(nation_marker_clusters[checkbox.name]);
-
-    var icons = document.querySelectorAll(
-      ".icon-" + checkbox.name + ":not(.marker-cluster-small)"
-    );
-    Array.from(icons).forEach(function(icon) {
-      icon.style.color = nations[checkbox.name].color;
-      icon.style.borderColor = nations[checkbox.name].color;
-      icon.style.borderWidth = "1px";
-      icon.style.borderStyle = "solid";
-    });
   } else if (checkbox) {
     map.removeLayer(nation_marker_clusters[checkbox.name]);
-  }
-});
-
-document.querySelector(".statuses").addEventListener("click", function(e) {
-  var checkbox = e.target.type === "checkbox" ? e.target : undefined;
-  if (checkbox) {
-    removeClusters();
-
-    var checkboxes = Array.from(
-      document.querySelectorAll(".statuses input:checked")
-    );
-
-    var names = checkboxes.map(function(c) {
-      return c.name;
-    });
-
-    filters[1] = function(features, layers) {
-      var bool = false;
-
-      if (names.indexOf(features.properties.status.toLowerCase()) > -1) {
-        bool = true;
-      }
-
-      return bool;
-    };
-
-    makeClusters();
   }
 });
 
@@ -188,39 +134,61 @@ function removeClusters() {
   });
 }
 
+Object.keys(nations).forEach(function(nation, i) {
+  var svg = true
+    ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
+      nations[nation].color +
+      "' stroke-width='3' stroke-linecap='square'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
+      nations[nation].color +
+      "' stroke-width='3' stroke-linecap='square' stroke-dasharray='4, 6'/></svg>"
+    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
+      nations[nation].color +
+      "'  fill='" +
+      nations[nation].color +
+      "' /></svg>";
+
+  document.querySelector(".nations").innerHTML +=
+    '<li><label for="' +
+    nation +
+    '"><input type="checkbox" name="' +
+    nation +
+    '" id="' +
+    nation +
+    '"  checked>' +
+    nations[nation].label +
+    '<span class="colorKey" ' +
+    "style=\"background-image: url('data:image/svg+xml;base64," +
+    window.btoa(svg) +
+    '")></span></label></li>';
+});
+
 function makeClusters() {
-  Object.keys(nations).forEach(function(nation) {
-    if (Object.keys(nation_marker_clusters) > 0) {
-      map.removeLayer(nation_marker_clusters[nation]);
-    }
+  Object.keys(nations)
+    .reverse()
+    .forEach(function(nation) {
+      if (Object.keys(nation_marker_clusters) > 0) {
+        map.removeLayer(nation_marker_clusters[nation]);
+      }
 
-    fetch(
-      "https://csis.carto.com/api/v2/sql?api_key=" +
-        apiKey +
-        "&format=geojson&q=SELECT%20*%20FROM%20" +
-        nation +
-        "_scs_islands"
-    )
-      .then(function(resp) {
-        return resp.json();
-      })
-      .then(function(json) {
-        makeMarkers(nation, json, filters);
-
-        var icons = document.querySelectorAll(
-          ".icon-" + nation + ":not(.marker-cluster-small)"
-        );
-        Array.from(icons).forEach(function(icon) {
-          icon.style.color = nations[nation].color;
-          icon.style.borderColor = nations[nation].color;
-          icon.style.borderWidth = 1;
-          icon.style.borderStyle = "solid";
+      fetch(
+        "https://csis.carto.com/api/v2/sql?api_key=" +
+          apiKey +
+          "&format=geojson&q=SELECT%20*%20FROM%20all_claims%20WHERE%20country%20%3D%20%27" +
+          encodeURI(nation) +
+          "%27"
+      )
+        .then(function(resp) {
+          return resp.json();
+        })
+        .then(function(json) {
+          makeMarkers(nation, json, filters);
         });
-      });
-  });
+    });
 }
 
 function makeMarkers(nation, json, filters) {
+  console.log(nation, json);
+
   nation_marker_clusters[nation] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
@@ -248,32 +216,10 @@ function makeMarkers(nation, json, filters) {
         }
       });
 
-      var svg;
-      switch (feature.properties.status.toLowerCase()) {
-        case "low-tide elevation":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' stroke=\"#ffffff\" fill='" +
-            nations[nation].color +
-            "' paint-order='stroke'></polygon></svg>";
-          break;
-        case "rock":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' stroke=\"#ffffff\" fill='" +
-            nations[nation].color +
-            "'></rect></svg>";
-          break;
-        case "submerged":
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><rect x='4' y='2' width='9' height='9' transform='translate(6 -3) rotate(45)' stroke=\"#ffffff\" fill='" +
-            nations[nation].color +
-            "' paint-order='stroke'></rect></svg>";
-          break;
-        default:
-          svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\" fill='" +
-            nations[nation].color +
-            "' /></svg>";
-      }
+      var svg =
+        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\"  fill='" +
+        nations[nation].color +
+        "' /></svg>";
 
       var iconUrl = encodeURI("data:image/svg+xml," + svg).replace("#", "%23");
 
@@ -282,6 +228,14 @@ function makeMarkers(nation, json, filters) {
       return L.marker(latlng, {
         icon: icon
       });
+    },
+    style: function style(feature) {
+      return {
+        color: nations[nation].color,
+        lineCap: "square",
+        dashArray: "12,18",
+        weight: 4
+      };
     },
     onEachFeature: function onEachFeature(feature, layer) {
       layer.on({
@@ -320,7 +274,7 @@ function makeMarkers(nation, json, filters) {
         description = Object.keys(feature.properties)
           .map(function(p) {
             if (feature.properties[p])
-              return ignoredHeaders.indexOf(p) < 0
+              return allowedHeaders.indexOf(p) > -1
                 ? '<div class="popupHeaderStyle">' +
                     p.toUpperCase().replace(/_/g, " ") +
                     '</div><div class="popupEntryStyle">' +
@@ -341,20 +295,7 @@ function makeMarkers(nation, json, filters) {
         });
       }
 
-      var link = feature.properties.hyperlink;
-
-      var islandTracker =
-        feature.properties.hyperlink.trim().length > 1
-          ? '<div class="separator"></div><div class="islandTracker popupEntryStyle"><a href=' +
-            link +
-            ' target="_blank">' +
-            "View on the Island Tracker" +
-            "</a>" +
-            externalLink +
-            "</div>"
-          : "";
-
-      layer.bindPopup(description + islandTracker);
+      layer.bindPopup(description);
     }
   });
 
@@ -408,6 +349,8 @@ function makeMarkers(nation, json, filters) {
       );
     });
   });
+
+  // nation_marker_clusters.cpp_radar_ranges.bringToBack();
 }
 
 map.on("click", function() {

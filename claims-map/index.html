@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Chinese Power Projection Capabilities in the South China Sea
+      <title>Maritime Claims of the Asia Pacific
  | AMTI | CSIS</title>
       <meta name="viewport" content="initial-scale=1.0">
       <meta charset="utf-8">
@@ -11,15 +11,15 @@
       <!-- Share meta -->
       <meta property="og:locale" content="en_US" />
       <meta property="og:type" content="article" />
-      <meta property="og:title" content="Chinese Power Projection Capabilities in the South China Sea
+      <meta property="og:title" content="Maritime Claims of the Asia Pacific
  - Asia Maritime Transparency Initiative" />
-      <meta property="og:description" content="Since 2014, China has substantially expanded its ability to monitor and project power throughout the South China Sea via the construction of dual civilian-military bases at its outposts in the disputed Spratly and Paracel Islands. These include new radar and communications arrays, airstrips and hangars to accommodate combat aircraft, shelters likely meant to house missile platforms, and deployments of mobile surface-to-air and anti-ship cruise missile systems at Woody Island in the Paracels." />
+      <meta property="og:description" content="Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims." />
       <meta property="og:image" content="https://amti.csis.org/wp-content/uploads/2018/10/oil_and_gasSCStmb.jpg" />
       <meta property="og:image:width" content="2000" />
       <meta property="og:image:height" content="1333" />
       <meta name="twitter:card" content="summary" />
-      <meta name="twitter:description" content="Since 2014, China has substantially expanded its ability to monitor and project power throughout the South China Sea via the construction of dual civilian-military bases at its outposts in the disputed Spratly and Paracel Islands. These include new radar and communications arrays, airstrips and hangars to accommodate combat aircraft, shelters likely meant to house missile platforms, and deployments of mobile surface-to-air and anti-ship cruise missile systems at Woody Island in the Paracels." />
-      <meta name="twitter:title" content="Chinese Power Projection Capabilities in the South China Sea
+      <meta name="twitter:description" content="Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims." />
+      <meta name="twitter:title" content="Maritime Claims of the Asia Pacific
  - Asia Maritime Transparency Initiative" />
       <meta name="twitter:image" content="https://amti.csis.org/wp-content/uploads/2018/10/oil_and_gasSCStmb.jpg" />
       <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
@@ -34,6 +34,14 @@
       <script src="zoom_slider/zoomslider.js"></script>
       <!-- Include Diacritics plugin -->
       <script src="js/latinize.js"></script>
+      <!-- Include d3 Colors plugin -->
+
+      <script src="https://d3js.org/d3-array.v1.min.js"></script>
+      <script src="https://d3js.org/d3-color.v1.min.js"></script>
+      <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+      <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+      <script src="https://d3js.org/d3-scale.v2.min.js"></script>
+
       <!-- Include CARTO.js -->
       <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
       <!-- Include local styles and scripts -->
@@ -50,41 +58,41 @@ gtag("js", new Date());
 
 gtag("config", "UA-55717458-1");
 </script> -->
-   </head>
-   <body>
-      <nav id='menu-ui' class='menu-ui'></nav>
-      <div id="map"></div>
-      <aside class="toolbox">
-         <input type="checkbox" checked class="ui mobile-only">
-         <div class="hamburger mobile-only">
-            <div class="icon">
-               <span></span>
-               <span></span>
-               <span></span>
-            </div>
-            <div class="menu">
-              Chinese Power Projection Capabilities in the South China Sea
-
-            </div>
+</head>
+<body>
+   <nav id='menu-ui' class='menu-ui'></nav>
+   <div id="map"></div>
+   <aside class="toolbox">
+      <input type="checkbox" checked class="ui mobile-only">
+      <div class="hamburger mobile-only">
+         <div class="icon">
+            <span></span>
+            <span></span>
+            <span></span>
          </div>
-         <div class="box">
-            <header class="mobile-toggle">
-               <h1>Chinese Power Projection Capabilities in the South China Sea
-</h1>
-               <a href="https://amti.csis.org/" target="_blank"><button class="mobile-toggle" id="logo"></button></a>
-
-            </header>
-            <section>
-
-               <div class="separator mobile-toggle"></div>
-               <div id="controls">
-                  <div id="info">
+         <div class="menu">
+            Maritime Claims of the Asia Pacific
+         </div>
+      </div>
+      <div class="box">
+         <header class="mobile-toggle">
+            <h1>Maritime Claims of the Asia Pacific</h1>
+            <a href="https://amti.csis.org/" target="_blank"><button class="mobile-toggle" id="logo"></button></a>
+            <p class="mobile-only open-sans">Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims.</p>
+         </header>
+         <section>
+            <p class="description open-sans mobile-toggle">Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims.</p>
+            <div class="separator mobile-toggle"></div>
+            <div id="controls">
+               <div id="info">
+                     <h3 class="mobile-toggle">Claimant</h3>
                      <p class="open-sans">
-                        Click to toggle layers.
+                        Click to toggle island features by claimant and type.
                      </p>
+
                   </div>
 
-                  <ul class="mapLayers">
+                  <ul class="nations">
 
                   </ul>
 
@@ -93,6 +101,6 @@ gtag("config", "UA-55717458-1");
             <footer class="js-footer"></footer>
          </div>
       </aside>
-      <script src="js/mapLayers.js"></script>
+      <script src="js/claims.js"></script>
    </body>
 </html>
