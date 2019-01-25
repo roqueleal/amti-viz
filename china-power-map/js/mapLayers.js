@@ -44,11 +44,20 @@ var apiKey = "X1A67o9_DcmpMX2RAYQ15g";
 var mapLayers = {
   cpp_anti_cruise_ship: {
     label: "Anti-Ship Cruise Missiles",
-    color: "#11A579"
+    color: "#11A579",
+    line: true
   },
-  cpp_sam_ranges: { label: "SAM Sites", color: "#7F3C8D" },
-  cpp_fighter_ranges: { label: "Fighter Aircraft", color: "#E73F74" },
-  cpp_bomber_ranges: { label: "Bomber Aircraft", color: "orange" },
+  cpp_sam_ranges: { label: "SAM Sites", color: "#7F3C8D", line: true },
+  cpp_fighter_ranges: {
+    label: "Fighter Aircraft",
+    color: "#E73F74",
+    line: true
+  },
+  cpp_bomber_ranges: {
+    label: "Bomber Aircraft",
+    color: "orange",
+    line: true
+  },
   cpp_radar_ranges: { label: "Radar", color: "yellow" },
   cpp_nine_dash_line: { label: "Chinese Maritime Claims", color: "black" },
   cpp_chinese_outposts: { label: "Chinese Outposts", color: "#3969AC" }
@@ -90,6 +99,18 @@ function removeClusters() {
 }
 
 Object.keys(mapLayers).forEach(function(mapLayer) {
+  var svg = mapLayers[mapLayer].line
+    ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
+      mapLayers[mapLayer].color +
+      "' stroke-width='3' stroke-linecap='round'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
+      mapLayers[mapLayer].color +
+      "' stroke-width='3' stroke-linecap='round' stroke-dasharray='4, 6'/></svg>"
+    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
+      mapLayers[mapLayer].color +
+      "'  fill='" +
+      mapLayers[mapLayer].color +
+      "' /></svg>";
+
   document.querySelector(".mapLayers").innerHTML +=
     '<li>\n     <label for="' +
     mapLayer +
@@ -99,9 +120,10 @@ Object.keys(mapLayers).forEach(function(mapLayer) {
     mapLayer +
     '"  checked>\n     ' +
     mapLayers[mapLayer].label +
-    '\n     <span class="colorKey" style="background-color: ' +
-    mapLayers[mapLayer].color +
-    ';"></span>\n     </label>\n  </li>';
+    '\n     <span class="colorKey" ' +
+    "style=\"background-image: url('data:image/svg+xml;base64," +
+    window.btoa(svg) +
+    '")></span>\n     </label>\n  </li>';
 });
 
 function makeClusters() {
