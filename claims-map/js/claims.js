@@ -128,6 +128,32 @@ document.querySelector(".nations").addEventListener("click", function(e) {
   }
 });
 
+document.querySelector(".types").addEventListener("click", function(e) {
+  var checkbox = e.target.type === "checkbox" ? e.target : undefined;
+  if (checkbox) {
+    removeClusters();
+
+    var checkboxes = Array.from(
+      document.querySelectorAll(".types input:checked")
+    );
+
+    var names = checkboxes.map(function(c) {
+      return c.name;
+    });
+
+    filters[0] = function(features, layers) {
+      var bool = false;
+
+      if (names.indexOf(features.properties.type.toLowerCase().trim()) > -1) {
+        bool = true;
+      }
+      return bool;
+    };
+
+    makeClusters();
+  }
+});
+
 function removeClusters() {
   Object.keys(nations).forEach(function(nation) {
     map.removeLayer(nation_marker_clusters[nation]);
@@ -139,7 +165,7 @@ var types = [
   "Territorial Sea",
   "Exclusive Economic Zone",
   "Continental Shelf",
-  "Nine-Dash/U-Shaped-Line"
+  "Nine-Dash/U-Shaped Line"
 ];
 types.forEach(function(type) {
   var defaultColor = d3.color("#cad2d3");
@@ -265,8 +291,7 @@ function makeMarkers(nation, json, filters) {
       var bool = filters.map(function(f) {
         return f(feature);
       });
-
-      return bool[0] && bool[1];
+      return bool[0];
     },
     pointToLayer: function pointToLayer(feature, latlng) {
       var CustomIcon = L.Icon.extend({
