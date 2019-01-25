@@ -40,12 +40,12 @@ L.control.zoomslider().addTo(map);
 var apiKey = "wSX_v1e4-P45ernhjNuLgg";
 
 var nations = {
-  china: "#3969AC",
-  vietnam: "#11A579",
-  malaysia: "#7F3C8D",
-  philippines: "#E73F74",
-  taiwan: "#F2B701",
-  unoccupied: "#888888"
+  china: { color: "#3969AC" },
+  vietnam: { color: "#11A579" },
+  malaysia: { color: "#7F3C8D" },
+  philippines: { color: "#E73F74" },
+  taiwan: { color: "#F2B701" },
+  unoccupied: { color: "#888888" }
 };
 
 var filters = [];
@@ -62,18 +62,31 @@ var ignoredHeaders = [
 ];
 
 Object.keys(nations).forEach(function(nation) {
+  var svg = nations[nation].line
+    ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
+      nations[nation].color +
+      "' stroke-width='3' stroke-linecap='round'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
+      nations[nation].color +
+      "' stroke-width='3' stroke-linecap='round' stroke-dasharray='4, 6'/></svg>"
+    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
+      nations[nation].color +
+      "'  fill='" +
+      nations[nation].color +
+      "' /></svg>";
+
   document.querySelector(".occupiers").innerHTML +=
-    '<li>\n     <label for="' +
+    '<li><label for="' +
     nation +
-    '">\n     <input type="checkbox" name="' +
+    '"><input type="checkbox" name="' +
     nation +
     '" id="' +
     nation +
-    '"  checked>\n     ' +
+    '"checked>' +
     (nation.charAt(0).toUpperCase() + nation.slice(1)) +
-    '\n     <span class="colorKey" style="background-color: ' +
-    nations[nation] +
-    ';"></span>\n     </label>\n  </li>';
+    '<span class="colorKey" ' +
+    "style=\"background-image: url('data:image/svg+xml;base64," +
+    window.btoa(svg) +
+    '")></span></label></li>';
 });
 
 resetFilters();
@@ -132,8 +145,8 @@ document.querySelector(".occupiers").addEventListener("click", function(e) {
       ".icon-" + checkbox.name + ":not(.marker-cluster-small)"
     );
     Array.from(icons).forEach(function(icon) {
-      icon.style.color = nations[checkbox.name];
-      icon.style.borderColor = nations[checkbox.name];
+      icon.style.color = nations[checkbox.name].color;
+      icon.style.borderColor = nations[checkbox.name].color;
       icon.style.borderWidth = "1px";
       icon.style.borderStyle = "solid";
     });
@@ -198,8 +211,8 @@ function makeClusters() {
           ".icon-" + nation + ":not(.marker-cluster-small)"
         );
         Array.from(icons).forEach(function(icon) {
-          icon.style.color = nations[nation];
-          icon.style.borderColor = nations[nation];
+          icon.style.color = nations[nation].color;
+          icon.style.borderColor = nations[nation].color;
           icon.style.borderWidth = 1;
           icon.style.borderStyle = "solid";
         });
@@ -240,25 +253,25 @@ function makeMarkers(nation, json, filters) {
         case "low-tide elevation":
           svg =
             "<svg xmlns='http://www.w3.org/2000/svg'><polygon points='6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
+            nations[nation].color +
             "' paint-order='stroke'></polygon></svg>";
           break;
         case "rock":
           svg =
             "<svg xmlns='http://www.w3.org/2000/svg'><rect width='10' height='10' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
+            nations[nation].color +
             "'></rect></svg>";
           break;
         case "submerged":
           svg =
             "<svg xmlns='http://www.w3.org/2000/svg'><rect x='4' y='2' width='9' height='9' transform='translate(6 -3) rotate(45)' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
+            nations[nation].color +
             "' paint-order='stroke'></rect></svg>";
           break;
         default:
           svg =
             "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\" fill='" +
-            nations[nation] +
+            nations[nation].color +
             "' /></svg>";
       }
 
@@ -308,7 +321,7 @@ function makeMarkers(nation, json, filters) {
           .map(function(p) {
             if (feature.properties[p])
               return ignoredHeaders.indexOf(p) < 0
-                ? '<div class=\n            "popupHeaderStyle">' +
+                ? '<div class="popupHeaderStyle">' +
                     p
                       .toUpperCase()
                       .replace(/_/g, " ")
@@ -325,7 +338,7 @@ function makeMarkers(nation, json, filters) {
       } else {
         Object.keys(feature.properties).map(function(p) {
           description =
-            '<div class=\n      "popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
+            '<div class="popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
             feature.properties["name"] +
             "</div>";
         });

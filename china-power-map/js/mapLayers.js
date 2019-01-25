@@ -112,18 +112,18 @@ Object.keys(mapLayers).forEach(function(mapLayer) {
       "' /></svg>";
 
   document.querySelector(".mapLayers").innerHTML +=
-    '<li>\n     <label for="' +
+    '<li><label for="' +
     mapLayer +
-    '">\n     <input type="checkbox" name="' +
+    '"><input type="checkbox" name="' +
     mapLayer +
     '" id="' +
     mapLayer +
-    '"  checked>\n     ' +
+    '"  checked>' +
     mapLayers[mapLayer].label +
-    '\n     <span class="colorKey" ' +
+    '<span class="colorKey" ' +
     "style=\"background-image: url('data:image/svg+xml;base64," +
     window.btoa(svg) +
-    '")></span>\n     </label>\n  </li>';
+    '")></span></label></li>';
 });
 
 function makeClusters() {
@@ -237,7 +237,7 @@ function makeMarkers(mapLayer, json, filters) {
           .map(function(p) {
             if (feature.properties[p])
               return allowedHeaders.indexOf(p) > -1
-                ? '<div class=\n            "popupHeaderStyle">' +
+                ? '<div class="popupHeaderStyle">' +
                     p
                       .toUpperCase()
                       .replace(/_/g, " ")
@@ -254,7 +254,7 @@ function makeMarkers(mapLayer, json, filters) {
       } else {
         Object.keys(feature.properties).map(function(p) {
           description =
-            '<div class=\n      "popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
+            '<div class="popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
             feature.properties["name"] +
             "</div>";
         });
