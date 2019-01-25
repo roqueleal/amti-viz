@@ -98,7 +98,7 @@ function removeClusters() {
   });
 }
 
-Object.keys(mapLayers).forEach(function(mapLayer) {
+Object.keys(mapLayers).forEach(function(mapLayer, i) {
   var svg = mapLayers[mapLayer].line
     ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
       mapLayers[mapLayer].color +
@@ -124,6 +124,11 @@ Object.keys(mapLayers).forEach(function(mapLayer) {
     "style=\"background-image: url('data:image/svg+xml;base64," +
     window.btoa(svg) +
     '")></span></label></li>';
+
+  if (i === 3) {
+    document.querySelector(".mapLayers").innerHTML +=
+      '  <div class="separator mobile-toggle"></div>';
+  }
 });
 
 function makeClusters() {
