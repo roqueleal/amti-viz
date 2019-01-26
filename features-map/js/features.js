@@ -68,7 +68,7 @@ Object.keys(nations).forEach(function(nation) {
       "' stroke-width='3' stroke-linecap='round'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
       nations[nation].color +
       "' stroke-width='3' stroke-linecap='round' stroke-dasharray='4, 6'/></svg>"
-    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
+    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke='" +
       nations[nation].color +
       "'  fill='" +
       nations[nation].color +
@@ -270,7 +270,7 @@ function makeMarkers(nation, json, filters) {
           break;
         default:
           svg =
-            "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\" fill='" +
+            "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke=\"#ffffff\" fill='" +
             nations[nation].color +
             "' /></svg>";
       }

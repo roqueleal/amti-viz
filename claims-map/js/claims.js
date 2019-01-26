@@ -27,6 +27,8 @@ var allowedHeaders = [
   "link"
 ];
 
+var select = document.querySelector("#searchClaimant");
+
 var map = L.map("map", {
   center: [20, 120],
   zoom: 4,
@@ -48,7 +50,9 @@ L.control.zoomslider().addTo(map);
 var apiKey = "buPBMXbElVsLJ_AYQ3VA4w";
 
 var nations = {
-  India: { label: "India" },
+  India: {
+    label: "India"
+  },
   Bangladesh: { label: "Bangladesh" },
   Brunei: { label: "Brunei" },
   Thailand: { label: "Thailand" },
@@ -61,19 +65,25 @@ var nations = {
   Japan: { label: "Japan" },
 
   "People''s Republic of China": {
-    label: " China"
+    label: "China",
+    selected: true
   },
   "Republic of China (Taiwan)": {
     label: "Taiwan"
   },
   Singapore: { label: "Singapore" },
   "Sri Lanka": { label: "Sri Lanka" },
-  Vietnam: { label: "Vietnam" },
+  Vietnam: {
+    label: "Vietnam",
+    selected: true
+  },
   "South Korea": { label: "South Korea" },
   Maldives: { label: "Maldives" },
   Malaysia: { label: "Malaysia" },
   Myanmar: { label: "Myanmar" },
-  Philippines: { label: "Philippines" }
+  Philippines: {
+    label: "Philippines"
+  }
 };
 
 var nationsLength = Object.keys(nations).length;
@@ -89,10 +99,8 @@ var scaleTwo = d3
 Object.keys(nations).forEach((nation, i) => {
   var color =
     i % 2 === 0
-      ? d3.color(
-          scaleOne((Math.abs(nationsLength - i + -1) / nationsLength) * 1)
-        )
-      : d3.color(scaleTwo((i / nationsLength) * 1));
+      ? d3.color(scaleOne(Math.abs(nationsLength - i + -1) / nationsLength * 1))
+      : d3.color(scaleTwo(i / nationsLength * 1));
 
   nations[nation] = {
     ...nations[nation],
@@ -121,10 +129,26 @@ function resetFilters() {
 
 document.querySelector(".nations").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
-  if (checkbox && checkbox.checked) {
-    map.addLayer(nation_marker_clusters[checkbox.name]);
-  } else if (checkbox) {
-    map.removeLayer(nation_marker_clusters[checkbox.name]);
+  if (checkbox) {
+    removeClusters();
+
+    var checkboxes = Array.from(
+      document.querySelectorAll(".nations input:checked")
+    );
+
+    var names = checkboxes.map(function(c) {
+      return c.name.replace("''", "'");
+    });
+
+    filters[1] = function(features, layers) {
+      var bool = false;
+      if (names.indexOf(features.properties.country) > -1) {
+        bool = true;
+      }
+      return bool;
+    };
+
+    makeClusters();
   }
 });
 
@@ -143,8 +167,7 @@ document.querySelector(".types").addEventListener("click", function(e) {
 
     filters[0] = function(features, layers) {
       var bool = false;
-
-      if (names.indexOf(features.properties.type.toLowerCase().trim()) > -1) {
+      if (names.indexOf(features.properties.type.toLowerCase()) > -1) {
         bool = true;
       }
       return bool;
@@ -180,10 +203,10 @@ types.forEach(function(type) {
     case "Territorial Sea":
       svg =
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
-        defaultColor.darker().darker() +
+        "#000000" +
         "' stroke-width='5' /><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
         defaultColor +
-        "' stroke-width='1' /></svg>";
+        "' stroke-width='2' /></svg>";
       break;
     case "Exclusive Economic Zone":
       svg =
@@ -222,17 +245,12 @@ types.forEach(function(type) {
 });
 
 Object.keys(nations).forEach(function(nation) {
-  var svg = true
-    ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><line x1='0' x2='12' y1='25%' y2='25%' stroke='" +
-      nations[nation].color +
-      "' stroke-width='3' stroke-linecap='square'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
-      nations[nation].color +
-      "' stroke-width='3' stroke-linecap='square' stroke-dasharray='4, 6'/></svg>"
-    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
-      nations[nation].color +
-      "'  fill='" +
-      nations[nation].color +
-      "' /></svg>";
+  var svg =
+    "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke='" +
+    nations[nation].color +
+    "'  fill='" +
+    nations[nation].color +
+    "' /></svg>";
 
   document.querySelector(".nations").innerHTML +=
     '<li><label for="' +
@@ -241,13 +259,120 @@ Object.keys(nations).forEach(function(nation) {
     nation +
     '" id="' +
     nation +
-    '"  checked><span class="colorKey" ' +
+    '"' +
+    (nations[nation].selected ? "checked" : "") +
+    ' ><span class="colorKey" ' +
     "style=\"background-image: url('data:image/svg+xml;base64," +
     window.btoa(svg) +
     '")></span>' +
     nations[nation].label +
     "</label></li>";
+
+  select.innerHTML +=
+    "  <option value=" +
+    nations[nation].label +
+    (nations[nation].selected ? ' selected="selected"' : "") +
+    ">" +
+    nations[nation].label +
+    "</option>";
 });
+
+var dropdownOptions = {
+  removeItemButton: true,
+  maxItemCount: 6,
+  callbackOnCreateTemplates: function(template) {
+    return {
+      item: (classNames, data) => {
+        var nation = Object.keys(nations).find(
+          n => nations[n].label == data.label
+        );
+
+        var color = nations[nation].color;
+
+        var svg =
+          "<svg  xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke='" +
+          color +
+          "'  fill='" +
+          color +
+          "' /></svg>";
+
+        var remove =
+          '<svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="#000" fill-rule="evenodd"><path d="M2.592.044l18.364 18.364-2.548 2.548L.044 2.592z"/><path d="M0 18.364L18.364 0l2.548 2.548L2.548 20.912z"/></g></svg>';
+
+        var markup =
+          '<div style="border-color:' +
+          color +
+          '" class="' +
+          classNames.item +
+          '" data-item data-id="' +
+          data.id +
+          '" data-value="' +
+          data.value +
+          '" ' +
+          (data.active ? 'aria-selected="true"' : "") +
+          " " +
+          (data.disabled ? 'aria-disabled="true"' : "") +
+          '><span class="colorKey" ' +
+          "style=\"background-image: url('data:image/svg+xml;base64," +
+          window.btoa(svg) +
+          '")></span> ' +
+          data.label +
+          "<button style=\"background-image: url('data:image/svg+xml;base64," +
+          window.btoa(remove) +
+          '" type="button" class="choices__button" data-button="" aria-label="Remove item">Remove item</button></div>';
+
+        return template(markup);
+      },
+      choice: (classNames, data) => {
+        var nation = Object.keys(nations).find(
+          n => nations[n].label == data.label
+        );
+
+        var color = nations[nation].color;
+
+        var svg =
+          "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke='" +
+          color +
+          "'  fill='" +
+          color +
+          "' /></svg>";
+
+        var markup =
+          ' <div class="' +
+          classNames.item +
+          " " +
+          classNames.itemChoice +
+          " " +
+          (data.disabled
+            ? classNames.itemDisabled
+            : classNames.itemSelectable) +
+          '" data-select-text="' +
+          this.config.itemSelectText +
+          '" data-choice ' +
+          (data.disabled
+            ? 'data-choice-disabled aria-disabled="true"'
+            : "data-choice-selectable") +
+          ' data-id="' +
+          data.id +
+          '" data-value="' +
+          data.value +
+          '" ' +
+          (data.groupId > 0 ? 'role="treeitem"' : 'role="option"') +
+          '> <span class="colorKey" ' +
+          "style=\"background-image: url('data:image/svg+xml;base64," +
+          window.btoa(svg) +
+          '")></span> ' +
+          data.label +
+          " </div> ";
+
+        return template(markup);
+      }
+    };
+  }
+};
+
+var searchBox = new Choices(select, dropdownOptions);
+var initialized = null;
 
 function makeClusters() {
   Object.keys(nations)
@@ -269,8 +394,50 @@ function makeClusters() {
         })
         .then(function(json) {
           makeMarkers(nation, json, filters);
+
+          if (
+            Object.keys(nation_marker_clusters).length ===
+            Object.keys(nations).length
+          ) {
+            initialized = initialized === null ? true : false;
+          }
+
+          if (initialized) {
+            search();
+
+            select.addEventListener("highlightItem", function(e) {
+              searchBox.removeHighlightedItems();
+            });
+
+            select.addEventListener("removeItem", search);
+            select.addEventListener("addItem", search);
+
+            document.querySelector(".choices__input").focus();
+
+            initialized = false;
+          }
         });
     });
+}
+
+function search() {
+  removeClusters();
+
+  var names = Array.from(select.options).map(o => {
+    var nation = Object.keys(nations).find(n => nations[n].label === o.value);
+
+    return nation.replace("''", "'");
+  });
+
+  filters[1] = function(features, layers) {
+    var bool = false;
+
+    if (names.indexOf(features.properties.country) > -1) {
+      bool = true;
+    }
+    return bool;
+  };
+  makeClusters();
 }
 
 function makeMarkers(nation, json, filters) {
@@ -287,11 +454,12 @@ function makeMarkers(nation, json, filters) {
   });
 
   var geoJsonOptions = {
-    filter: function filter(feature) {
+    filter: function(feature) {
       var bool = filters.map(function(f) {
         return f(feature);
       });
-      return bool[0];
+
+      return bool[0] && bool[1];
     },
     pointToLayer: function pointToLayer(feature, latlng) {
       var CustomIcon = L.Icon.extend({
@@ -301,7 +469,7 @@ function makeMarkers(nation, json, filters) {
       });
 
       var svg =
-        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\"  fill='" +
+        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke=\"#ffffff\"  fill='" +
         nations[nation].color +
         "' /></svg>";
 
@@ -383,28 +551,33 @@ function makeMarkers(nation, json, filters) {
           color: nations[nation].color,
           weight: 4,
           lineCap: "square",
-          dashArray: "12,18"
+          dashArray: "12,18",
+          opacity: initialized === null ? 0 : 1
         };
       case "Territorial Sea":
         return {
           color: nations[nation].color,
-          weight: 4
+          weight: 4,
+          opacity: initialized === null ? 0 : 1
         };
       case "Exclusive Economic Zone":
         return {
           color: "#000000",
-          weight: 4
+          weight: 4,
+          opacity: initialized === null ? 0 : 1
         };
       case "Continental Shelf":
         return {
           color: "#ffffff",
-          weight: 4
+          weight: 4,
+          opacity: initialized === null ? 0 : 1
         };
       default:
         return {
           color: nations[nation].color,
           lineCap: "square",
-          weight: 4
+          weight: 4,
+          opacity: initialized === null ? 0 : 1
         };
     }
   };
@@ -416,30 +589,35 @@ function makeMarkers(nation, json, filters) {
           color: nations[nation].color,
           weight: 4,
           lineCap: "square",
-          dashArray: "12,18"
+          dashArray: "12,18",
+          opacity: initialized === null ? 0 : 1
         };
       case "Territorial Sea":
         return {
           color: "#cad2d3",
-          weight: 1.5
+          weight: 1.5,
+          opacity: initialized === null ? 0 : 1
         };
       case "Exclusive Economic Zone":
         return {
           color: nations[nation].color,
           weight: 4,
           lineCap: "square",
-          dashArray: "12,18"
+          dashArray: "12,18",
+          opacity: initialized === null ? 0 : 1
         };
       case "Continental Shelf":
         return {
           color: nations[nation].color,
-          weight: 1.5
+          weight: 1.5,
+          opacity: initialized === null ? 0 : 1
         };
       default:
         return {
           color: nations[nation].color,
           lineCap: "square",
-          weight: 4
+          weight: 4,
+          opacity: initialized === null ? 0 : 1
         };
     }
   };
@@ -506,8 +684,6 @@ function makeMarkers(nation, json, filters) {
       );
     });
   });
-
-  // nation_marker_clusters.cpp_radar_ranges.bringToBack();
 }
 
 map.on("click", function() {

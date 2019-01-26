@@ -105,7 +105,7 @@ Object.keys(mapLayers).forEach(function(mapLayer, i) {
       "' stroke-width='3' stroke-linecap='square'/><line x1='0' x2='12' y1='75%' y2='75%' stroke='" +
       mapLayers[mapLayer].color +
       "' stroke-width='3' stroke-linecap='square' stroke-dasharray='4, 6'/></svg>"
-    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke='" +
+    : "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke='" +
       mapLayers[mapLayer].color +
       "'  fill='" +
       mapLayers[mapLayer].color +
@@ -183,7 +183,7 @@ function makeMarkers(mapLayer, json, filters) {
       });
 
       var svg =
-        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='6' stroke=\"#ffffff\"  fill='" +
+        "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='6' cy='6' r='5' stroke=\"#ffffff\"  fill='" +
         mapLayers[mapLayer].color +
         "' /></svg>";
 

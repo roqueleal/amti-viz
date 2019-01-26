@@ -34,13 +34,18 @@
   <script src="zoom_slider/zoomslider.js"></script>
   <!-- Include Diacritics plugin -->
   <script src="js/latinize.js"></script>
-  <!-- Include d3 Colors plugin -->
 
+  <!-- Include d3 Colors plugin -->
   <script src="https://d3js.org/d3-array.v1.min.js"></script>
   <script src="https://d3js.org/d3-color.v1.min.js"></script>
   <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
   <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
   <script src="https://d3js.org/d3-scale.v2.min.js"></script>
+
+
+  <!--  Dropdown -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@4/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js@4/public/assets/scripts/choices.min.js"></script>
 
   <!-- Include CARTO.js -->
   <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
@@ -87,22 +92,22 @@ gtag("config", "UA-55717458-1");
         <div id="controls">
           <div id="info">
             <p class="open-sans">
-              Click to toggle island features by claimant and type.
+              Toggle layers by claimant and type.
             </p>
           </div>
 
+          <h3 class="mobile-toggle">Claimant</h3>
+          <select id="searchClaimant" placeholder="Search and add up to 6 claimants" multiple="" tabindex="-1" aria-hidden="true" data-choice="active"></select>
+
           <h3 class="mobile-toggle">Type</h3>
 
-          <ul class="types">
+          <ul class="types"></ul>
 
-          </ul>
           <div class="separator mobile-toggle"></div>
 
           <h3 class="mobile-toggle">Claimant</h3>
 
-          <ul class="nations">
-
-          </ul>
+          <ul class="nations"></ul>
 
         </div>
       </section>
