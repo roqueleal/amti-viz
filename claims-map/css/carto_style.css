@@ -1,6 +1,6 @@
 .choices__list--multiple .choices__item {
   background-color: transparent;
-  color: unset;
+  color: black;
   font-weight: bold;
   font: 12px/16px "Open Sans" !important;
   -webkit-transition: all 0.3s ease-in-out;

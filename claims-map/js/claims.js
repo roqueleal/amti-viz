@@ -1,3 +1,17 @@
+var _extends =
+  Object.assign ||
+  function(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+
 var url =
   window.location != window.parent.location
     ? document.referrer
@@ -96,16 +110,15 @@ var scaleTwo = d3
   .scaleSequential(d3.interpolateRainbow)
   .domain(d3.range(0, nationsLength));
 
-Object.keys(nations).forEach((nation, i) => {
+Object.keys(nations).forEach(function(nation, i) {
   var color =
     i % 2 === 0
       ? d3.color(scaleOne(Math.abs(nationsLength - i + -1) / nationsLength * 1))
       : d3.color(scaleTwo(i / nationsLength * 1));
 
-  nations[nation] = {
-    ...nations[nation],
+  nations[nation] = _extends({}, nations[nation], {
     color: color.hex()
-  };
+  });
 });
 
 var filters = [];
@@ -280,12 +293,14 @@ Object.keys(nations).forEach(function(nation) {
 var dropdownOptions = {
   removeItemButton: true,
   maxItemCount: 6,
-  callbackOnCreateTemplates: function(template) {
+  callbackOnCreateTemplates: function callbackOnCreateTemplates(template) {
+    var _this = this;
+
     return {
-      item: (classNames, data) => {
-        var nation = Object.keys(nations).find(
-          n => nations[n].label == data.label
-        );
+      item: function item(classNames, data) {
+        var nation = Object.keys(nations).find(function(n) {
+          return nations[n].label == data.label;
+        });
 
         var color = nations[nation].color;
 
@@ -323,10 +338,10 @@ var dropdownOptions = {
 
         return template(markup);
       },
-      choice: (classNames, data) => {
-        var nation = Object.keys(nations).find(
-          n => nations[n].label == data.label
-        );
+      choice: function choice(classNames, data) {
+        var nation = Object.keys(nations).find(function(n) {
+          return nations[n].label == data.label;
+        });
 
         var color = nations[nation].color;
 
@@ -347,7 +362,7 @@ var dropdownOptions = {
             ? classNames.itemDisabled
             : classNames.itemSelectable) +
           '" data-select-text="' +
-          this.config.itemSelectText +
+          _this.config.itemSelectText +
           '" data-choice ' +
           (data.disabled
             ? 'data-choice-disabled aria-disabled="true"'
@@ -423,8 +438,10 @@ function makeClusters() {
 function search() {
   removeClusters();
 
-  var names = Array.from(select.options).map(o => {
-    var nation = Object.keys(nations).find(n => nations[n].label === o.value);
+  var names = Array.from(select.options).map(function(o) {
+    var nation = Object.keys(nations).find(function(n) {
+      return nations[n].label === o.value;
+    });
 
     return nation.replace("''", "'");
   });
@@ -454,7 +471,7 @@ function makeMarkers(nation, json, filters) {
   });
 
   var geoJsonOptions = {
-    filter: function(feature) {
+    filter: function filter(feature) {
       var bool = filters.map(function(f) {
         return f(feature);
       });
@@ -622,15 +639,19 @@ function makeMarkers(nation, json, filters) {
     }
   };
 
-  var geoJsonLayerA = L.geoJson(json, {
-    ...geoJsonOptions,
-    style: styleLayerA
-  });
+  var geoJsonLayerA = L.geoJson(
+    json,
+    _extends({}, geoJsonOptions, {
+      style: styleLayerA
+    })
+  );
 
-  var geoJsonLayerB = L.geoJson(json, {
-    ...geoJsonOptions,
-    style: styleLayerB
-  });
+  var geoJsonLayerB = L.geoJson(
+    json,
+    _extends({}, geoJsonOptions, {
+      style: styleLayerB
+    })
+  );
 
   nation_marker_clusters[nation].addLayer(geoJsonLayerA);
 
