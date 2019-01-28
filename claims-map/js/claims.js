@@ -103,18 +103,18 @@ var nations = {
 var nationsLength = Object.keys(nations).length;
 
 var scaleOne = d3
-  .scaleSequential(d3.interpolateCubehelixDefault)
+  .scaleSequential(d3.interpolateRainbow)
   .domain(d3.range(0, nationsLength));
 
 var scaleTwo = d3
-  .scaleSequential(d3.interpolateRainbow)
+  .scaleSequential(d3.interpolateSpectral)
   .domain(d3.range(0, nationsLength));
 
 Object.keys(nations).forEach(function(nation, i) {
   var color =
     i % 2 === 0
       ? d3.color(
-          scaleOne((Math.abs(nationsLength - i + -1) / nationsLength) * 1)
+          scaleOne((Math.abs(nationsLength - i - 5) / nationsLength) * 1)
         )
       : d3.color(scaleTwo((i / nationsLength) * 1));
 
