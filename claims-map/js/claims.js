@@ -61,7 +61,7 @@ L.control
 
 L.control.zoomslider().addTo(map);
 
-var apiKey = "buPBMXbElVsLJ_AYQ3VA4w";
+var apiKey = "fd_7Di9PMY2uwTyag2LfVw";
 
 var nations = {
   India: {
@@ -113,8 +113,10 @@ var scaleTwo = d3
 Object.keys(nations).forEach(function(nation, i) {
   var color =
     i % 2 === 0
-      ? d3.color(scaleOne(Math.abs(nationsLength - i + -1) / nationsLength * 1))
-      : d3.color(scaleTwo(i / nationsLength * 1));
+      ? d3.color(
+          scaleOne((Math.abs(nationsLength - i + -1) / nationsLength) * 1)
+        )
+      : d3.color(scaleTwo((i / nationsLength) * 1));
 
   nations[nation] = _extends({}, nations[nation], {
     color: color.hex()
@@ -216,9 +218,9 @@ types.forEach(function(type) {
     case "Territorial Sea":
       svg =
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
-        "#000000" +
+        defaultColor.darker() +
         "' stroke-width='5' /><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
-        defaultColor +
+        "#ffffff" +
         "' stroke-width='2' /></svg>";
       break;
     case "Exclusive Economic Zone":
@@ -400,7 +402,7 @@ function makeClusters() {
       fetch(
         "https://csis.carto.com/api/v2/sql?api_key=" +
           apiKey +
-          "&format=geojson&q=SELECT%20*%20FROM%20all_claims%20WHERE%20country%20%3D%20%27" +
+          "&format=geojson&q=SELECT%20*%20FROM%20all_claims_2%20WHERE%20country%20%3D%20%27" +
           encodeURI(nation) +
           "%27"
       )
@@ -566,7 +568,7 @@ function makeMarkers(nation, json, filters) {
       case "Territorial Baseline":
         return {
           color: nations[nation].color,
-          weight: 4,
+          weight: 3,
           lineCap: "square",
           dashArray: "12,18",
           opacity: initialized === null ? 0 : 1
@@ -580,13 +582,13 @@ function makeMarkers(nation, json, filters) {
       case "Exclusive Economic Zone":
         return {
           color: "#000000",
-          weight: 4,
+          weight: 3,
           opacity: initialized === null ? 0 : 1
         };
       case "Continental Shelf":
         return {
           color: "#ffffff",
-          weight: 4,
+          weight: 6,
           opacity: initialized === null ? 0 : 1
         };
       default:
@@ -604,7 +606,7 @@ function makeMarkers(nation, json, filters) {
       case "Territorial Baseline":
         return {
           color: nations[nation].color,
-          weight: 4,
+          weight: 3,
           lineCap: "square",
           dashArray: "12,18",
           opacity: initialized === null ? 0 : 1
@@ -612,13 +614,13 @@ function makeMarkers(nation, json, filters) {
       case "Territorial Sea":
         return {
           color: "#cad2d3",
-          weight: 1.5,
+          weight: 2,
           opacity: initialized === null ? 0 : 1
         };
       case "Exclusive Economic Zone":
         return {
           color: nations[nation].color,
-          weight: 4,
+          weight: 3,
           lineCap: "square",
           dashArray: "12,18",
           opacity: initialized === null ? 0 : 1
@@ -626,7 +628,7 @@ function makeMarkers(nation, json, filters) {
       case "Continental Shelf":
         return {
           color: nations[nation].color,
-          weight: 1.5,
+          weight: 3,
           opacity: initialized === null ? 0 : 1
         };
       default:
