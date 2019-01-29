@@ -352,7 +352,7 @@ function makeMarkers(nation, json, filters) {
             "' /></svg>";
       }
 
-      var iconUrl = encodeURI("data:image/svg+xml," + svg).replace("#", "%23");
+      var iconUrl = encodeURI("data:image/svg+xml;base64," + window.btoa(svg));
 
       var icon = new CustomIcon({ iconUrl: iconUrl });
 
