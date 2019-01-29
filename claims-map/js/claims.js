@@ -491,7 +491,7 @@ function makeMarkers(nation, json, filters) {
         nations[nation].color +
         "' /></svg>";
 
-      var iconUrl = encodeURI("data:image/svg+xml," + svg).sreplace("#", "%23");
+      var iconUrl = encodeURI("data:image/svg+xml;base64," + window.btoa(svg));
 
       var icon = new CustomIcon({ iconUrl: iconUrl });
 
