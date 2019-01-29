@@ -97,6 +97,9 @@ function resetFilters() {
     },
     function() {
       return true;
+    },
+    function() {
+      return true;
     }
   ];
 }
@@ -215,20 +218,28 @@ function searchFeatures(e) {
 
 document.querySelector(".occupiers").addEventListener("click", function(e) {
   var checkbox = e.target.type === "checkbox" ? e.target : undefined;
-  if (checkbox && checkbox.checked) {
-    map.addLayer(nation_marker_clusters[checkbox.name]);
+  if (checkbox) {
+    removeClusters();
 
-    var icons = document.querySelectorAll(
-      ".icon-" + checkbox.name + ":not(.marker-cluster-small)"
+    var checkboxes = Array.from(
+      document.querySelectorAll(".occupiers input:checked")
     );
-    Array.from(icons).forEach(function(icon) {
-      icon.style.color = nations[checkbox.name].color;
-      icon.style.borderColor = nations[checkbox.name].color;
-      icon.style.borderWidth = "1px";
-      icon.style.borderStyle = "solid";
+
+    var names = checkboxes.map(function(c) {
+      return c.name;
     });
-  } else if (checkbox) {
-    map.removeLayer(nation_marker_clusters[checkbox.name]);
+
+    filters[2] = function(features, layers) {
+      var bool = false;
+
+      if (names.indexOf(features.properties.occupier.toLowerCase()) > -1) {
+        bool = true;
+      }
+
+      return bool;
+    };
+
+    makeClusters();
   }
 });
 
@@ -316,7 +327,7 @@ function makeMarkers(nation, json, filters) {
         return f(feature);
       });
 
-      return bool[0] && bool[1];
+      return bool[0] && bool[1] && bool[2];
     },
     pointToLayer: function pointToLayer(feature, latlng) {
       var CustomIcon = L.Icon.extend({
