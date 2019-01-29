@@ -399,7 +399,7 @@ function makeMarkers(nation, json, filters) {
             if (feature.properties[p])
               return ignoredHeaders.indexOf(p) < 0
                 ? '<div class="popupHeaderStyle">' +
-                    p.toLowerCase().replace(/_/g, " ") +
+                    p.replace(/_/g, " ") +
                     '</div><div class="popupEntryStyle">' +
                     feature.properties[p] +
                     "</div>"

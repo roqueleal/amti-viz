@@ -76,7 +76,7 @@ if (lang) {
       ) {
         sortedTranslations.forEach(function(t) {
           if (Object.keys(translations[t]).length) {
-            var re = new RegExp("\\b(" + t + ")", "gi");
+            var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
             el.innerHTML = el.innerHTML.replace(re, translations[t]);
           }
         });
@@ -104,6 +104,10 @@ if (lang) {
     .bringToFront()
     .addTo(map);
 }
+
+RegExp.escape = function(s) {
+  return s.replace(/[\/\\^$*+?.()|[\]{}]/g, "\\$&");
+};
 
 function parseData(data) {
   var languageData = {};
@@ -185,7 +189,7 @@ function initResources() {
         .map(function(d) {
           return (
             '<div class="popupHeaderStyle">' +
-            capitalize(d.replace(/_/g, " ")) +
+            d.replace(/_/g, " ") +
             '</div><div class="popupEntryStyle">' +
             data[d] +
             "</div>"
@@ -194,9 +198,12 @@ function initResources() {
         .join("");
 
       content += "" + stakeHolders;
+
       if (lang) {
         sortedTranslations.forEach(function(t) {
-          content = content.replace(t, translations[t]);
+          var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
+
+          content = content.replace(re, translations[t]);
         });
       }
 
