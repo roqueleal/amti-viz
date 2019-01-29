@@ -109,7 +109,7 @@ div#results {
 .shapeKey {
   display: inline-block;
   height: 12px;
-  width: 24px;
+  width: 12px;
   margin: 3px 5px 0 5px;
 }
 
@@ -132,25 +132,28 @@ div#results {
   margin-left: 6px;
 }
 
-.statuses label,
+/* .statuses label,
 .occupiers label {
   display: flex;
   align-items: center;
-}
+} */
 
+#controls li input[type="checkbox"] {
+  margin: 2px 2px 0 0;
+}
 .shapeKey {
   background-size: contain;
   background-repeat: no-repeat;
 }
-.submerged.shapeKey {
+.s.shapeKey {
   background-image: url(../images/submerged.svg);
   height: 15px;
   width: 15px;
 }
-.rock.shapeKey {
+.r.shapeKey {
   background-image: url(../images/rock.svg);
 }
-.low-tide.shapeKey {
+.lte.shapeKey {
   background-image: url(../images/low_tide.svg);
 }
 

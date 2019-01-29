@@ -58,7 +58,8 @@ var ignoredHeaders = [
   "latitude",
   "longitude",
   "occupier",
-  "hyperlink"
+  "hyperlink",
+  "status"
 ];
 
 Object.keys(nations).forEach(function(nation) {
@@ -81,17 +82,13 @@ Object.keys(nations).forEach(function(nation) {
     nation +
     '" id="' +
     nation +
-    '"checked>' +
-    (nation.charAt(0).toUpperCase() + nation.slice(1)) +
-    '<span class="colorKey" ' +
+    '"checked><span class="colorKey" ' +
     "style=\"background-image: url('data:image/svg+xml;base64," +
     window.btoa(svg) +
-    '")></span></label></li>';
+    '\')"></span><span class="translate">' +
+    (nation.charAt(0).toUpperCase() + nation.slice(1)) +
+    "</span></label></li>";
 });
-
-resetFilters();
-
-makeClusters();
 
 function resetFilters() {
   filters = [
@@ -102,6 +99,86 @@ function resetFilters() {
       return true;
     }
   ];
+}
+
+var spreadsheetID = "1wUMSGriDTQgS1NIqeRlJktBxOJ208vWfNVMXNRu4adM";
+
+var translationsURL =
+  "https://spreadsheets.google.com/feeds/list/" +
+  spreadsheetID +
+  "/1/public/values?alt=json";
+
+var translations;
+var sortedTranslations;
+
+if (lang) {
+  fetch(translationsURL)
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(json) {
+      translations = parseData(json.feed.entry);
+      sortedTranslations = Object.keys(translations).sort(function(a, b) {
+        return b.length - a.length;
+      });
+
+      Array.from(document.querySelectorAll(".translate")).forEach(function(
+        el,
+        i
+      ) {
+        sortedTranslations.forEach(function(t) {
+          if (Object.keys(translations[t]).length) {
+            var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
+
+            el.innerHTML = el.innerHTML.replace(re, translations[t]);
+          }
+        });
+      });
+
+      resetFilters();
+
+      makeClusters();
+
+      return json;
+    })
+    .catch(function(ex) {
+      console.log("mm parsing failed", ex);
+    });
+} else {
+  resetFilters();
+
+  makeClusters();
+}
+
+RegExp.escape = function(s) {
+  return s.replace(/[\/\\^$*+?.()|[\]{}]/g, "\\$&");
+};
+
+function parseData(data) {
+  var languageData = {};
+
+  data.forEach(function(row) {
+    var key;
+    Object.keys(row).forEach(function(column, i) {
+      if (column.indexOf("gsx$") > -1) {
+        var columnName = column.replace("gsx$", "");
+        if (columnName === "en") {
+          key = row[column]["$t"];
+          languageData[key] = {};
+        }
+
+        // if (languageData[key]) {
+        //   languageData[key][columnName] = row[column]["$t"];
+        // }
+
+        if (columnName === lang) {
+          languageData[key] = row[column]["$t"];
+        }
+      }
+    });
+  });
+
+  return languageData;
 }
 
 document.querySelector("#query").addEventListener("keyup", searchFeatures);
@@ -322,7 +399,7 @@ function makeMarkers(nation, json, filters) {
             if (feature.properties[p])
               return ignoredHeaders.indexOf(p) < 0
                 ? '<div class="popupHeaderStyle">' +
-                    p.toUpperCase().replace(/_/g, " ") +
+                    p.toLowerCase().replace(/_/g, " ") +
                     '</div><div class="popupEntryStyle">' +
                     feature.properties[p] +
                     "</div>"
@@ -335,7 +412,7 @@ function makeMarkers(nation, json, filters) {
       } else {
         Object.keys(feature.properties).map(function(p) {
           description =
-            '<div class="popupHeaderStyle">Name</div><div class="popupEntryStyle">' +
+            '<div class="popupHeaderStyle">name</div><div class="popupEntryStyle">' +
             feature.properties["name"] +
             "</div>";
         });
@@ -354,7 +431,17 @@ function makeMarkers(nation, json, filters) {
             "</div>"
           : "";
 
-      layer.bindPopup(description + islandTracker);
+      content = description + islandTracker;
+
+      if (lang) {
+        sortedTranslations.forEach(function(t) {
+          var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
+
+          content = content.replace(re, translations[t]);
+        });
+      }
+
+      layer.bindPopup(content);
     }
   });
 

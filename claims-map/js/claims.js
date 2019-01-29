@@ -101,7 +101,6 @@ var nations = {
 };
 
 var nationsLength = Object.keys(nations).length;
-
 var scaleOne = d3
   .scaleSequential(d3.interpolateRainbow)
   .domain(d3.range(0, nationsLength));
