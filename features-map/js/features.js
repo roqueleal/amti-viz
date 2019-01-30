@@ -193,7 +193,7 @@ document.querySelector("#resetButton").addEventListener("click", function(e) {
   filters[0] = function() {
     return true;
   };
-  makeClusters();
+  remakeClusters();
 });
 
 function searchFeatures(e) {
@@ -216,7 +216,7 @@ function searchFeatures(e) {
     return bool;
   };
 
-  makeClusters();
+  remakeClusters();
 }
 
 document.querySelector(".occupiers").addEventListener("click", function(e) {
@@ -242,7 +242,7 @@ document.querySelector(".occupiers").addEventListener("click", function(e) {
       return bool;
     };
 
-    makeClusters();
+    remakeClusters();
   }
 });
 
@@ -269,7 +269,7 @@ document.querySelector(".statuses").addEventListener("click", function(e) {
       return bool;
     };
 
-    makeClusters();
+    remakeClusters();
   }
 });
 
@@ -311,10 +311,23 @@ function makeClusters() {
   });
 }
 
+function remakeClusters() {
+  Object.keys(nations).forEach(function(nation) {
+    makeMarkers(nation, nation_marker_clusters[nation].json, filters);
+
+    var icons = document.querySelectorAll(
+      ".icon-" + nation + ":not(.marker-cluster-small)"
+    );
+    Array.from(icons).forEach(function(icon) {
+      icon.style.color = nations[nation].color;
+      icon.style.borderColor = nations[nation].color;
+      icon.style.borderWidth = 1;
+      icon.style.borderStyle = "solid";
+    });
+  });
+}
+
 function makeMarkers(nation, json, filters) {
-  console.log(1, filters[0]);
-  console.log(2, filters[1]);
-  console.log(3, filters[2]);
   nation_marker_clusters[nation] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
@@ -326,6 +339,8 @@ function makeMarkers(nation, json, filters) {
       });
     }
   });
+
+  nation_marker_clusters[nation].json = json;
 
   var geoJsonLayer = L.geoJson(json, {
     filter: function filter(feature) {
