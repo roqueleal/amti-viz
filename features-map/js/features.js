@@ -31,7 +31,7 @@ var map = L.map("map", {
 L.control
   .attribution({ position: "bottomleft" })
   .setPrefix(
-    ' © <a href="https://amti.csis.org" target="_blank">AMTI</a> and <a href="https://www.csis.org" target="_blank">CSIS</a> | 2018'
+    'Data by <a href="https://amti.csis.org" target="_blank">CSIS AMTI</a>, © OpenStreetMap, Leaflet contributors, © CARTO'
   )
   .addTo(map);
 
