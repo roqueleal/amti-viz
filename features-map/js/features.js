@@ -59,7 +59,8 @@ var ignoredHeaders = [
   "longitude",
   "occupier",
   "hyperlink",
-  "status"
+  "status",
+  "picture"
 ];
 
 Object.keys(nations).forEach(function(nation) {
@@ -189,7 +190,9 @@ document.querySelector("#query").addEventListener("keyup", searchFeatures);
 document.querySelector("#resetButton").addEventListener("click", function(e) {
   document.querySelector("#query").value = "";
   removeClusters();
-  resetFilters();
+  filters[0] = function() {
+    return true;
+  };
   makeClusters();
 });
 
@@ -309,6 +312,9 @@ function makeClusters() {
 }
 
 function makeMarkers(nation, json, filters) {
+  console.log(1, filters[0]);
+  console.log(2, filters[1]);
+  console.log(3, filters[2]);
   nation_marker_clusters[nation] = new L.MarkerClusterGroup({
     showCoverageOnHover: false,
     zoomToBoundsOnClick: false,
