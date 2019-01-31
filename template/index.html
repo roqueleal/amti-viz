@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Maritime Claims of the Asia Pacific | AMTI | CSIS</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700" rel="stylesheet">
+  <link href="zoom_slider/zoomslider.css" rel="stylesheet">
+  <!-- Share meta -->
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Maritime Claims of the Asia Pacific
+ - Asia Maritime Transparency Initiative" />
+  <meta property="og:description" content="Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims." />
+  <meta property="og:image" content="https://amti.csis.org/wp-content/uploads/2018/10/oil_and_gasSCStmb.jpg" />
+  <meta property="og:image:width" content="2000" />
+  <meta property="og:image:height" content="1333" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims." />
+  <meta name="twitter:title" content="Maritime Claims of the Asia Pacific
+ - Asia Maritime Transparency Initiative" />
+  <meta name="twitter:image" content="https://amti.csis.org/wp-content/uploads/2018/10/oil_and_gasSCStmb.jpg" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+  <!-- Include Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+  <link href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" rel="stylesheet">
+  <!-- Include markerCluster plugin -->
+  <link href='https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css' rel='stylesheet' />
+  <script src='https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js'></script>
+  <!-- Include Zoom Slider plugin -->
+  <script src="zoom_slider/zoomslider.js"></script>
+  <!-- Include Diacritics plugin -->
+  <script src="js/latinize.js"></script>
+
+  <!-- Include d3 Colors plugin -->
+  <script src="https://d3js.org/d3-array.v1.min.js"></script>
+  <script src="https://d3js.org/d3-color.v1.min.js"></script>
+  <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://d3js.org/d3-scale.v2.min.js"></script>
+
+
+  <!--  Fetch Polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/whatwg-fetch@3.0.0/dist/fetch.umd.min.js"></script>
+
+  <!--  Dropdown -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@4/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js@4/public/assets/scripts/choices.min.js"></script>
+
+  <!-- Include CARTO.js -->
+  <link href="https://carto.com/developers/carto-js/examples/maps/public/style.css" rel="stylesheet">
+  <!-- Include local styles and scripts -->
+  <link href="css/carto_style.css" rel="stylesheet">
+  <!-- Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-55717458-1"></script>
+         <script>
+         window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+  dataLayer.push(arguments);
+}
+gtag("js", new Date());
+
+gtag("config", "UA-55717458-1");
+</script> -->
+</head>
+
+<body>
+  <nav id='menu-ui' class='menu-ui'></nav>
+  <div id="map"></div>
+  <aside class="toolbox">
+    <input type="checkbox" checked class="ui mobile-only">
+    <div class="hamburger mobile-only">
+      <div class="icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="menu">
+        Maritime Claims of the Asia Pacific
+      </div>
+    </div>
+    <div class="box">
+      <header class="mobile-toggle">
+        <h1>Maritime Claims of the Asia Pacific</h1>
+        <a href="https://amti.csis.org/" target="_blank"><button class="mobile-toggle" id="logo"></button></a>
+        <p class="mobile-only open-sans">Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims.</p>
+      </header>
+      <section>
+        <p class="description open-sans mobile-toggle">Who's Claiming What? All claims depicted are based on a claimant’s international agreements, domestic legislation, and public submission of claims.</p>
+        <div class="separator mobile-toggle"></div>
+        <div id="controls">
+          <div id="info">
+            <p class="open-sans">
+              Toggle layers by claimant and type.
+            </p>
+          </div>
+
+          <h3 class="mobile-toggle">Claimant</h3>
+          <select id="searchClaimant" placeholder="Search and add up to 6 claimants" multiple="" tabindex="-1" aria-hidden="true" data-choice="active"></select>
+
+          <h3 class="mobile-toggle">Type</h3>
+
+          <ul class="types"></ul>
+
+          <div class="separator mobile-toggle"></div>
+
+          <h3 class="mobile-toggle">Claimant</h3>
+
+          <ul class="nations"></ul>
+
+        </div>
+      </section>
+      <footer class="js-footer"></footer>
+    </div>
+  </aside>
+  <script src="js/claims.js"></script>
+</body>
+
+</html>
