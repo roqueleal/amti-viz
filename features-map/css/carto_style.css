@@ -110,14 +110,17 @@ div#results {
   display: inline-block;
   height: 12px;
   width: 12px;
-  margin: 3px 5px 0 5px;
+  margin: 0 5px 0 5px;
 }
 
 .statuses,
 .occupiers {
   display: flex;
-
   flex-wrap: wrap;
+}
+
+#controls li:last-child {
+  margin: 0 0 8px 0;
 }
 
 .occupiers li {
@@ -132,14 +135,13 @@ div#results {
   margin-left: 6px;
 }
 
-/* .statuses label,
-.occupiers label {
+#controls li label {
   display: flex;
   align-items: center;
-} */
+}
 
 #controls li input[type="checkbox"] {
-  margin: 2px 2px 0 0;
+  margin: 0px 2px 0 0;
 }
 
 #controls ul {
