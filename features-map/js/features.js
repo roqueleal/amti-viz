@@ -425,7 +425,7 @@ function makeMarkers(nation, json, filters) {
 
       var description;
 
-      if (window.innerWidth > 768) {
+      if (true) {
         description = Object.keys(feature.properties)
           .map(function(p) {
             if (feature.properties[p])
