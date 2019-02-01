@@ -141,6 +141,11 @@ div#results {
 #controls li input[type="checkbox"] {
   margin: 2px 2px 0 0;
 }
+
+#controls ul {
+  margin: 10px 0;
+}
+
 .shapeKey {
   background-size: contain;
   background-repeat: no-repeat;

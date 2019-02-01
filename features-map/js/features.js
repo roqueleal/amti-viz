@@ -450,6 +450,10 @@ function makeMarkers(nation, json, filters) {
         });
       }
 
+      // var link = lang
+      //   ? feature.properties.hyperlink + "?lang=" + lang
+      //   : feature.properties.hyperlink;
+
       var link = feature.properties.hyperlink;
 
       var islandTracker =
