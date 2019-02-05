@@ -57,36 +57,42 @@
 <script>
 var defaultColor = d3.color("#cad2d3");
 
-var url =
-  window.location != window.parent.location
-    ? document.referrer
-    : document.location.href;
+var maps = [
+  // {
+  //   id: "claims-map",
+  //   sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
+  //   allowedHeaders: [
+  //     lang ? "name_" + lang : "name",
+  //     lang ? "description_" + lang : "description",
+  //     "link"
+  //   ]
+  // },
+  // {
+  //   id: "features-map",
+  //   sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
+  // },
+  {
+    id: "resources-map",
+    sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
+    allowedHeaders: [
+      lang ? "name_" + lang : "name",
+      lang ? "description_" + lang : "description",
+      "link"
+    ]
+  }
+];
 
-var href = /lang=([^&]+)/.exec(url);
-var lang = href ? href[1] : null;
+maps.reverse().forEach((map, i) => {
+  var mapboxStyle =
+    lang && lang.indexOf("zh-") > -1
+      ? (mapboxStyle = "citui3waw00162jo1zcsf1urj")
+      : (mapboxStyle = "cj84s9bet10f52ro2lrna50yg");
 
-var basemap =
-  lang && lang.indexOf("zh-") > -1
-    ? (basemap = [
-        L.tileLayer(
-          "https://api.mapbox.com/styles/v1/ilabmedia/citui3waw00162jo1zcsf1urj/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-          {}
-        )
-      ])
-    : (basemap = [
-        L.tileLayer(
-          "https://api.mapbox.com/styles/v1/ilabmedia/cj84s9bet10f52ro2lrna50yg/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
-          {}
-        ) ]);
-
-        var spreadsheetID = "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw";
-
-        var allowedHeaders = [ lang ? "name_" + lang : "name", lang ? "description_" + lang : "description", "link" ];
-
-        makeMap("claims-map", spreadsheetID, allowedHeaders);
-
-        // makeMap("features-map", "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw", allowedHeaders);
-
+  setTimeout(() => {
+    console.log(93);
+    makeMap(map.id, map.sheet, mapboxStyle, map.allowedHeaders);
+  }, 2000 * i);
+});
 </script>
 </body>
 

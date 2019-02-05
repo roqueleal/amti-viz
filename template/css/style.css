@@ -1,7 +1,17 @@
+section.widget.occupation_status ul {
+  display: grid;
+  display: -ms-grid;
+  grid-column-gap: 2rem;
+  -ms-grid-columns: 1fr 2rem 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  -ms-grid-rows: auto auto;
+  grid-template-rows: auto auto;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font: 14px/18px "Open Sans";
+  font: 12px/16px "Open Sans";
 }
 
 h1,
@@ -16,6 +26,7 @@ h3 {
 
 p {
   margin: 0;
+  color: #666666;
 }
 #logo {
   position: absolute;
@@ -29,6 +40,11 @@ p {
   background-repeat: no-repeat;
   background-color: transparent;
   cursor: pointer;
+}
+
+body > section {
+  position: relative;
+  height: 100vh;
 }
 
 .map {
@@ -46,9 +62,13 @@ aside.toolbox {
   z-index: 2;
   display: block;
   left: calc(100vw - 324px);
-  position: relative;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.leaflet-tile {
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .box {
@@ -66,6 +86,10 @@ aside.toolbox {
   font-weight: bold;
   font-size: 24px;
   line-height: 28px;
+}
+header + p {
+  margin-top: 0.5rem;
+  font-style: italic;
 }
 .box section .separator {
   min-height: 1px;
@@ -102,18 +126,15 @@ aside.toolbox {
 #controls .widget {
   margin-top: 12px;
 }
-#controls input.search {
+#controls input[id^="search"] {
   width: 75%;
 }
 
-.choices__list--multiple .choices__item:hover {
-  background-color: #cad2d3;
-}
-
-.islandTracker {
+.hyperlink {
   display: flex;
 }
-.islandTracker a {
+
+.hyperlink a {
   white-space: nowrap;
   color: #0d7f6d;
   -webkit-transition: all 0.3s ease-in-out;
@@ -123,7 +144,7 @@ aside.toolbox {
   transition: all 0.3s ease-in-out;
 }
 
-.islandTracker svg {
+.hyperlink svg {
   margin-left: 0.3rem;
   fill: #0d7f6d;
   -webkit-transition: all 0.3s ease-in-out;
@@ -133,17 +154,11 @@ aside.toolbox {
   transition: all 0.3s ease-in-out;
 }
 
-.separator {
-  min-height: 1px;
-  background-color: rgba(46, 60, 67, 0.08);
-  margin: 8px 0;
-}
-
-.islandTracker:hover a {
+.hyperlink:hover a {
   color: #17b39a;
 }
 
-.islandTracker:hover svg {
+.hyperlink:hover svg {
   fill: #17b39a;
 }
 
@@ -162,11 +177,19 @@ aside.toolbox {
 .shapeKey {
   width: 12px;
 }
+
 .lineKey {
   width: 48px;
 }
 
+.separator {
+  min-height: 1px;
+  background-color: rgba(46, 60, 67, 0.08);
+  margin: 8px 0;
+}
+
 .popupHeaderStyle {
+  font-family: "Open Sans Condensed", sans-serif;
   text-transform: uppercase;
 }
 
@@ -264,6 +287,7 @@ aside.toolbox .ui:checked ~ .hamburger span:nth-child(3) {
 
   .mobile-toggle,
   header,
+  h3,
   aside.toolbox .ui:not(:checked) ~ .box {
     display: none;
   }

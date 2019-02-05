@@ -858,6 +858,9 @@
 .choices[data-type*="select-one"] {
   cursor: pointer;
 }
+.choices__list--multiple .choices__item:hover {
+  background-color: #cad2d3;
+}
 .choices[data-type*="select-one"] .choices__inner {
   padding-bottom: 7.5px;
 }
