@@ -20,6 +20,7 @@ h3 {
   font-family: "Open Sans Condensed", sans-serif;
   margin: 0 0 12px;
 }
+
 h3 {
   text-transform: uppercase;
 }
@@ -28,6 +29,7 @@ p {
   margin: 0;
   color: #666666;
 }
+
 #logo {
   position: absolute;
   top: 50px;
@@ -71,6 +73,16 @@ aside.toolbox {
   opacity: 1 !important;
 }
 
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #004165;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 1s linear infinite;
+  margin: auto;
+}
+
 .box {
   background: #ffffff;
   z-index: 2;
@@ -79,6 +91,7 @@ aside.toolbox {
   margin: 24px 0;
   box-shadow: 0 0px 16px rgba(0, 0, 0, 0.24);
 }
+
 .box header h1 {
   display: inline-block;
   color: #2e3c43;
@@ -87,35 +100,46 @@ aside.toolbox {
   font-size: 24px;
   line-height: 28px;
 }
+
 header + p {
   margin-top: 0.5rem;
   font-style: italic;
 }
+
 .box section .separator {
   min-height: 1px;
   background-color: rgba(46, 60, 67, 0.08);
   margin: 16px 0;
 }
+
 /* BOX CONTROLS */
 #controls ul {
   padding: 0;
   margin-bottom: 0;
 }
+
 #controls li {
   list-style-type: none;
   margin: 0 0 8px 0;
   display: flex;
-  vertical-align: middle;
+  display: -ms-flex;
+  align-items: center;
+  -ms-flex-align: center;
 }
+
 #controls li input {
   margin: 0 8px 0 0;
 }
+
 #controls li input[type="checkbox"] {
   margin: 0 8px 0 0;
 }
+
 #controls li label {
   display: flex;
+  display: -ms-flex;
   align-items: center;
+  -ms-flex-align: center;
   font: 12px/16px "Open Sans";
   cursor: pointer;
 }
@@ -123,15 +147,20 @@ header + p {
 #controls li:hover {
   cursor: pointer;
 }
+
 #controls .widget {
   margin-top: 12px;
 }
+
 #controls input[id^="search"] {
   width: 75%;
 }
 
 .hyperlink {
   display: flex;
+  display: -ms-flex;
+  align-items: center;
+  -ms-flex-align: center;
 }
 
 .hyperlink a {
@@ -169,7 +198,7 @@ header + p {
   height: 12px;
   margin: 0 5px 0 5px;
   background-size: contain;
-  background-position: center;
+  background-position: center left;
   background-repeat: no-repeat;
 }
 
@@ -220,7 +249,9 @@ aside.toolbox .ui {
   top: 50px;
   left: 24px;
   display: flex;
+  display: -ms-flex;
   align-items: center;
+  -ms-flex-align: center;
   background-color: #fff;
   border-radius: 4px;
   padding: 0 16px;
