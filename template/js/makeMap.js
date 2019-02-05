@@ -231,8 +231,7 @@ function init(
               <a target="_blank" id="logo"></a>
               <p class="translate"></p>
             </header>
-            <p class="translate">
-            ${options.instructions}</p>
+            ${options.instructions ? `<p class="translate"></p>` : ``}
             <div id="controls">
             </div>
             <footer></footer>
@@ -843,7 +842,11 @@ function convertType(value) {
       ? undefined
       : value === "null"
         ? null
-        : value === "true" ? true : value === "false" ? false : value;
+        : value === "true"
+          ? true
+          : value === "false"
+            ? false
+            : value;
 }
 
 function parseLanguageData(data) {
@@ -894,7 +897,9 @@ function parseLegendData(json, style) {
 
           data.color = colorVal
             ? colorVal
-            : style === "form" ? defaultColor : colorScale[x];
+            : style === "form"
+              ? defaultColor
+              : colorScale[x];
 
           data.form = row[Object.keys(row)[y + 5]]["$t"];
 
@@ -920,8 +925,8 @@ function createColorScale(count, index) {
   for (var i = 0; i < count; i++) {
     var color =
       i % 2 === 0
-        ? d3.color(scaleOne(Math.abs(count - i - 5) / count * 1))
-        : d3.color(scaleTwo(i / count * 1));
+        ? d3.color(scaleOne((Math.abs(count - i - 5) / count) * 1))
+        : d3.color(scaleTwo((i / count) * 1));
 
     scale.push(color.hex());
   }
