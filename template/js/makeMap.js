@@ -917,7 +917,7 @@ function makeGroups(map) {
               colors.push([null, null]);
               break;
             case 1:
-              colors.push([null, defaultColor.hex()]);
+              colors.push([null, defaultColor]);
               break;
             case 2:
               colors.push(["#000000", null]);
@@ -1191,9 +1191,8 @@ function styleColorFeature(feature, map, field, colors, forms, index) {
 
   if (feature.properties.toggle === "line") {
     return {
-      color: d3
-        .color(key.color)
-        .brighter()
+      color: chroma(key.color)
+        .brighten()
         .hex(),
       weight: 4
     };
@@ -1227,23 +1226,23 @@ function styleFormKey(key, i, forms, color) {
       switch (i) {
         case 0:
           colors = [
-            color ? color : defaultColor.darker(),
-            color ? color : defaultColor.darker()
+            color ? color : chroma(defaultColor).darken(),
+            color ? color : chroma(defaultColor).darken()
           ];
           break;
         case 1:
-          colors = [color ? color : defaultColor.darker(), "#ffffff"];
+          colors = [color ? color : chroma(defaultColor).darken(), "#ffffff"];
           break;
         case 2:
           colors = ["#000000", color ? color : defaultColor];
           break;
         case 3:
-          colors = ["#ffffff", color ? color : defaultColor.darker()];
+          colors = ["#ffffff", color ? color : chroma(defaultColor).darken()];
           break;
         default:
           colors = [
-            color ? color : defaultColor.darker(),
-            color ? color : defaultColor.darker()
+            color ? color : chroma(defaultColor).darken(),
+            color ? color : chroma(defaultColor).darken()
           ];
           break;
       }
@@ -1306,23 +1305,30 @@ function styleFormKey(key, i, forms, color) {
 }
 
 function createColorScale(count, index) {
-  var scaleOne = d3
-    .scaleSequential(d3.interpolateRainbow)
-    .domain(d3.range(0, count));
+  var scaleOne = chroma
+    .cubehelix()
+    .hue(0.5)
+    .lightness([0.4, 0.6])
+    .scale()
+    .colors(count * 2);
 
-  var scaleTwo = d3
-    .scaleSequential(d3.interpolateSpectral)
-    .domain(d3.range(0, count));
+  var scaleTwo = chroma
+    .cubehelix()
+    .hue(1)
+    .gamma(0.5)
+    .scale()
+    .colors(count * 2)
+    .reverse();
 
   var scale = [];
 
   for (var i = 0; i < count; i++) {
-    var color =
-      i % 2 === 0
-        ? d3.color(scaleOne((Math.abs(count - i - 5) / count) * 1))
-        : d3.color(scaleTwo((i / count) * 1));
+    var color = i % 2 === 0 ? scaleOne[i * 2] : scaleTwo[i * 2];
+    color = chroma(color)
+      .saturate()
+      .hex();
 
-    scale.push(color.hex());
+    scale.push(color);
   }
 
   return scale;

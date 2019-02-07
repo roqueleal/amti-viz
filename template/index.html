@@ -31,8 +31,8 @@
   <!-- Include Diacritics plugin -->
   <script src="js/vendor/latinize.js"></script>
 
-  <!-- Include d3 Colors plugin -->
-  <script src="js/vendor/d3colors.js"></script>
+  <!-- Include Chroma colors plugin -->
+  <script src="js/vendor/chroma.js"></script>
 
   <!--  Babel/Promise/Fetch Polyfills -->
   <script src="js/vendor/polyfills.js"></script>
@@ -46,24 +46,24 @@
 
 <script src="js/makeMap.js"></script>
 <script>
-var defaultColor = d3.color("#cad2d3");
+var defaultColor = "#cad2d3";
 
 var maps = [
-  {
-    id: "features-map",
-    sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
-  }
-  ,
-  {
-    id: "resources-map",
-    sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
-    allowedHeaders: [
-      lang ? "name_" + lang : "name",
-      lang ? "description_" + lang : "description",
-      "link"
-    ]
-  }
-  ,
+  // {
+  //   id: "features-map",
+  //   sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
+  // }
+  // ,
+  // {
+  //   id: "resources-map",
+  //   sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
+  //   allowedHeaders: [
+  //     lang ? "name_" + lang : "name",
+  //     lang ? "description_" + lang : "description",
+  //     "link"
+  //   ]
+  // }
+  // ,
   {
     id: "claims-map",
     sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
