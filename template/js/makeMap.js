@@ -21,10 +21,10 @@ function Map(container, options) {
   this.externalLinkText = options.externalLinkText;
   this.filters = [];
   this.footer = options.footer;
-  this.group;
+  this.groups = [];
   this.image = options.image;
   this.instructions = options.instructions;
-  this.json;
+  this.json = [];
   this.apiKey = options.apiKey;
   this.logo = options.logo;
   this.map;
@@ -48,7 +48,13 @@ function Map(container, options) {
   };
 
   this.removeGroups = function() {
-    this.map.removeLayer(this.group);
+    var _this = this;
+
+    this.groups.forEach(function(group) {
+      _this.map.removeLayer(group);
+    });
+
+    this.groups = [];
   };
 
   this.render = function() {
@@ -180,7 +186,7 @@ function init(
       makeNodes(options);
 
       var referenceSheets = widgets.filter(function(w) {
-        return w.legendReferenceSheetId;
+        return w.reference;
       });
 
       if (referenceSheets) {
@@ -188,12 +194,12 @@ function init(
 
         var referenceSheetURLS = widgets
           .map(function(w) {
-            if (w.legendReferenceSheetId) {
+            if (w.reference) {
               return (
                 dataURL +
                 spreadsheetID +
                 "/" +
-                w.legendReferenceSheetId +
+                w.reference +
                 "/public/values?alt=json"
               );
             }
@@ -227,26 +233,41 @@ function init(
 }
 
 function getWidgets(metaData) {
-  var widgetId = 0;
-  var widgets = Object.keys(metaData)
-    .filter(function(k) {
-      return k.toLowerCase().indexOf("data") > -1;
-    })
-    .map(function(k) {
-      var widgetOptions = metaData[k].split(",").map(function(o) {
-        return convertType(o);
-      });
+  var widgets = [];
 
-      return {
-        id: widgetId++,
-        type: widgetOptions[0],
-        field: widgetOptions[1].replace(/ /g, "_"),
-        instructions: widgetOptions[2],
-        maxItems: widgetOptions[3],
-        style: widgetOptions[4],
-        legendReferenceSheetId: widgetOptions[5]
-      };
+  function process(k, index, property) {
+    if (k.toLowerCase().indexOf(property) > -1)
+      widgets[index - 1][property] = convertType(metaData[k]);
+  }
+
+  var properties = [
+    "input",
+    "field",
+    "instructions",
+    "maximum",
+    "type",
+    "reference",
+    "style"
+  ];
+
+  Object.keys(metaData)
+    .filter(function(k) {
+      return k.toLowerCase().indexOf("widget") > -1;
+    })
+    .forEach(function(k) {
+      var index = k.match(/\d+/)[0];
+
+      widgets[index - 1] = widgets[index - 1] || {};
+
+      properties.forEach(function(property) {
+        process(k, index, property);
+      });
     });
+
+  widgets.forEach(function(w, i) {
+    w.field = w.field.replace(/ /g, "_");
+    w.id = i;
+  });
 
   return widgets;
 }
@@ -338,7 +359,7 @@ function makeWidgetContent(widgets, x) {
   var widgetNodes = "";
   var options;
 
-  switch (widgets[x].type) {
+  switch (widgets[x].input) {
     case "toggle":
       widgetNodes +=
         '<label for="toggle_' +
@@ -383,7 +404,7 @@ function makeWidgetContent(widgets, x) {
       var keyStyle;
 
       widgets[x].keys.forEach(function(key, i) {
-        switch (widgets[x].style) {
+        switch (widgets[x].type) {
           case "form":
             var forms = widgets[x].keys.map(function(f) {
               return f.value;
@@ -400,7 +421,7 @@ function makeWidgetContent(widgets, x) {
           '<li><label for="' +
           key.value +
           '"><input class="widget ' +
-          widgets[x].type +
+          widgets[x].input +
           '" type="checkbox" name="' +
           key.value +
           '" id="' +
@@ -432,8 +453,8 @@ function makeWidgets(jsons, options, boxContent) {
   var widgetContent = [];
 
   options.widgets.forEach(function(w, x) {
-    var legendData = w.legendReferenceSheetId
-      ? parseLegendData(jsons[x].feed.entry, w.style)
+    var legendData = w.reference
+      ? parseLegendData(jsons[x].feed.entry, w.type)
       : null;
 
     options.widgets[x].keys = legendData;
@@ -469,7 +490,36 @@ function makeWidgets(jsons, options, boxContent) {
       return resp.json();
     })
     .then(function(json) {
-      map.json = json;
+      var colorKey = map.widgets.find(function(w) {
+        return w.type === "color";
+      });
+
+      map.json = [json];
+
+      if (colorKey) {
+        map.json = [];
+        var featureGroups = json.features.groupBy(colorKey.field, "properties");
+
+        Object.keys(featureGroups)
+          .sort(function(a, b) {
+            return featureGroups[b][0].properties[colorKey.field].localeCompare(
+              featureGroups[a][0].properties[colorKey.field]
+            );
+          })
+          .map(function(feature) {
+            map.json.push({
+              type: "FeatureCollection",
+              features: featureGroups[feature]
+            });
+          });
+      }
+
+      if (!options.widgets.length) {
+        makeGroups(map);
+        var box = document.querySelector("#" + options.slug + " #controls");
+
+        box.innerHTML = "";
+      }
 
       options.widgets.forEach(function(w, x) {
         var element = document.querySelector(
@@ -507,14 +557,29 @@ function makeWidgets(jsons, options, boxContent) {
           .concat(search)
           .concat(toggle);
 
+        var initialized = 0;
+        var count = inputs.length;
+
         inputs.forEach(function(input) {
           if (input.type === "text") {
             input.addEventListener("keyup", function() {
-              handleChange(map, element, options.widgets[x]);
+              handleChange(
+                map,
+                element,
+                options.widgets[x],
+                count,
+                ++initialized
+              );
             });
           } else {
             input.addEventListener("change", function() {
-              handleChange(map, element, options.widgets[x]);
+              handleChange(
+                map,
+                element,
+                options.widgets[x],
+                count,
+                ++initialized
+              );
             });
           }
 
@@ -535,7 +600,7 @@ function makeWidgets(jsons, options, boxContent) {
 function handleReset(element, map, x) {
   element.querySelector("input[type='text']").value = "";
 
-  if (map.group) map.removeGroups();
+  if (map.groups.length) map.removeGroups();
 
   map.filters[x] = function() {
     return true;
@@ -544,7 +609,7 @@ function handleReset(element, map, x) {
   makeGroups(map);
 }
 
-function handleChange(map, element, widget) {
+function handleChange(map, element, widget, count, initialized) {
   var selections = element.querySelector("select")
     ? Array.from(element.querySelector("select").options)
     : element.querySelector("input[type='text']")
@@ -558,7 +623,7 @@ function handleChange(map, element, widget) {
   });
 
   map.filters[widget.id] =
-    widget.type === "toggle"
+    widget.input === "toggle"
       ? function(feature) {
           var bool = true;
 
@@ -603,10 +668,11 @@ function handleChange(map, element, widget) {
             return bool;
           };
 
-  if (map.group) map.removeGroups();
+  if (map.groups.length) map.removeGroups();
 
   map.map.invalidateSize();
-  makeGroups(map);
+
+  if (initialized >= count) makeGroups(map);
 }
 
 function makeDropdownOptions(widgets, x) {
@@ -623,7 +689,7 @@ function makeDropdownOptions(widgets, x) {
   return {
     choices: choices,
     removeItemButton: true,
-    maxItemCount: 6,
+    maxItemCount: widgets[x].maximum,
     callbackOnCreateTemplates: function callbackOnCreateTemplates(template) {
       var _this = this;
 
@@ -634,7 +700,8 @@ function makeDropdownOptions(widgets, x) {
           });
 
           var keyStyle;
-          switch (widgets[x].style) {
+
+          switch (widgets[x].type) {
             case "form":
               var forms = widgets[x].keys.map(function(k) {
                 return k.value.toLowerCase();
@@ -680,7 +747,7 @@ function makeDropdownOptions(widgets, x) {
           });
 
           var keyStyle;
-          switch (widgets[x].style) {
+          switch (widgets[x].type) {
             case "form":
               var forms = widgets[x].keys.map(function(k) {
                 return k.value.toLowerCase();
@@ -839,6 +906,14 @@ function pointToLayer(feature, latlng, map, colorKey, formKey) {
     pointStyle = styleFormKey(key, i, forms, color);
   } else if (colorKey) {
     pointStyle = styleColorKey(key);
+  } else {
+    pointStyle = {
+      class: "default",
+      svg:
+        '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+        "#38f" +
+        '"/></svg>'
+    };
   }
 
   var iconUrl = encodeURI(
@@ -874,138 +949,165 @@ function makeGeoJsonOptions(map, colorKey, formKey) {
 
 function makeGroups(map) {
   var colorKey = map.widgets.find(function(w) {
-    return w.style === "color";
+    return w.type === "color";
   });
+
   var formKey = map.widgets.find(function(w) {
-    return w.style === "form";
+    return w.type === "form";
   });
 
   var geoJsonOptions = makeGeoJsonOptions(map, colorKey, formKey);
 
-  map.group = new L.MarkerClusterGroup({
-    showCoverageOnHover: false,
-    zoomToBoundsOnClick: false,
-    maxClusterRadius: map.cluster,
-    iconCreateFunction: function(cluster) {
-      return L.divIcon({
-        className: "icon-group",
-        html:
-          '<span class="text" style="border: 1px solid #000000; color: #000000">' +
-          cluster.getChildCount() +
-          "</span>"
-      });
+  map.json.forEach(function(json, i) {
+    var color;
+
+    if (colorKey) {
+      var collectionName = json.features[0].properties[colorKey.field];
+
+      color = colorKey.keys.find(function(key) {
+        return key.value.toLowerCase() === collectionName.toLowerCase();
+      }).color;
+    } else {
+      color = "#000000";
     }
-  });
 
-  if (formKey) {
-    var colors = [];
-    var forms = [];
-
-    forms = formKey.keys.map(function(f) {
-      return f.value;
-    });
-
-    var key = formKey.keys.reduce(function(a, c) {
-      return c.form;
-    });
-
-    switch (key) {
-      case "line":
-        forms.forEach(function(f, i) {
-          switch (i) {
-            case 0:
-              colors.push([null, null]);
-              break;
-            case 1:
-              colors.push([null, defaultColor]);
-              break;
-            case 2:
-              colors.push(["#000000", null]);
-              break;
-            case 3:
-              colors.push(["#ffffff", null]);
-              break;
-            default:
-              colors.push([null, null]);
-              break;
-          }
-        });
-
-        var Background = function Background(feature) {
-          return styleFormFeature(
-            feature,
-            map,
-            formKey.field,
-            colors,
-            forms,
-            0
-          );
-        };
-
-        var geoJsonA = L.geoJson(
-          map.json,
-          _extends({}, geoJsonOptions, {
-            style: Background
-          })
-        );
-
-        map.group.addLayer(geoJsonA);
-
-        var Foreground = function Foreground(feature) {
-          return styleFormFeature(
-            feature,
-            map,
-            formKey.field,
-            colors,
-            forms,
-            1
-          );
-        };
-
-        var geoJsonB = L.geoJson(
-          map.json,
-          _extends({}, geoJsonOptions, {
-            style: Foreground
-          })
-        );
-
-        map.group.addLayer(geoJsonB);
-
-        break;
-      default:
-        map.json.features = map.json.features.sort(function(a, b) {
-          return b.properties[colorKey.field].localeCompare(
-            a.properties[colorKey.field]
-          );
-        });
-
-        var geoJson = L.geoJson(map.json, _extends({}, geoJsonOptions, {}));
-
-        map.group.addLayer(geoJson);
-    }
-  } else if (colorKey) {
-    var Style = function Style(feature) {
-      return styleColorFeature(feature, map, colorKey.field, colors, forms);
-    };
-
-    map.json.features = map.json.features.sort(function(a, b) {
-      return b.properties[colorKey.field].localeCompare(
-        a.properties[colorKey.field]
-      );
-    });
-
-    var geoJson = L.geoJson(
-      map.json,
-      _extends({}, geoJsonOptions, { style: Style })
+    map.groups.push(
+      new L.MarkerClusterGroup({
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: false,
+        maxClusterRadius: map.cluster,
+        iconCreateFunction: function(cluster) {
+          return L.divIcon({
+            className: "icon-group",
+            html:
+              '<span class="text" style="border: 2px solid' +
+              color +
+              "; color:" +
+              color +
+              '">' +
+              cluster.getChildCount() +
+              "</span>"
+          });
+        }
+      })
     );
 
-    map.group.addLayer(geoJson);
-  }
+    if (formKey) {
+      var colors = [];
+      var forms = [];
 
-  map.map.addLayer(map.group);
+      forms = formKey.keys.map(function(f) {
+        return f.value;
+      });
 
-  map.group.on("clusterclick", function(e) {
-    handleClusterClick(e, map);
+      var key = formKey.keys.reduce(function(a, c) {
+        return c.form;
+      });
+
+      switch (key) {
+        case "line":
+          forms.forEach(function(f, i) {
+            switch (i) {
+              case 0:
+                colors.push([null, null]);
+                break;
+              case 1:
+                colors.push([null, defaultColor]);
+                break;
+              case 2:
+                colors.push(["#000000", null]);
+                break;
+              case 3:
+                colors.push(["#ffffff", null]);
+                break;
+              default:
+                colors.push([null, null]);
+                break;
+            }
+          });
+
+          var Background = function Background(feature) {
+            return styleFormFeature(
+              feature,
+              map,
+              formKey.field,
+              colors,
+              forms,
+              0
+            );
+          };
+
+          var geoJsonA = L.geoJson(
+            json,
+            _extends({}, geoJsonOptions, {
+              style: Background
+            })
+          );
+
+          map.groups[i].addLayer(geoJsonA);
+
+          var Foreground = function Foreground(feature) {
+            return styleFormFeature(
+              feature,
+              map,
+              formKey.field,
+              colors,
+              forms,
+              1
+            );
+          };
+
+          var geoJsonB = L.geoJson(
+            json,
+            _extends({}, geoJsonOptions, {
+              style: Foreground
+            })
+          );
+
+          map.groups[i].addLayer(geoJsonB);
+
+          break;
+        default:
+          json.features = json.features.sort(function(a, b) {
+            return b.properties[colorKey.field].localeCompare(
+              a.properties[colorKey.field]
+            );
+          });
+
+          var geoJson = L.geoJson(json, _extends({}, geoJsonOptions, {}));
+
+          map.groups[i].addLayer(geoJson);
+      }
+    } else if (colorKey) {
+      var Style = function Style(feature) {
+        return styleColorFeature(feature, map, colorKey.field, colors, forms);
+      };
+
+      json.features = json.features.sort(function(a, b) {
+        return b.properties[colorKey.field].localeCompare(
+          a.properties[colorKey.field]
+        );
+      });
+
+      var geoJson = L.geoJson(
+        json,
+        _extends({}, geoJsonOptions, { style: Style })
+      );
+
+      map.groups[i].addLayer(geoJson);
+    } else {
+      // var Style = function Style(feature) {     };
+
+      var geoJson = L.geoJson(json, _extends({}, geoJsonOptions, {}));
+
+      map.groups[i].addLayer(geoJson);
+    }
+
+    map.map.addLayer(map.groups[i]);
+
+    map.groups[i].on("clusterclick", function(e) {
+      handleClusterClick(e, map, i);
+    });
   });
 }
 
@@ -1113,12 +1215,10 @@ function handleLayerClick(feature, layer, map) {
   }
 }
 
-function handleClusterClick(e, map) {
+function handleClusterClick(e, map, i) {
   map.map._layers[e.layer._leaflet_id].spiderfy();
 
   Object.keys(map.map._layers).forEach(function(layer, i) {
-    console.log(layer);
-
     if (parseInt(layer, 10) !== e.layer._leaflet_id) {
       if (map.map._layers[layer].unspiderfy)
         map.map._layers[layer].unspiderfy();
@@ -1127,7 +1227,7 @@ function handleClusterClick(e, map) {
 
   var isSpiderfied = false;
 
-  Object.values(map.group._featureGroup._layers).forEach(function(v) {
+  Object.values(map.groups[i]._featureGroup._layers).forEach(function(v) {
     if (v._group && v._group._spiderfied) isSpiderfied = true;
   });
 
@@ -1141,7 +1241,7 @@ function handleClusterClick(e, map) {
       return (d.style.opacity = isSpiderfied ? 0.2 : 1);
     }
   );
-  Object.values(map.group._featureGroup._layers).filter(function(v) {
+  Object.values(map.groups[i]._featureGroup._layers).filter(function(v) {
     e.layer
       .getAllChildMarkers()
       .map(function(m) {
@@ -1158,7 +1258,7 @@ function handleClusterClick(e, map) {
 
 function styleFormFeature(feature, map, field, colors, forms, index) {
   var colorKey = map.widgets.find(function(w) {
-    return w.style === "color";
+    return w.type === "color";
   });
 
   var key = colorKey.keys.find(function(k) {
@@ -1180,7 +1280,7 @@ function styleFormFeature(feature, map, field, colors, forms, index) {
 
 function styleColorFeature(feature, map, field, colors, forms, index) {
   var colorKey = map.widgets.find(function(w) {
-    return w.style === "color";
+    return w.type === "color";
   });
 
   var key = colorKey.keys.find(function(k) {
@@ -1219,7 +1319,6 @@ function styleColorKey(key) {
 function styleFormKey(key, i, forms, color) {
   var dashArray;
   var colors;
-
   switch (key.form) {
     case "line":
       var svg;
@@ -1259,7 +1358,7 @@ function styleFormKey(key, i, forms, color) {
         "' stroke-width='" +
         lineWeights[i][1] +
         "' stroke-linecap='square' stroke-dasharray='" +
-        (i === 4 ? "18,12" : lineDashArrays[i][0]) +
+        (i === 4 ? "18,12" : lineDashArrays[i][1]) +
         "'/></svg>";
 
       return { svg: svg, class: "line" };
@@ -1379,13 +1478,20 @@ var _extends =
     return target;
   };
 
-Array.prototype.groupBy = function(prop) {
-  return this.reduce(function(groups, item) {
-    var val = item[prop];
-    groups[val] = groups[val] || [];
-    groups[val].push(item);
-    return groups;
-  }, {});
+Array.prototype.groupBy = function(property1, property2) {
+  return property2
+    ? this.reduce(function(groups, item) {
+        var val = item[property2][property1];
+        groups[val] = groups[val] || [];
+        groups[val].push(item);
+        return groups;
+      }, {})
+    : this.reduce(function(groups, item) {
+        var val = item[property1];
+        groups[val] = groups[val] || [];
+        groups[val].push(item);
+        return groups;
+      }, {});
 };
 
 RegExp.escape = function(s) {
