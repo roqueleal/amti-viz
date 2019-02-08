@@ -215,9 +215,16 @@ header + p {
   margin: 8px 0;
 }
 
+.popupTitleStyle {
+  font-size: 16px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .popupHeaderStyle {
   font-family: "Open Sans Condensed", sans-serif;
   text-transform: uppercase;
+  font-weight: bold;
 }
 
 .popupEntryStyle {

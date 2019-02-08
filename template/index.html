@@ -46,18 +46,17 @@
 
 <script src="js/makeMap.js"></script>
 <script>
-var defaultColor = "#cad2d3";
 
 var maps = [
-  // {
-  //   id: "features-map",
-  //   sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
-  // }
+  {
+    id: "features-map",
+    sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
+  }
   // ,
   // {
   //   id: "resources-map",
   //   sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
-  //   allowedHeaders: [
+  //   popupHeaders: [
   //     lang ? "name_" + lang : "name",
   //     lang ? "description_" + lang : "description",
   //     "link"
@@ -67,17 +66,17 @@ var maps = [
   // {
   //   id: "claims-map",
   //   sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
-  //   allowedHeaders: [
+  //   popupHeaders: [
   //     lang ? "name_" + lang : "name",
   //     lang ? "description_" + lang : "description",
   //     "link"
   //   ]
   // }
   // ,
-  {
-    id: "aegis",
-    sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
-  }
+  // {
+  //   id: "aegis",
+  //   sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
+  // }
 ];
 
 maps.reverse().forEach((map, i) => {
@@ -86,12 +85,63 @@ maps.reverse().forEach((map, i) => {
       ? (mapboxStyle = "citui3waw00162jo1zcsf1urj")
       : (mapboxStyle = "cj84s9bet10f52ro2lrna50yg");
 
+
+
   setTimeout(() => {
     console.log(93);
-    makeMap(map.id, map.sheet, mapboxStyle, map.allowedHeaders);
+    makeMap({
+      mapID: map.id,
+      googleSheet: map.sheet,
+      mapboxStyle: mapboxStyle,
+      oceanColor: "#cad2d3",
+      popupHeaders: map.popupHeaders,
+      // popupContent: null,
+      // pointStyle: null,
+      // nonPointStyle: null,
+      onEachFeature: {
+        click: function(feature, layer, map){
+          alert("clicked")
+        }
+        // dbclick: null,
+        // mousedown: null,
+        // mouseenter: null,
+        // mouseout: null
+      },
+      formatPopupContent:function(feature,map){
+          return `<div class="popupTitleStyle">${feature.properties.name}</div>
+
+            ${
+              feature.properties.total_guided_missile_cruisers
+                ? `<div class="popupHeaderStyle">Guided Missile Cruisers: ${
+                    feature.properties.total_guided_missile_cruisers
+                  }</div>
+            <div><span class='popupEntryStyle'>BMD-Capable:</span>
+            <span class='popupEntryStyle'>${feature.properties.bmd_capable_gmc}</span></div>`
+                : ""
+            }
+        ${
+            feature.properties.total_guided_missile_destroyers
+              ? `<div class="popupHeaderStyle">Guided Missile Destroyers: ${
+                  feature.properties.total_guided_missile_destroyers
+                }</div>
+        <div><span class='popupEntryStyle'>BMD-Capable:</span>
+        <span class='popupEntryStyle'>${feature.properties.total_guided_missile_destroyers}</span></div>`
+              : ""
+          }`
+      }
+    });
   }, 2000 * i);
 });
 </script>
+
+
+<style>
+  .leaflet-popup-tip,
+  .leaflet-popup-content-wrapper {
+    color:#fff;
+    background-color: rgba(47, 82, 98, 0.85);
+  }
+</style>
 </body>
 
 </html>

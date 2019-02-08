@@ -10,34 +10,18 @@ var lang = href ? href[1] : null;
 
 var mapId = 0;
 
-function Map(container, options) {
-  // constructor {
+function Map(container, properties) {
   this.id = mapId++;
-  this.attribution = options.attribution;
-  this.center = options.center;
-  this.container = container;
-  this.cluster = options.cluster;
-  this.description = options.description;
-  this.externalLinkText = options.externalLinkText;
   this.filters = [];
-  this.footer = options.footer;
   this.groups = [];
-  this.image = options.image;
-  this.instructions = options.instructions;
   this.json = [];
-  this.apiKey = options.apiKey;
-  this.logo = options.logo;
   this.map;
-  this.mapboxStyle = options.mapboxStyle;
-  this.popupContent = options.popupContent;
-  this.popupHeaders = options.popupHeaders;
-  this.program = options.program;
-  this.slug = options.slug;
-  this.table = options.table;
-  this.title = options.title;
-  this.translations = options.translations;
-  this.widgets = options.widgets;
-  this.zoom = options.zoom;
+
+  var _this = this;
+
+  Object.keys(properties).forEach(function(property) {
+    _this[property] = properties[property];
+  });
 
   Map.all = Map.all || [];
 
@@ -48,8 +32,6 @@ function Map(container, options) {
   };
 
   this.removeGroups = function() {
-    var _this = this;
-
     this.groups.forEach(function(group) {
       _this.map.removeLayer(group);
     });
@@ -85,13 +67,9 @@ function Map(container, options) {
   };
 }
 
-function makeMap(container, spreadsheetID, mapboxStyle) {
-  var popupHeaders =
-    arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-  var popupContent =
-    arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
-
+function makeMap(options) {
   var dataURL = "https://spreadsheets.google.com/feeds/list/";
+  window.defaultColor = options.oceanColor;
 
   var translations;
 
@@ -103,39 +81,15 @@ function makeMap(container, spreadsheetID, mapboxStyle) {
       .then(function(json) {
         var translations = parseLanguageData(json.feed.entry);
 
-        init(
-          dataURL,
-          container,
-          spreadsheetID,
-          mapboxStyle,
-          popupHeaders,
-          popupContent,
-          translations
-        );
+        init(dataURL, options, translations);
       });
   } else {
-    init(
-      dataURL,
-      container,
-      spreadsheetID,
-      mapboxStyle,
-      popupHeaders,
-      popupContent,
-      translations
-    );
+    init(dataURL, options, translations);
   }
 }
 
-function init(
-  dataURL,
-  container,
-  spreadsheetID,
-  mapboxStyle,
-  popupHeaders,
-  popupContent,
-  translations
-) {
-  fetch(dataURL + spreadsheetID + "/" + 2 + "/public/values?alt=json")
+function init(dataURL, options, translations) {
+  fetch(dataURL + options.googleSheet + "/" + 2 + "/public/values?alt=json")
     .then(function(response) {
       return response.json();
     })
@@ -161,29 +115,42 @@ function init(
           return i;
         });
 
-      var options = {
+      var properties = {
+        apiKey: metaData["api key"],
         attribution: metaData.attribution,
-        mapboxStyle: mapboxStyle,
+        mapboxStyle: options.mapboxStyle,
         center: metaData.center.split(","),
         cluster: metaData.cluster,
         description: metaData.description,
         externalLinkText: metaData["external link text"],
+        formatPopupContent: options.formatPopupContent,
         image: metaData.image,
         instructions: metaData.instructions,
         logo: metaData.logo,
-        apiKey: metaData["api key"],
-        popupContent: metaDataContent.length ? metaDataContent : popupContent,
-        popupHeaders: metaDataHeaders.length ? metaDataHeaders : popupHeaders,
+        pointStyle: options.pointStyle,
+        nonPointStyle: options.nonPointStyle,
+        onEachFeature: options.onEachFeature,
+        popupContent: metaDataContent.length
+          ? metaDataContent
+          : options.popupContent
+            ? options.popupContent
+            : [],
+        popupHeaders: metaDataHeaders.length
+          ? metaDataHeaders
+          : options.popupHeaders
+            ? options.popupHeaders
+            : [],
         program: metaData.program,
         slug: metaData.title.toLowerCase().replace(/ /g, "-"),
         table: metaData.table,
         title: metaData.title,
         translations: translations,
+        website: metaData.website,
         widgets: widgets,
         zoom: metaData.zoom
       };
 
-      makeNodes(options);
+      makeNodes(properties);
 
       var referenceSheets = widgets.filter(function(w) {
         return w.reference;
@@ -197,7 +164,7 @@ function init(
             if (w.reference) {
               return (
                 dataURL +
-                spreadsheetID +
+                options.googleSheet +
                 "/" +
                 w.reference +
                 "/public/values?alt=json"
@@ -221,13 +188,13 @@ function init(
             );
           })
           .then(function(jsons) {
-            makeWidgets(jsons, options, boxContent);
+            makeWidgets(jsons, properties, boxContent);
           });
       } else {
         console.log("else");
-        makeWidgets(jsons, options, boxContent);
-        var container = document.querySelector("#" + options.slug + " .map");
-        new Map(container, options).render();
+        makeWidgets(jsons, properties, boxContent);
+        var container = document.querySelector("#" + properties.slug + " .map");
+        new Map(container, properties).render();
       }
     });
 }
@@ -409,11 +376,19 @@ function makeWidgetContent(widgets, x) {
             var forms = widgets[x].keys.map(function(f) {
               return f.value;
             });
-            keyStyle = styleFormKey(key, i, forms);
+            var styleOptions = {
+              key: key,
+              index: i,
+              forms: forms
+            };
+            keyStyle = styleKey(styleOptions);
             break;
 
           case "color":
-            keyStyle = styleColorKey(key);
+            var styleOptions = {
+              key: key
+            };
+            keyStyle = styleKey(styleOptions);
             break;
         }
 
@@ -431,8 +406,8 @@ function makeWidgetContent(widgets, x) {
           ' ><span class="' +
           keyStyle.class +
           'Key" ' +
-          "style=\"background-image: url('data:image/svg+xml;base64," +
-          window.btoa(keyStyle.svg) +
+          "style=\"background-image: url('" +
+          keyStyle.svg +
           '")></span>' +
           key.label +
           "</label></li>";
@@ -490,20 +465,25 @@ function makeWidgets(jsons, options, boxContent) {
       return resp.json();
     })
     .then(function(json) {
-      var colorKey = map.widgets.find(function(w) {
+      var colorKeyWidget = map.widgets.find(function(w) {
         return w.type === "color";
       });
 
       map.json = [json];
 
-      if (colorKey) {
+      if (colorKeyWidget) {
         map.json = [];
-        var featureGroups = json.features.groupBy(colorKey.field, "properties");
+        var featureGroups = json.features.groupBy(
+          colorKeyWidget.field,
+          "properties"
+        );
 
         Object.keys(featureGroups)
           .sort(function(a, b) {
-            return featureGroups[b][0].properties[colorKey.field].localeCompare(
-              featureGroups[a][0].properties[colorKey.field]
+            return featureGroups[b][0].properties[
+              colorKeyWidget.field
+            ].localeCompare(
+              featureGroups[a][0].properties[colorKeyWidget.field]
             );
           })
           .map(function(feature) {
@@ -670,8 +650,6 @@ function handleChange(map, element, widget, count, initialized) {
 
   if (map.groups.length) map.removeGroups();
 
-  map.map.invalidateSize();
-
   if (initialized >= count) makeGroups(map);
 }
 
@@ -706,11 +684,21 @@ function makeDropdownOptions(widgets, x) {
               var forms = widgets[x].keys.map(function(k) {
                 return k.value.toLowerCase();
               });
-              keyStyle = styleFormKey(key, i, forms);
+
+              var styleOptions = {
+                key: key,
+                index: i,
+                forms: forms
+              };
+
+              keyStyle = styleKey(styleOptions);
               break;
 
             case "color":
-              keyStyle = styleColorKey(key);
+              var styleOptions = {
+                key: key
+              };
+              keyStyle = styleKey(styleOptions);
               break;
           }
 
@@ -730,8 +718,8 @@ function makeDropdownOptions(widgets, x) {
             '><span class="' +
             keyStyle.class +
             'Key" ' +
-            "style=\"background-image: url('data:image/svg+xml;base64," +
-            window.btoa(keyStyle.svg) +
+            "style=\"background-image: url('" +
+            keyStyle.svg +
             '")></span> ' +
             data.label +
             '<button style="border-left: 1px solid ' +
@@ -747,17 +735,26 @@ function makeDropdownOptions(widgets, x) {
           });
 
           var keyStyle;
+
           switch (widgets[x].type) {
             case "form":
               var forms = widgets[x].keys.map(function(k) {
                 return k.value.toLowerCase();
               });
+              var styleOptions = {
+                key: key,
+                index: i,
+                forms: forms
+              };
 
-              keyStyle = styleFormKey(key, i, forms);
+              keyStyle = styleKey(styleOptions);
               break;
 
             case "color":
-              keyStyle = styleColorKey(key);
+              var styleOptions = {
+                key: key
+              };
+              keyStyle = styleKey(styleOptions);
               break;
           }
 
@@ -785,8 +782,8 @@ function makeDropdownOptions(widgets, x) {
             '> <span class="' +
             keyStyle.class +
             'Key" ' +
-            "style=\"background-image: url('data:image/svg+xml;base64," +
-            window.btoa(keyStyle.svg) +
+            "style=\"background-image: url('" +
+            keyStyle.svg +
             '")></span> ' +
             data.label +
             " </div> ";
@@ -839,13 +836,15 @@ function parseLegendData(json, style) {
 
           var colorVal = row[Object.keys(row)[y + 4]]["$t"];
 
+          data.form = row[Object.keys(row)[y + 5]]["$t"];
+
           data.color = colorVal
             ? colorVal
-            : style === "form"
+            : data.form === "line"
               ? defaultColor
               : colorScale[x];
 
-          data.form = row[Object.keys(row)[y + 5]]["$t"];
+          data.icon = row[Object.keys(row)[y + 6]]["$t"];
 
           legendItems.push(data);
         }
@@ -873,7 +872,7 @@ function parseMetaData(json) {
   return data;
 }
 
-function pointToLayer(feature, latlng, map, colorKey, formKey) {
+function pointToLayer(feature, latlng, map, colorKeyWidget, formKeyWidget) {
   var CustomIcon = L.Icon.extend({
     options: {
       iconSize: [20, 20]
@@ -882,43 +881,58 @@ function pointToLayer(feature, latlng, map, colorKey, formKey) {
 
   var pointStyle;
 
-  if (formKey) {
-    var forms = formKey.keys.map(function(k) {
+  if (formKeyWidget && feature.properties[formKeyWidget.field]) {
+    var forms = formKeyWidget.keys.map(function(k) {
       return k.value.toLowerCase();
     });
 
-    var i = forms.indexOf(feature.properties[formKey.field].toLowerCase());
+    var i = forms.indexOf(
+      feature.properties[formKeyWidget.field].toLowerCase()
+    );
 
-    var key = formKey.keys.find(function(k) {
+    var key = formKeyWidget.keys.find(function(k) {
       return (
         k.value.toLowerCase() ===
-        feature.properties[formKey.field].toLowerCase()
+        feature.properties[formKeyWidget.field].toLowerCase()
       );
     });
+    var styleOptions = {
+      key: key,
+      index: i,
+      forms: forms,
+      color: key.color,
+      map: map,
+      feature
+    };
 
-    var color = colorKey.keys.find(function(k) {
+    pointStyle = styleKey(styleOptions);
+  } else if (colorKeyWidget && feature.properties[colorKeyWidget.field]) {
+    var key = colorKeyWidget.keys.find(function(k) {
       return (
         k.value.toLowerCase() ===
-        feature.properties[colorKey.field].toLowerCase()
+        feature.properties[colorKeyWidget.field].toLowerCase()
       );
-    }).color;
+    });
+    var styleOptions = {
+      key: key,
+      map: map,
+      feature
+    };
 
-    pointStyle = styleFormKey(key, i, forms, color);
-  } else if (colorKey) {
-    pointStyle = styleColorKey(key);
+    pointStyle = styleKey(styleOptions);
   } else {
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+      "#38f" +
+      '"/></svg>';
+
     pointStyle = {
       class: "default",
-      svg:
-        '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-        "#38f" +
-        '"/></svg>'
+      svg: encodeURI("data:image/svg+xml;base64," + window.btoa(svg))
     };
   }
 
-  var iconUrl = encodeURI(
-    "data:image/svg+xml;base64," + window.btoa(pointStyle.svg)
-  );
+  var iconUrl = pointStyle.svg;
 
   var icon = new CustomIcon({ iconUrl: iconUrl });
 
@@ -927,46 +941,303 @@ function pointToLayer(feature, latlng, map, colorKey, formKey) {
   });
 }
 
-function makeGeoJsonOptions(map, colorKey, formKey) {
-  return {
-    filter: function(feature) {
-      return map.filters
-        .map(function(f) {
-          return f(feature);
-        })
-        .every(function(f) {
-          return f !== false;
+function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
+  if (formKeyWidget) {
+    var colors = [];
+    var forms = [];
+
+    forms = formKeyWidget.keys.map(function(f) {
+      return f.value;
+    });
+
+    var key = formKeyWidget.keys.reduce(function(a, c) {
+      return c.form;
+    });
+
+    switch (key) {
+      case "icon":
+        return [
+          {
+            filter: function(feature) {
+              return map.filters
+                .map(function(f) {
+                  return f(feature);
+                })
+                .every(function(f) {
+                  return f !== false;
+                });
+            },
+            onEachFeature: function(feature, layer) {
+              handleFeatureEvents(feature, layer, map);
+            },
+            pointToLayer: function(feature, latlng) {
+              var CustomIcon = L.Icon.extend({
+                options: {
+                  iconSize: [20, 20]
+                }
+              });
+
+              var svg =
+                '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+                "blue" +
+                '"/></svg>';
+              var iconUrl = encodeURI(
+                "data:image/svg+xml;base64," + window.btoa(svg)
+              );
+
+              var icon = new CustomIcon({ iconUrl: iconUrl });
+
+              return L.marker(latlng, {
+                icon: icon
+              });
+
+              // return pointToLayer(
+              //   feature,
+              //   latlng,
+              //   map,
+              //   colorKeyWidget,
+              //   formKeyWidget
+              // );
+            },
+            style: function(feature) {
+              return {
+                color: "blue",
+                weight: 3,
+                lineCap: "square",
+                dashArray: "7,3"
+              };
+
+              // return styleNonPointForm(
+              //   feature,
+              //   map,
+              //   formKeyWidget.field,
+              //   colors,
+              //   forms
+              // );
+            }
+          }
+        ];
+
+        break;
+      case "line":
+        forms.forEach(function(f, i) {
+          switch (i) {
+            case 0:
+              colors.push([null, null]);
+              break;
+            case 1:
+              colors.push([null, defaultColor]);
+              break;
+            case 2:
+              colors.push(["#000000", null]);
+              break;
+            case 3:
+              colors.push(["#ffffff", null]);
+              break;
+            default:
+              colors.push([null, null]);
+              break;
+          }
         });
-    },
-    pointToLayer: function(feature, latlng) {
-      return pointToLayer(feature, latlng, map, colorKey, formKey);
-    },
-    onEachFeature: function(feature, layer) {
-      handleFeatureClick(feature, layer, map);
+
+        var backgroundOptions = {
+          filter: function(feature) {
+            return map.filters
+              .map(function(f) {
+                return f(feature);
+              })
+              .every(function(f) {
+                return f !== false;
+              });
+          },
+          onEachFeature: function(feature, layer) {
+            handleFeatureEvents(feature, layer, map);
+          },
+          pointToLayer: function(feature, latlng) {
+            return pointToLayer(
+              feature,
+              latlng,
+              map,
+              colorKeyWidget,
+              formKeyWidget
+            );
+          },
+          style: function(feature) {
+            return styleNonPointForm(
+              feature,
+              map,
+              formKeyWidget.field,
+              colors,
+              forms,
+              0
+            );
+          }
+        };
+
+        var foregroundOptions = {
+          filter: function(feature) {
+            return map.filters
+              .map(function(f) {
+                return f(feature);
+              })
+              .every(function(f) {
+                return f !== false;
+              });
+          },
+          onEachFeature: function(feature, layer) {
+            handleFeatureEvents(feature, layer, map);
+          },
+          pointToLayer: function(feature, latlng) {
+            return pointToLayer(
+              feature,
+              latlng,
+              map,
+              colorKeyWidget,
+              formKeyWidget
+            );
+          },
+          style: function(feature) {
+            return styleNonPointForm(
+              feature,
+              map,
+              formKeyWidget.field,
+              colors,
+              forms,
+              1
+            );
+          }
+        };
+
+        return [backgroundOptions, foregroundOptions];
+
+      default:
+        return [
+          {
+            filter: function(feature) {
+              return map.filters
+                .map(function(f) {
+                  return f(feature);
+                })
+                .every(function(f) {
+                  return f !== false;
+                });
+            },
+            onEachFeature: function(feature, layer) {
+              handleFeatureEvents(feature, layer, map);
+            },
+            pointToLayer: function(feature, latlng) {
+              return pointToLayer(
+                feature,
+                latlng,
+                map,
+                colorKeyWidget,
+                formKeyWidget
+              );
+            },
+            style: function(feature) {
+              return styleNonPointForm(
+                feature,
+                map,
+                formKeyWidget.field,
+                colors,
+                forms,
+                1
+              );
+            }
+          }
+        ];
     }
-  };
+  } else if (colorKeyWidget) {
+    return [
+      {
+        filter: function(feature) {
+          return map.filters
+            .map(function(f) {
+              return f(feature);
+            })
+            .every(function(f) {
+              return f !== false;
+            });
+        },
+        onEachFeature: function(feature, layer) {
+          handleFeatureEvents(feature, layer, map);
+        },
+        pointToLayer: function(feature, latlng) {
+          return pointToLayer(
+            feature,
+            latlng,
+            map,
+            colorKeyWidget,
+            formKeyWidget
+          );
+        },
+        style: function(feature) {
+          return styleNonPointColor(feature, map, colorKeyWidget, colors);
+        }
+      }
+    ];
+  } else {
+    return [
+      {
+        filter: function(feature) {
+          return map.filters
+            .map(function(f) {
+              return f(feature);
+            })
+            .every(function(f) {
+              return f !== false;
+            });
+        },
+        onEachFeature: function(feature, layer) {
+          handleFeatureEvents(feature, layer, map);
+        },
+        pointToLayer: function(feature, latlng) {
+          return pointToLayer(
+            feature,
+            latlng,
+            map,
+            colorKeyWidget,
+            formKeyWidget
+          );
+        }
+        // style: function(feature) {
+        //   console.log(1164);
+        //   return styleNonPointColor(
+        //     feature,
+        //     map,
+        //     colorKeyWidget,
+        //     colors,
+        //     forms,
+        //     index
+        //   );
+        // }
+      }
+    ];
+  }
 }
 
 function makeGroups(map) {
-  var colorKey = map.widgets.find(function(w) {
+  var colorKeyWidget = map.widgets.find(function(w) {
     return w.type === "color";
   });
 
-  var formKey = map.widgets.find(function(w) {
+  var formKeyWidget = map.widgets.find(function(w) {
     return w.type === "form";
   });
 
-  var geoJsonOptions = makeGeoJsonOptions(map, colorKey, formKey);
+  var geoJsonOptions = makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget);
 
   map.json.forEach(function(json, i) {
     var color;
 
-    if (colorKey) {
-      var collectionName = json.features[0].properties[colorKey.field];
+    if (colorKeyWidget) {
+      var collectionName = json.features[0].properties[colorKeyWidget.field];
 
-      color = colorKey.keys.find(function(key) {
+      var colorKey = colorKeyWidget.keys.find(function(key) {
         return key.value.toLowerCase() === collectionName.toLowerCase();
-      }).color;
+      });
+
+      color = colorKey ? colorKey.color : "#000000";
     } else {
       color = "#000000";
     }
@@ -992,116 +1263,19 @@ function makeGroups(map) {
       })
     );
 
-    if (formKey) {
-      var colors = [];
-      var forms = [];
-
-      forms = formKey.keys.map(function(f) {
-        return f.value;
-      });
-
-      var key = formKey.keys.reduce(function(a, c) {
-        return c.form;
-      });
-
-      switch (key) {
-        case "line":
-          forms.forEach(function(f, i) {
-            switch (i) {
-              case 0:
-                colors.push([null, null]);
-                break;
-              case 1:
-                colors.push([null, defaultColor]);
-                break;
-              case 2:
-                colors.push(["#000000", null]);
-                break;
-              case 3:
-                colors.push(["#ffffff", null]);
-                break;
-              default:
-                colors.push([null, null]);
-                break;
-            }
-          });
-
-          var Background = function Background(feature) {
-            return styleFormFeature(
-              feature,
-              map,
-              formKey.field,
-              colors,
-              forms,
-              0
-            );
-          };
-
-          var geoJsonA = L.geoJson(
-            json,
-            _extends({}, geoJsonOptions, {
-              style: Background
-            })
+    geoJsonOptions.forEach(function(option) {
+      if (colorKeyWidget) {
+        json.features = json.features.sort(function(a, b) {
+          return b.properties[colorKeyWidget.field].localeCompare(
+            a.properties[colorKeyWidget.field]
           );
-
-          map.groups[i].addLayer(geoJsonA);
-
-          var Foreground = function Foreground(feature) {
-            return styleFormFeature(
-              feature,
-              map,
-              formKey.field,
-              colors,
-              forms,
-              1
-            );
-          };
-
-          var geoJsonB = L.geoJson(
-            json,
-            _extends({}, geoJsonOptions, {
-              style: Foreground
-            })
-          );
-
-          map.groups[i].addLayer(geoJsonB);
-
-          break;
-        default:
-          json.features = json.features.sort(function(a, b) {
-            return b.properties[colorKey.field].localeCompare(
-              a.properties[colorKey.field]
-            );
-          });
-
-          var geoJson = L.geoJson(json, _extends({}, geoJsonOptions, {}));
-
-          map.groups[i].addLayer(geoJson);
+        });
       }
-    } else if (colorKey) {
-      var Style = function Style(feature) {
-        return styleColorFeature(feature, map, colorKey.field, colors, forms);
-      };
 
-      json.features = json.features.sort(function(a, b) {
-        return b.properties[colorKey.field].localeCompare(
-          a.properties[colorKey.field]
-        );
-      });
-
-      var geoJson = L.geoJson(
-        json,
-        _extends({}, geoJsonOptions, { style: Style })
-      );
+      var geoJson = L.geoJson(json, _extends({}, option));
 
       map.groups[i].addLayer(geoJson);
-    } else {
-      // var Style = function Style(feature) {     };
-
-      var geoJson = L.geoJson(json, _extends({}, geoJsonOptions, {}));
-
-      map.groups[i].addLayer(geoJson);
-    }
+    });
 
     map.map.addLayer(map.groups[i]);
 
@@ -1111,15 +1285,27 @@ function makeGroups(map) {
   });
 }
 
-function handleFeatureClick(feature, layer, map) {
-  layer.on({
-    click: function() {
-      handleLayerClick(feature, layer, map);
-    }
-  });
+function handleFeatureEvents(feature, layer, map) {
+  var eventOptions = map.onEachFeature
+    ? map.onEachFeature
+    : {
+        click: function() {
+          handleLayerClick(feature, layer, map);
+        }
+      };
 
-  var description;
-  description = Object.keys(feature.properties)
+  layer.on(eventOptions);
+
+  var popupContent = map.formatPopupContent
+    ? map.formatPopupContent(feature, map)
+    : formatPopupContent(feature, map);
+
+  layer.bindPopup(popupContent);
+}
+
+function formatPopupContent(feature, map) {
+  var content;
+  content = Object.keys(feature.properties)
     .map(function(p) {
       if (feature.properties[p]) {
         if (map.popupHeaders.length && map.popupContent.length) {
@@ -1172,7 +1358,7 @@ function handleFeatureClick(feature, layer, map) {
         "</div>"
       : "";
 
-  description += externalLinkContent;
+  content += externalLinkContent;
 
   if (lang) {
     translatableStrings = Object.keys(map.translations).sort(function(a, b) {
@@ -1182,11 +1368,9 @@ function handleFeatureClick(feature, layer, map) {
     translatableStrings.forEach(function(t) {
       var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
 
-      description = description.replace(re, map.translations[t]);
+      content = content.replace(re, map.translations[t]);
     });
   }
-
-  layer.bindPopup(description);
 }
 
 function handleLayerClick(feature, layer, map) {
@@ -1256,150 +1440,270 @@ function handleClusterClick(e, map, i) {
   });
 }
 
-function styleFormFeature(feature, map, field, colors, forms, index) {
-  var colorKey = map.widgets.find(function(w) {
+function styleNonPointForm(feature, map, field, colors, forms, index) {
+  var formKeyWidget = map.widgets.find(function(w) {
+    return w.type === "form";
+  });
+
+  var colorKeyWidget = map.widgets.find(function(w) {
     return w.type === "color";
   });
 
-  var key = colorKey.keys.find(function(k) {
+  var colorKey = colorKeyWidget.keys.find(function(k) {
     return (
-      k.value.toLowerCase() === feature.properties[colorKey.field].toLowerCase()
+      k.value.toLowerCase() ===
+      feature.properties[colorKeyWidget.field].toLowerCase()
+    );
+  });
+  var formKey = formKeyWidget.keys.find(function(k) {
+    return (
+      k.value.toLowerCase() ===
+      feature.properties[formKeyWidget.field].toLowerCase()
     );
   });
 
-  var i = forms.indexOf(feature.properties[field]);
+  var color = colorKey ? colorKey.color : formKey ? formKey.color : null;
 
-  if (i > -1)
-    return {
-      color: colors[i][index] ? colors[i][index] : key.color,
-      weight: lineWeights[i][index],
-      lineCap: "square",
-      dashArray: lineDashArrays[i] ? lineDashArrays[i][index] : null
-    };
-}
-
-function styleColorFeature(feature, map, field, colors, forms, index) {
-  var colorKey = map.widgets.find(function(w) {
-    return w.type === "color";
-  });
-
-  var key = colorKey.keys.find(function(k) {
+  var form = formKeyWidget.keys.find(function(k) {
     return (
-      k.value.toLowerCase() === feature.properties[colorKey.field].toLowerCase()
+      k.value.toLowerCase() ===
+      feature.properties[formKeyWidget.field].toLowerCase()
     );
-  });
+  }).form;
 
-  if (feature.properties.toggle === "line") {
-    return {
-      color: chroma(key.color)
-        .brighten()
-        .hex(),
-      weight: 4
-    };
-  } else {
-    return {
-      fillColor: key.color,
-      color: defaultColor,
-      fillOpacity: 0.7,
-      opacity: 0.5,
-      weight: 2
-    };
+  if (forms) {
+    var i = forms.indexOf(feature.properties[field]);
+    if (i > -1) {
+      switch (form) {
+        case "icon":
+          var latlng = feature.geometry.coordinates;
+
+          var CustomIcon = L.Icon.extend({
+            options: {
+              iconSize: [20, 20]
+            }
+          });
+
+          var svg =
+            '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+            color +
+            '"/></svg>';
+
+          var iconUrl = encodeURI(
+            "data:image/svg+xml;base64," + window.btoa(svg)
+          );
+
+          var icon = new CustomIcon({ iconUrl: iconUrl });
+
+          return L.marker(latlng, {
+            icon: icon
+          });
+
+        case "line":
+          return {
+            color: colors[i][index] ? colors[i][index] : color,
+            weight: lineWeights[i][index],
+            lineCap: "square",
+            dashArray: lineDashArrays[i] ? lineDashArrays[i][index] : null
+          };
+      }
+    }
   }
 }
 
-function styleColorKey(key) {
-  var svg =
-    '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-    key.color +
-    '"/></svg>';
+function styleNonPointColor(
+  feature,
+  map,
+  colorKeyWidget,
+  colors,
+  forms,
+  index
+) {
+  if (feature.properties[colorKeyWidget.field]) {
+    var key = colorKeyWidget.keys.find(function(k) {
+      return (
+        k.value.toLowerCase() ===
+        feature.properties[colorKeyWidget.field].toLowerCase()
+      );
+    });
 
-  return { svg: svg, class: "color" };
+    if (feature.properties.toggle === "line") {
+      return {
+        color: chroma(key.color)
+          .brighten()
+          .hex(),
+        weight: 4
+      };
+    } else {
+      return {
+        fillColor: key.color,
+        color: defaultColor,
+        fillOpacity: 0.7,
+        opacity: 0.5,
+        weight: 2
+      };
+    }
+  } else {
+    return styleNonPointForm(feature, map, colorKeyWidget.field, colors);
+  }
 }
 
-function styleFormKey(key, i, forms, color) {
+function styleKey(options) {
+  var keyColor;
   var dashArray;
   var colors;
-  switch (key.form) {
+  switch (options.key.form) {
     case "line":
-      var svg;
-      switch (i) {
-        case 0:
-          colors = [
-            color ? color : chroma(defaultColor).darken(),
-            color ? color : chroma(defaultColor).darken()
-          ];
-          break;
-        case 1:
-          colors = [color ? color : chroma(defaultColor).darken(), "#ffffff"];
-          break;
-        case 2:
-          colors = ["#000000", color ? color : defaultColor];
-          break;
-        case 3:
-          colors = ["#ffffff", color ? color : chroma(defaultColor).darken()];
-          break;
-        default:
-          colors = [
-            color ? color : chroma(defaultColor).darken(),
-            color ? color : chroma(defaultColor).darken()
-          ];
-          break;
+      keyColor = options.key.color ? options.key.color : options.color;
+
+      if (options.forms) {
+        var svg;
+        switch (options.index) {
+          case 0:
+            colors = [
+              keyColor ? keyColor : chroma(defaultColor).darken(),
+              color ? color : chroma(defaultColor).darken()
+            ];
+            break;
+          case 1:
+            colors = [
+              keyColor ? keyColor : chroma(defaultColor).darken(),
+              "#ffffff"
+            ];
+            break;
+          case 2:
+            colors = ["#000000", keyColor ? keyColor : defaultColor];
+            break;
+          case 3:
+            colors = [
+              "#ffffff",
+              keyColor ? keyColor : chroma(defaultColor).darken()
+            ];
+            break;
+          default:
+            colors = [
+              keyColor ? keyColor : chroma(defaultColor).darken(),
+              keyColor ? keyColor : chroma(defaultColor).darken()
+            ];
+            break;
+        }
+
+        svg =
+          "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+          colors[0] +
+          "' stroke-width='" +
+          lineWeights[i][0] +
+          "' stroke-linecap='square' stroke-dasharray='" +
+          (i === 4 ? "18,12" : lineDashArrays[i][0]) +
+          "'/><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+          colors[1] +
+          "' stroke-width='" +
+          lineWeights[i][1] +
+          "' stroke-linecap='square' stroke-dasharray='" +
+          (i === 4 ? "18,12" : lineDashArrays[i][1]) +
+          "'/></svg>";
+      } else {
+        svg =
+          "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
+          keyColor +
+          "' stroke-width='" +
+          3 +
+          "' stroke-linecap='square' stroke-dasharray='" +
+          "7,3" +
+          "'/></svg>";
+      }
+      return {
+        svg: "data:image/svg+xml;base64," + window.btoa(svg),
+        class: "line"
+      };
+    case "icon":
+      var svg = options.key.icon
+        ? options.key.icon
+        : "data:image/svg+xml;base64," +
+          window.btoa(
+            '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+              keyColor +
+              '"/></svg>'
+          );
+
+      return {
+        svg: svg,
+        class: "shape"
+      };
+    case "shape":
+      if (options.feature) {
+        var colorKeyWidget = options.map.widgets.find(function(w) {
+          return w.type === "color";
+        });
+
+        var colorKey = colorKeyWidget.keys.find(function(k) {
+          return (
+            k.value.toLowerCase() ===
+            options.feature.properties[colorKeyWidget.field].toLowerCase()
+          );
+        });
+
+        keyColor = colorKey
+          ? colorKey.color
+          : options.color
+            ? options.color
+            : null;
       }
 
-      svg =
-        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
-        colors[0] +
-        "' stroke-width='" +
-        lineWeights[i][0] +
-        "' stroke-linecap='square' stroke-dasharray='" +
-        (i === 4 ? "18,12" : lineDashArrays[i][0]) +
-        "'/><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
-        colors[1] +
-        "' stroke-width='" +
-        lineWeights[i][1] +
-        "' stroke-linecap='square' stroke-dasharray='" +
-        (i === 4 ? "18,12" : lineDashArrays[i][1]) +
-        "'/></svg>";
-
-      return { svg: svg, class: "line" };
-
-    case "shape":
       var svg;
-      switch (i) {
+      switch (options.index) {
         case 0:
           svg =
             '<svg xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rainbow"  y1="4.5" x2="9" y2="4.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(4.5 -4.5) rotate(135)"><stop offset="0" stop-color="#7f3c8d"/><stop offset="0.325" stop-color="#e73f74"/><stop offset="0.5" stop-color="#f2b701"/><stop offset="0.675" stop-color="#11a579"/><stop offset="1" stop-color="#3969ac"/></linearGradient></defs><rect x="3.25" y="1.75" width="9" height="9" transform="translate(4.5 -4.5) rotate(45)" ' +
-            (color ? 'paint-order="stroke" stroke="#ffffff"' : "") +
+            (keyColor ? 'paint-order="stroke" stroke="#ffffff"' : "") +
             ' fill="' +
-            (color ? color : "url(#rainbow)") +
+            (keyColor ? keyColor : "url(#rainbow)") +
             '" /></svg>';
           break;
         case 1:
           svg =
             '<svg xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rainbow" y1="5" x2="10" y2="5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3969ac"/><stop offset="0.25" stop-color="#11a579"/><stop offset="0.5" stop-color="#f2b701"/><stop offset="0.75" stop-color="#e73f74"/><stop offset="1" stop-color="#7f3c8d"/></linearGradient></defs><rect width="10" height="10" ' +
-            (color ? 'stroke="#ffffff"' : "") +
+            (keyColor ? 'stroke="#ffffff"' : "") +
             ' fill="' +
-            (color ? color : "url(#rainbow)") +
+            (keyColor ? keyColor : "url(#rainbow)") +
             '"/></svg>';
           break;
         case 2:
           svg =
             '<svg xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rainbow" y1="5" x2="10" y2="5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3969ac"/><stop offset="0.325" stop-color="#11a579"/><stop offset="0.5" stop-color="#f2b701"/><stop offset="0.675" stop-color="#e73f74"/><stop offset="1" stop-color="#7f3c8d"/></linearGradient></defs><polygon points="6 10.39 0 10.39 3 5.2 6 0 9 5.2 12 10.39 6 10.39" ' +
-            (color ? 'paint-order="stroke" stroke="#ffffff"' : "") +
+            (keyColor ? 'paint-order="stroke" stroke="#ffffff"' : "") +
             ' fill="' +
-            (color ? color : "url(#rainbow)") +
+            (keyColor ? keyColor : "url(#rainbow)") +
             '" /></svg>';
           break;
         default:
           svg =
             '<svg xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rainbow" y1="5" x2="10" y2="5" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3969ac"/><stop offset="0.25" stop-color="#11a579"/><stop offset="0.5" stop-color="#f2b701"/><stop offset="0.75" stop-color="#e73f74"/><stop offset="1" stop-color="#7f3c8d"/></linearGradient></defs><circle cx="6" cy="6" r="5" ' +
-            (color ? 'stroke="#ffffff"' : "") +
+            (keyColor ? 'stroke="#ffffff"' : "") +
             ' fill="' +
-            (color ? color : "url(#rainbow)") +
+            (keyColor ? keyColor : "url(#rainbow)") +
             '"/></svg>';
       }
 
-      return { svg: svg, class: "shape" };
+      return {
+        svg: "data:image/svg+xml;base64," + window.btoa(svg),
+        class: "shape"
+      };
+
+    default:
+      keyColor = options.key.color;
+      var svg =
+        "data:image/svg+xml;base64," +
+        window.btoa(
+          '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+            keyColor +
+            '"/></svg>'
+        );
+
+      return {
+        svg: svg,
+        class: "color"
+      };
   }
 }
 
