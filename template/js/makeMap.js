@@ -985,114 +985,81 @@ function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
     return stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget);
   };
 
-  var colors = [];
-  var forms = [];
+  var form = formKeyWidget
+    ? formKeyWidget.keys.reduce(function(a, c) {
+        return c.form;
+      })
+    : null;
 
-  if (formKeyWidget) {
+  if (formKeyWidget && form === "line") {
+    var colors = [];
+    var forms = [];
     forms = formKeyWidget.keys.map(function(f) {
       return f.value;
     });
 
-    var form = formKeyWidget.keys.reduce(function(a, c) {
-      return c.form;
+    forms.forEach(function(f, i) {
+      switch (i) {
+        case 0:
+          colors.push([null, null]);
+          break;
+        case 1:
+          colors.push([null, defaultColor]);
+          break;
+        case 2:
+          colors.push(["#000000", null]);
+          break;
+        case 3:
+          colors.push(["#ffffff", null]);
+          break;
+        default:
+          colors.push([null, null]);
+          break;
+      }
     });
 
-    switch (form) {
-      case "line":
-        console.log(1037);
-        forms.forEach(function(f, i) {
-          switch (i) {
-            case 0:
-              colors.push([null, null]);
-              break;
-            case 1:
-              colors.push([null, defaultColor]);
-              break;
-            case 2:
-              colors.push(["#000000", null]);
-              break;
-            case 3:
-              colors.push(["#ffffff", null]);
-              break;
-            default:
-              colors.push([null, null]);
-              break;
-          }
-        });
+    var styleOptions = {
+      map: map,
+      formKeyWidget: formKeyWidget,
+      colorKeyWidget: colorKeyWidget,
+      colors: colors,
+      forms: forms
+    };
 
-        var backgroundOptions = {
-          filter: filter,
-          onEachFeature: onEachFeature,
-          pointToLayer: pointToLayer,
-          style: function(feature) {
-            return styleNonPointForm(
-              feature,
-              map,
-              formKeyWidget,
-              colorKeyWidget,
-              colors,
-              forms,
-              0
-            );
-          }
-        };
+    var backgroundOptions = {
+      filter: filter,
+      onEachFeature: onEachFeature,
+      pointToLayer: pointToLayer,
+      style: function(feature) {
+        return styleNonPoint(feature, styleOptions, 0);
+      }
+    };
 
-        var foregroundOptions = {
-          filter: filter,
-          onEachFeature: onEachFeature,
-          pointToLayer: pointToLayer,
-          style: function(feature) {
-            return styleNonPointForm(
-              feature,
-              map,
-              formKeyWidget,
-              colorKeyWidget,
-              colors,
-              forms,
-              1
-            );
-          }
-        };
+    var foregroundOptions = {
+      filter: filter,
+      onEachFeature: onEachFeature,
+      pointToLayer: pointToLayer,
+      style: function(feature) {
+        return styleNonPoint(feature, styleOptions, 1);
+      }
+    };
 
-        return [backgroundOptions, foregroundOptions];
+    return [backgroundOptions, foregroundOptions];
+  } else {
+    var styleOptions = {
+      map: map,
+      formKeyWidget: formKeyWidget,
+      colorKeyWidget: colorKeyWidget
+    };
 
-      default:
-        return [
-          {
-            filter: filter,
-            onEachFeature: onEachFeature,
-            pointToLayer: pointToLayer,
-            style: function(feature) {
-              return styleNonPointForm(
-                feature,
-                map,
-                formKeyWidget.field,
-                colors,
-                forms,
-                1
-              );
-            }
-          }
-        ];
-    }
-  } else if (colorKeyWidget) {
     return [
       {
         filter: filter,
         onEachFeature: onEachFeature,
         pointToLayer: pointToLayer,
         style: function(feature) {
-          return styleNonPointForm(feature, map, colorKeyWidget.field, colors);
+          return styleNonPoint(feature, styleOptions);
         }
-      }
-    ];
-  } else {
-    console.log(1136);
-    return [
-      {
-        filter: filter,
-        onEachFeature: onEachFeature,
-        pointToLayer: pointToLayer
       }
     ];
   }
@@ -1322,100 +1289,84 @@ function handleClusterClick(e, map, i) {
   });
 }
 
-function styleNonPointForm(
-  feature,
-  map,
-  formKeyWidget,
-  colorKeyWidget,
-  colors,
-  forms,
-  index
-) {
-  var colorKey = colorKeyWidget.keys.find(function(k) {
-    return (
-      k.value.toLowerCase() ===
-      feature.properties[colorKeyWidget.field].toLowerCase()
-    );
-  });
+function styleNonPoint(feature, options, index) {
+  var { map, formKeyWidget, colorKeyWidget, colors, forms } = options;
 
-  var formKey = formKeyWidget.keys.find(function(k) {
-    return (
-      k.value.toLowerCase() ===
-      feature.properties[formKeyWidget.field].toLowerCase()
-    );
-  });
+  var colorKey = colorKeyWidget
+    ? colorKeyWidget.keys.find(function(k) {
+        return (
+          k.value.toLowerCase() ===
+          feature.properties[colorKeyWidget.field].toLowerCase()
+        );
+      })
+    : null;
+
+  var formKey = formKeyWidget
+    ? formKeyWidget.keys.find(function(k) {
+        return (
+          k.value.toLowerCase() ===
+          feature.properties[formKeyWidget.field].toLowerCase()
+        );
+      })
+    : null;
+
   var color = colorKey ? colorKey.color : formKey ? formKey.color : null;
 
-  var form = formKeyWidget.keys.reduce(function(a, c) {
-    return c.form;
-  });
+  var formKeyForm = formKeyWidget
+    ? formKeyWidget.keys.reduce(function(a, c) {
+        return c.form;
+      })
+    : null;
 
-  if (forms) {
+  var colorKeyForm = colorKeyWidget
+    ? colorKeyWidget.keys.reduce(function(a, c) {
+        return c.form;
+      })
+    : null;
+
+  if ((forms && formKeyForm === "line") || (forms && colorKeyForm === "line")) {
     var i = forms.indexOf(feature.properties[formKeyWidget.field]);
 
     if (i > -1) {
-      switch (form) {
-        case "icon":
-
-        case "line":
-          return {
-            color: colors[i][index] ? colors[i][index] : color,
-            weight: lineWeights[i][index],
-            lineCap: "square",
-            dashArray: lineDashArrays[i] ? lineDashArrays[i][index] : null
-          };
-      }
+      return {
+        color: colors[i][index] ? colors[i][index] : color,
+        weight: lineWeights[i][index],
+        lineCap: "square",
+        dashArray: lineDashArrays[i] ? lineDashArrays[i][index] : null
+      };
     }
+  } else if (formKeyForm === "line" || colorKeyForm === "line") {
+    return {
+      color: color,
+      weight: 2,
+      lineCap: "square",
+      dashArray: "3,7"
+    };
   } else {
-    switch (form) {
-      case "icon":
-        var latlng = feature.geometry.coordinates;
-
-        console.log(form);
-        var CustomIcon = L.Icon.extend({
-          options: {
-            iconSize: [20, 20]
-          }
-        });
-
-        var svg =
-          '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-          color +
-          '"/></svg>';
-
-        var iconUrl = encodeURI(
-          "data:image/svg+xml;base64," + window.btoa(svg)
-        );
-
-        var icon = new CustomIcon({ iconUrl: iconUrl });
-
-        return L.marker(latlng, {
-          icon: icon
-        });
-
-      case "line":
-        return {
-          color: colorKey ? colorKey.color : defaultColor,
-          weight: 3,
-          lineCap: "square",
-          dashArray: "3,7"
-        };
-    }
+    return {
+      fillColor: color,
+      color: defaultColor,
+      fillOpacity: 0.7,
+      opacity: 0.5,
+      weight: 2,
+      lineCap: "square"
+    };
   }
 }
 
 function styleKey(options) {
+  var { map, feature, key, index, forms } = options;
+
   var keyColor;
   var dashArray;
   var colors;
-  var i = options.index;
-  switch (options.key.form) {
+  switch (key.form) {
     case "line":
-      keyColor = options.key.color ? options.key.color : options.color;
+      keyColor = key.color ? key.color : color;
 
-      if (options.forms) {
+      if (forms) {
         var svg;
-        switch (options.index) {
+        switch (index) {
           case 0:
             colors = [
               keyColor ? keyColor : chroma(defaultColor).darken(),
@@ -1449,15 +1400,15 @@ function styleKey(options) {
           "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 12'><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
           colors[0] +
           "' stroke-width='" +
-          lineWeights[i][0] +
+          lineWeights[index][0] +
           "' stroke-linecap='square' stroke-dasharray='" +
-          (i === 4 ? "18,12" : lineDashArrays[i][0]) +
+          (index === 4 ? "18,12" : lineDashArrays[index][0]) +
           "'/><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
           colors[1] +
           "' stroke-width='" +
-          lineWeights[i][1] +
+          lineWeights[index][1] +
           "' stroke-linecap='square' stroke-dasharray='" +
-          (i === 4 ? "18,12" : lineDashArrays[i][1]) +
+          (index === 4 ? "18,12" : lineDashArrays[index][1]) +
           "'/></svg>";
       } else {
         svg =
@@ -1474,9 +1425,9 @@ function styleKey(options) {
         class: "line"
       };
     case "icon":
-      keyColor = options.key.color;
-      var svg = options.key.icon
-        ? options.key.icon
+      keyColor = key.color;
+      var svg = key.icon
+        ? key.icon
         : "data:image/svg+xml;base64," +
           window.btoa(
             '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
@@ -1486,30 +1437,26 @@ function styleKey(options) {
 
       return {
         svg: svg,
-        class: options.key.icon ? "icon" : "color"
+        class: key.icon ? "icon" : "color"
       };
     case "shape":
-      if (options.feature) {
-        var colorKeyWidget = options.map.widgets.find(function(w) {
+      if (feature) {
+        var colorKeyWidget = map.widgets.find(function(w) {
           return w.type === "color";
         });
 
         var colorKey = colorKeyWidget.keys.find(function(k) {
           return (
             k.value.toLowerCase() ===
-            options.feature.properties[colorKeyWidget.field].toLowerCase()
+            feature.properties[colorKeyWidget.field].toLowerCase()
           );
         });
 
-        keyColor = colorKey
-          ? colorKey.color
-          : options.color
-            ? options.color
-            : null;
+        keyColor = colorKey ? colorKey.color : color ? color : null;
       }
 
       var svg;
-      switch (options.index) {
+      switch (index) {
         case 0:
           svg =
             '<svg xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rainbow"  y1="4.5" x2="9" y2="4.5" gradientUnits="userSpaceOnUse" gradientTransform="translate(4.5 -4.5) rotate(135)"><stop offset="0" stop-color="#7f3c8d"/><stop offset="0.325" stop-color="#e73f74"/><stop offset="0.5" stop-color="#f2b701"/><stop offset="0.675" stop-color="#11a579"/><stop offset="1" stop-color="#3969ac"/></linearGradient></defs><rect x="3.25" y="1.75" width="9" height="9" transform="translate(4.5 -4.5) rotate(45)" ' +
@@ -1549,7 +1496,7 @@ function styleKey(options) {
       };
 
     default:
-      keyColor = options.key.color;
+      keyColor = key.color;
       var svg =
         "data:image/svg+xml;base64," +
         window.btoa(
