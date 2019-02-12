@@ -191,9 +191,9 @@ header + p {
 
 .colorKey,
 .shapeKey,
-.lineKey {
+.lineKey,
+.iconKey {
   display: inline-block;
-  height: 12px;
   margin: 0 5px 0 5px;
   background-size: contain;
   background-position: center left;
@@ -203,10 +203,17 @@ header + p {
 .colorKey,
 .shapeKey {
   width: 12px;
+  height: 12px;
+}
+
+.iconKey {
+  width: 24px;
+  height: 24px;
 }
 
 .lineKey {
   width: 48px;
+  height: 12px;
 }
 
 .separator {

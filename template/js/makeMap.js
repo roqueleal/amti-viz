@@ -546,7 +546,8 @@ function makeWidgets(jsons, options, boxContent) {
               handleChange(
                 map,
                 element,
-                options.widgets[x],
+                options.widgets,
+                x,
                 count,
                 ++initialized
               );
@@ -556,7 +557,8 @@ function makeWidgets(jsons, options, boxContent) {
               handleChange(
                 map,
                 element,
-                options.widgets[x],
+                options.widgets,
+                x,
                 count,
                 ++initialized
               );
@@ -589,12 +591,32 @@ function handleReset(element, map, x) {
   makeGroups(map);
 }
 
-function handleChange(map, element, widget, count, initialized) {
+function handleChange(map, element, widgets, x, count, initialized) {
+  var options = element.querySelector("select")
+    ? Array.from(element.querySelector("select").options)
+    : element.querySelector("input[type='text']")
+      ? Array.from(element.querySelectorAll("input[type='text']"))
+      : Array.from(element.querySelectorAll("input"));
+
   var selections = element.querySelector("select")
     ? Array.from(element.querySelector("select").options)
     : element.querySelector("input[type='text']")
       ? Array.from(element.querySelectorAll("input[type='text']"))
       : Array.from(element.querySelectorAll("input:checked"));
+
+  var possibleChecks = Array.from(element.querySelectorAll("input")).map(
+    function(o) {
+      return o.name.toLowerCase();
+    }
+  );
+
+  var possibleOptions = Array.from(
+    element.querySelectorAll(".choices__item")
+  ).map(function(o) {
+    return o.dataset.value.toLowerCase();
+  });
+
+  var possibleQueries = possibleChecks.concat(possibleOptions);
 
   var query = Array.from(selections).map(function(o) {
     return element.querySelector("input[type='checkbox']")
@@ -602,8 +624,8 @@ function handleChange(map, element, widget, count, initialized) {
       : o.value.toLowerCase();
   });
 
-  map.filters[widget.id] =
-    widget.input === "toggle"
+  map.filters[widgets[x].id] =
+    widgets[x].input === "toggle"
       ? function(feature) {
           var bool = true;
 
@@ -615,7 +637,7 @@ function handleChange(map, element, widget, count, initialized) {
 
           return bool;
         }
-      : widget.field === "all"
+      : widgets[x].field === "all"
         ? function(feature) {
             var bool = true;
 
@@ -639,18 +661,21 @@ function handleChange(map, element, widget, count, initialized) {
           }
         : function(feature, layers) {
             var bool = true;
-
             if (
-              query.indexOf(feature.properties[widget.field].toLowerCase()) < 0
+              possibleQueries.indexOf(
+                feature.properties[widgets[x].field].toLowerCase()
+              ) > -1 &&
+              query.indexOf(
+                feature.properties[widgets[x].field].toLowerCase()
+              ) < 0
             ) {
               bool = false;
             }
             return bool;
           };
 
-  if (map.groups.length) map.removeGroups();
-
-  if (initialized >= count) makeGroups(map);
+  if (initialized > count) map.removeGroups();
+  if (widgets.length >= x + 1 && initialized >= count) makeGroups(map);
 }
 
 function makeDropdownOptions(widgets, x) {
@@ -872,7 +897,7 @@ function parseMetaData(json) {
   return data;
 }
 
-function pointToLayer(feature, latlng, map, colorKeyWidget, formKeyWidget) {
+function stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget) {
   var CustomIcon = L.Icon.extend({
     options: {
       iconSize: [20, 20]
@@ -896,6 +921,7 @@ function pointToLayer(feature, latlng, map, colorKeyWidget, formKeyWidget) {
         feature.properties[formKeyWidget.field].toLowerCase()
       );
     });
+
     var styleOptions = {
       key: key,
       index: i,
@@ -942,84 +968,38 @@ function pointToLayer(feature, latlng, map, colorKeyWidget, formKeyWidget) {
 }
 
 function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
-  if (formKeyWidget) {
-    var colors = [];
-    var forms = [];
+  var filter = function(feature) {
+    return map.filters
+      .map(function(f) {
+        return f(feature);
+      })
+      .every(function(f) {
+        return f !== false;
+      });
+  };
+  var onEachFeature = function(feature, layer) {
+    handleFeatureEvents(feature, layer, map);
+  };
 
+  var pointToLayer = function(feature, latlng) {
+    return stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget);
+  };
+
+  var colors = [];
+  var forms = [];
+
+  if (formKeyWidget) {
     forms = formKeyWidget.keys.map(function(f) {
       return f.value;
     });
 
-    var key = formKeyWidget.keys.reduce(function(a, c) {
+    var form = formKeyWidget.keys.reduce(function(a, c) {
       return c.form;
     });
 
-    switch (key) {
-      case "icon":
-        return [
-          {
-            filter: function(feature) {
-              return map.filters
-                .map(function(f) {
-                  return f(feature);
-                })
-                .every(function(f) {
-                  return f !== false;
-                });
-            },
-            onEachFeature: function(feature, layer) {
-              handleFeatureEvents(feature, layer, map);
-            },
-            pointToLayer: function(feature, latlng) {
-              var CustomIcon = L.Icon.extend({
-                options: {
-                  iconSize: [20, 20]
-                }
-              });
-
-              var svg =
-                '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-                "blue" +
-                '"/></svg>';
-              var iconUrl = encodeURI(
-                "data:image/svg+xml;base64," + window.btoa(svg)
-              );
-
-              var icon = new CustomIcon({ iconUrl: iconUrl });
-
-              return L.marker(latlng, {
-                icon: icon
-              });
-
-              // return pointToLayer(
-              //   feature,
-              //   latlng,
-              //   map,
-              //   colorKeyWidget,
-              //   formKeyWidget
-              // );
-            },
-            style: function(feature) {
-              return {
-                color: "blue",
-                weight: 3,
-                lineCap: "square",
-                dashArray: "7,3"
-              };
-
-              // return styleNonPointForm(
-              //   feature,
-              //   map,
-              //   formKeyWidget.field,
-              //   colors,
-              //   forms
-              // );
-            }
-          }
-        ];
-
-        break;
+    switch (form) {
       case "line":
+        console.log(1037);
         forms.forEach(function(f, i) {
           switch (i) {
             case 0:
@@ -1041,32 +1021,15 @@ function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
         });
 
         var backgroundOptions = {
-          filter: function(feature) {
-            return map.filters
-              .map(function(f) {
-                return f(feature);
-              })
-              .every(function(f) {
-                return f !== false;
-              });
-          },
-          onEachFeature: function(feature, layer) {
-            handleFeatureEvents(feature, layer, map);
-          },
-          pointToLayer: function(feature, latlng) {
-            return pointToLayer(
-              feature,
-              latlng,
-              map,
-              colorKeyWidget,
-              formKeyWidget
-            );
-          },
+          filter: filter,
+          onEachFeature: onEachFeature,
+          pointToLayer: pointToLayer,
           style: function(feature) {
             return styleNonPointForm(
               feature,
               map,
-              formKeyWidget.field,
+              formKeyWidget,
+              colorKeyWidget,
               colors,
               forms,
               0
@@ -1075,32 +1038,15 @@ function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
         };
 
         var foregroundOptions = {
-          filter: function(feature) {
-            return map.filters
-              .map(function(f) {
-                return f(feature);
-              })
-              .every(function(f) {
-                return f !== false;
-              });
-          },
-          onEachFeature: function(feature, layer) {
-            handleFeatureEvents(feature, layer, map);
-          },
-          pointToLayer: function(feature, latlng) {
-            return pointToLayer(
-              feature,
-              latlng,
-              map,
-              colorKeyWidget,
-              formKeyWidget
-            );
-          },
+          filter: filter,
+          onEachFeature: onEachFeature,
+          pointToLayer: pointToLayer,
           style: function(feature) {
             return styleNonPointForm(
               feature,
               map,
-              formKeyWidget.field,
+              formKeyWidget,
+              colorKeyWidget,
               colors,
               forms,
               1
@@ -1113,27 +1059,9 @@ function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
       default:
         return [
           {
-            filter: function(feature) {
-              return map.filters
-                .map(function(f) {
-                  return f(feature);
-                })
-                .every(function(f) {
-                  return f !== false;
-                });
-            },
-            onEachFeature: function(feature, layer) {
-              handleFeatureEvents(feature, layer, map);
-            },
-            pointToLayer: function(feature, latlng) {
-              return pointToLayer(
-                feature,
-                latlng,
-                map,
-                colorKeyWidget,
-                formKeyWidget
-              );
-            },
+            filter: filter,
+            onEachFeature: onEachFeature,
+            pointToLayer: pointToLayer,
             style: function(feature) {
               return styleNonPointForm(
                 feature,
@@ -1150,67 +1078,21 @@ function makeGeoJsonOptions(map, colorKeyWidget, formKeyWidget) {
   } else if (colorKeyWidget) {
     return [
       {
-        filter: function(feature) {
-          return map.filters
-            .map(function(f) {
-              return f(feature);
-            })
-            .every(function(f) {
-              return f !== false;
-            });
-        },
-        onEachFeature: function(feature, layer) {
-          handleFeatureEvents(feature, layer, map);
-        },
-        pointToLayer: function(feature, latlng) {
-          return pointToLayer(
-            feature,
-            latlng,
-            map,
-            colorKeyWidget,
-            formKeyWidget
-          );
-        },
+        filter: filter,
+        onEachFeature: onEachFeature,
+        pointToLayer: pointToLayer,
         style: function(feature) {
-          return styleNonPointColor(feature, map, colorKeyWidget, colors);
+          return styleNonPointForm(feature, map, colorKeyWidget.field, colors);
         }
       }
     ];
   } else {
+    console.log(1136);
     return [
       {
-        filter: function(feature) {
-          return map.filters
-            .map(function(f) {
-              return f(feature);
-            })
-            .every(function(f) {
-              return f !== false;
-            });
-        },
-        onEachFeature: function(feature, layer) {
-          handleFeatureEvents(feature, layer, map);
-        },
-        pointToLayer: function(feature, latlng) {
-          return pointToLayer(
-            feature,
-            latlng,
-            map,
-            colorKeyWidget,
-            formKeyWidget
-          );
-        }
-        // style: function(feature) {
-        //   console.log(1164);
-        //   return styleNonPointColor(
-        //     feature,
-        //     map,
-        //     colorKeyWidget,
-        //     colors,
-        //     forms,
-        //     index
-        //   );
-        // }
+        filter: filter,
+        onEachFeature: onEachFeature,
+        pointToLayer: pointToLayer
       }
     ];
   }
@@ -1440,64 +1322,40 @@ function handleClusterClick(e, map, i) {
   });
 }
 
-function styleNonPointForm(feature, map, field, colors, forms, index) {
-  var formKeyWidget = map.widgets.find(function(w) {
-    return w.type === "form";
-  });
-
-  var colorKeyWidget = map.widgets.find(function(w) {
-    return w.type === "color";
-  });
-
+function styleNonPointForm(
+  feature,
+  map,
+  formKeyWidget,
+  colorKeyWidget,
+  colors,
+  forms,
+  index
+) {
   var colorKey = colorKeyWidget.keys.find(function(k) {
     return (
       k.value.toLowerCase() ===
       feature.properties[colorKeyWidget.field].toLowerCase()
     );
   });
+
   var formKey = formKeyWidget.keys.find(function(k) {
     return (
       k.value.toLowerCase() ===
       feature.properties[formKeyWidget.field].toLowerCase()
     );
   });
-
   var color = colorKey ? colorKey.color : formKey ? formKey.color : null;
 
-  var form = formKeyWidget.keys.find(function(k) {
-    return (
-      k.value.toLowerCase() ===
-      feature.properties[formKeyWidget.field].toLowerCase()
-    );
-  }).form;
+  var form = formKeyWidget.keys.reduce(function(a, c) {
+    return c.form;
+  });
 
   if (forms) {
-    var i = forms.indexOf(feature.properties[field]);
+    var i = forms.indexOf(feature.properties[formKeyWidget.field]);
+
     if (i > -1) {
       switch (form) {
         case "icon":
-          var latlng = feature.geometry.coordinates;
-
-          var CustomIcon = L.Icon.extend({
-            options: {
-              iconSize: [20, 20]
-            }
-          });
-
-          var svg =
-            '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-            color +
-            '"/></svg>';
-
-          var iconUrl = encodeURI(
-            "data:image/svg+xml;base64," + window.btoa(svg)
-          );
-
-          var icon = new CustomIcon({ iconUrl: iconUrl });
-
-          return L.marker(latlng, {
-            icon: icon
-          });
 
         case "line":
           return {
@@ -1508,43 +1366,41 @@ function styleNonPointForm(feature, map, field, colors, forms, index) {
           };
       }
     }
-  }
-}
-
-function styleNonPointColor(
-  feature,
-  map,
-  colorKeyWidget,
-  colors,
-  forms,
-  index
-) {
-  if (feature.properties[colorKeyWidget.field]) {
-    var key = colorKeyWidget.keys.find(function(k) {
-      return (
-        k.value.toLowerCase() ===
-        feature.properties[colorKeyWidget.field].toLowerCase()
-      );
-    });
-
-    if (feature.properties.toggle === "line") {
-      return {
-        color: chroma(key.color)
-          .brighten()
-          .hex(),
-        weight: 4
-      };
-    } else {
-      return {
-        fillColor: key.color,
-        color: defaultColor,
-        fillOpacity: 0.7,
-        opacity: 0.5,
-        weight: 2
-      };
-    }
   } else {
-    return styleNonPointForm(feature, map, colorKeyWidget.field, colors);
+    switch (form) {
+      case "icon":
+        var latlng = feature.geometry.coordinates;
+
+        console.log(form);
+        var CustomIcon = L.Icon.extend({
+          options: {
+            iconSize: [20, 20]
+          }
+        });
+
+        var svg =
+          '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+          color +
+          '"/></svg>';
+
+        var iconUrl = encodeURI(
+          "data:image/svg+xml;base64," + window.btoa(svg)
+        );
+
+        var icon = new CustomIcon({ iconUrl: iconUrl });
+
+        return L.marker(latlng, {
+          icon: icon
+        });
+
+      case "line":
+        return {
+          color: colorKey ? colorKey.color : defaultColor,
+          weight: 3,
+          lineCap: "square",
+          dashArray: "3,7"
+        };
+    }
   }
 }
 
@@ -1552,6 +1408,7 @@ function styleKey(options) {
   var keyColor;
   var dashArray;
   var colors;
+  var i = options.index;
   switch (options.key.form) {
     case "line":
       keyColor = options.key.color ? options.key.color : options.color;
@@ -1562,7 +1419,7 @@ function styleKey(options) {
           case 0:
             colors = [
               keyColor ? keyColor : chroma(defaultColor).darken(),
-              color ? color : chroma(defaultColor).darken()
+              keyColor ? keyColor : chroma(defaultColor).darken()
             ];
             break;
           case 1:
@@ -1609,7 +1466,7 @@ function styleKey(options) {
           "' stroke-width='" +
           3 +
           "' stroke-linecap='square' stroke-dasharray='" +
-          "7,3" +
+          "3,7" +
           "'/></svg>";
       }
       return {
@@ -1617,6 +1474,7 @@ function styleKey(options) {
         class: "line"
       };
     case "icon":
+      keyColor = options.key.color;
       var svg = options.key.icon
         ? options.key.icon
         : "data:image/svg+xml;base64," +
@@ -1628,7 +1486,7 @@ function styleKey(options) {
 
       return {
         svg: svg,
-        class: "shape"
+        class: options.key.icon ? "icon" : "color"
       };
     case "shape":
       if (options.feature) {
