@@ -907,6 +907,7 @@ function stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget) {
   var pointStyle;
 
   if (formKeyWidget && feature.properties[formKeyWidget.field]) {
+    console.log(910);
     var forms = formKeyWidget.keys.map(function(k) {
       return k.value.toLowerCase();
     });
@@ -933,29 +934,31 @@ function stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget) {
 
     pointStyle = styleKey(styleOptions);
   } else if (colorKeyWidget && feature.properties[colorKeyWidget.field]) {
-    var key = colorKeyWidget.keys.find(function(k) {
-      return (
-        k.value.toLowerCase() ===
-        feature.properties[colorKeyWidget.field].toLowerCase()
-      );
-    });
-    var styleOptions = {
-      key: key,
-      map: map,
-      feature
-    };
-
-    pointStyle = styleKey(styleOptions);
+    console.log(936);
+    // var key = colorKeyWidget.keys.find(function(k) {
+    //   return (
+    //     k.value.toLowerCase() ===
+    //     feature.properties[colorKeyWidget.field].toLowerCase()
+    //   );
+    // });
+    // var styleOptions = {
+    //   key: key,
+    //   map: map,
+    //   feature
+    // };
+    //
+    // pointStyle = styleKey(styleOptions);
   } else {
-    var svg =
-      '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-      "#38f" +
-      '"/></svg>';
-
-    pointStyle = {
-      class: "default",
-      svg: encodeURI("data:image/svg+xml;base64," + window.btoa(svg))
-    };
+    console.log(952);
+    // var svg =
+    //   '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+    //   "#38f" +
+    //   '"/></svg>';
+    //
+    // pointStyle = {
+    //   class: "default",
+    //   svg: encodeURI("data:image/svg+xml;base64," + window.btoa(svg))
+    // };
   }
 
   var iconUrl = pointStyle.svg;
