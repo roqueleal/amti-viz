@@ -24,6 +24,8 @@
   <!--  Dropdown -->
   <script src="https://cdn.jsdelivr.net/npm/choices.js@4/public/assets/scripts/choices.min.js"></script>
 
+  <!-- Include Pattern plugin -->
+  <script src="js/vendor/patterns.js"></script>
 
   <!-- Include Zoom Slider plugin -->
   <script src="js/vendor/zoomslider.js"></script>
@@ -44,73 +46,79 @@
 
 </head>
 
-<script src="js/makeMap.js"></script>
-<script>
-
-var maps = [
-//   {
-//   id: "aegis",
-//   sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
-// }
-// ,
-//   {
-//     id: "features-map",
-//     sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
-//   }
-//   ,
-//   {
-//     id: "resources-map",
-//     sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
-//     popupHeaders: [
-//       lang ? "name_" + lang : "name",
-//       lang ? "description_" + lang : "description",
-//       "link"
-//     ]
-//   }
-//   ,
-  {
-    id: "claims-map",
-    sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
-    popupHeaders: [
-      lang ? "name_" + lang : "name",
-      lang ? "description_" + lang : "description",
-      "link"
-    ]
-  }
-
-
-];
-
-maps.reverse().forEach((map, i) => {
-  var mapboxStyle =
-    lang && lang.indexOf("zh-") > -1
-      ? (mapboxStyle = "citui3waw00162jo1zcsf1urj")
-      : (mapboxStyle = "cj84s9bet10f52ro2lrna50yg");
+<body>
 
 
 
-  setTimeout(() => {
-    console.log(93);
-    makeMap({
-      mapID: map.id,
-      googleSheet: map.sheet,
-      mapboxStyle: mapboxStyle,
-      oceanColor: "#cad2d3",
-      popupHeaders: map.popupHeaders,
-      // popupContent: null,
-      // pointStyle: null,
-      // nonPointStyle: null,
-      onEachFeature: {
-        click: function(feature, layer, map){
-          alert("clicked")
+
+  <script src="js/makeMap.js"></script>
+  <script>
+    var maps = [
+      {
+        id: "claims-map",
+        sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
+        popupHeaders: [
+          lang ? "name_" + lang : "name",
+          lang ? "description_" + lang : "description",
+          "link"
+        ]
+      }
+      ,
+      {
+        id: "venezuela",
+        sheet: "13tvoxc7kB8BzSKO67c6kf949kqte_o-WFF5W21h5O98",
+      }
+      ,
+        {
+          id: "features-map",
+          sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
         }
-        // dbclick: null,
-        // mousedown: null,
-        // mouseenter: null,
-        // mouseout: null
-      },
-      formatPopupContent:function(feature,map){
-          return `<div class="popupTitleStyle">${feature.properties.name}</div>
+        ,
+        {
+          id: "resources-map",
+          sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
+          popupHeaders: [
+            lang ? "name_" + lang : "name",
+            lang ? "description_" + lang : "description",
+            "link"
+          ]
+        }
+        ,
+        {
+        id: "aegis",
+        sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
+      }
+
+    ];
+
+    maps.reverse().forEach((map, i) => {
+      var mapboxStyle =
+        lang && lang.indexOf("zh-") > -1 ?
+        (mapboxStyle = "citui3waw00162jo1zcsf1urj") :
+        (mapboxStyle = "cj84s9bet10f52ro2lrna50yg");
+
+
+
+      setTimeout(() => {
+        console.log(93);
+        makeMap({
+          mapID: map.id,
+          googleSheet: map.sheet,
+          mapboxStyle: map.id === "aegis" ? "cjoiv6dmo29kh2rsd2z5qda2p" : mapboxStyle,
+          oceanColor: "#cad2d3",
+          popupHeaders: map.popupHeaders, // Array
+          // popupContent: [],
+          // pointStyle: function(feature,latlng){},
+          // nonPointStyle: function(feature){},
+          // onEachFeature: {
+          // click: function(feature, layer){}
+          // dbclick: function(feature, layer, map){},
+          // mousedown: function(feature, layer, map){},
+          // mouseenter: function(feature, layer, map){},
+          // mouseout: function(feature, layer, map){}
+          // },
+          formatPopupContent: map.id === "aegis" ? function(feature, map) {
+            return `<div class="popupTitleStyle">${feature.properties.name}</div>
 
             ${
               feature.properties.total_guided_missile_cruisers
@@ -130,20 +138,33 @@ maps.reverse().forEach((map, i) => {
         <span class='popupEntryStyle'>${feature.properties.total_guided_missile_destroyers}</span></div>`
               : ""
           }`
-      }
+          } : map.id === "venezuela" ? function(feature, map) {
+            return '<div class="popupHeaderStyle">' +
+              feature.properties.country +
+              '</div><div class="popupEntryStyle">' +
+              (feature.properties.recognition.toLowerCase() === "y" ? feature.properties.country + " recognizes Juan Guaid\xF3 as President of Venezuela" : feature.properties.country +
+                " recognizes Nicol\xE1s Maduro as President of Venezuela</div>") +
+              "</div>"
+          } : null
+        });
+      }, 2000 * i);
     });
-  }, 2000 * i);
-});
-</script>
+  </script>
 
 
-<style>
-  .leaflet-popup-tip,
-  .leaflet-popup-content-wrapper {
-    color:#fff;
-    background-color: rgba(47, 82, 98, 0.85);
-  }
-</style>
+  <style>
+    .leaflet-popup-tip,
+    .leaflet-popup-content-wrapper {
+      color: #fff;
+      background-color: rgba(47, 82, 98, 0.85);
+    }
+
+  </style>
+
+
+
+
+
 </body>
 
 </html>
