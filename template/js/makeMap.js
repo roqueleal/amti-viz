@@ -37,7 +37,7 @@ function Map(container, properties) {
 
   this.render = function() {
     this.map = L.map(container, {
-      center: this.center,
+      center: this.center.split(","),
       zoom: this.zoom,
       scrollWheelZoom: window.innerWidth < 768 ? false : true,
       zoomControl: false,
@@ -46,7 +46,7 @@ function Map(container, properties) {
 
     L.tileLayer(
       "https://api.mapbox.com/styles/v1/ilabmedia/" +
-        this.mapboxStyle +
+        this["mapbox style"] +
         "/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
       {}
     ).addTo(this.map);
@@ -64,7 +64,7 @@ function Map(container, properties) {
 
 function makeMap(options) {
   var dataURL = "https://spreadsheets.google.com/feeds/list/";
-  window.defaultColor = options.oceanColor;
+  window.defaultColor = options["ocean color"];
   var translations;
 
   if (lang) {
@@ -106,43 +106,27 @@ function init(dataURL, options, translations) {
           return i;
         });
 
-      var properties = {
-        apiKey: metaData["api key"],
-        attribution: metaData.attribution,
-        mapboxStyle: metaData["mapbox style"]
-          ? metaData["mapbox style"]
-          : options.mapboxStyle,
-        center: metaData.center.split(","),
-        cluster: metaData.cluster,
-        description: metaData.description,
-        externalLinkText: metaData["external link text"],
-        footer: metaData.footer,
-        formatPopupContent: options.formatPopupContent,
-        image: metaData.image,
-        instructions: metaData.instructions,
-        logo: metaData.logo,
-        pointStyle: options.pointStyle,
-        nonPointStyle: options.nonPointStyle,
-        onEachFeature: options.onEachFeature,
-        popupContent: metaDataContent.length
-          ? metaDataContent
-          : options.popupContent
-            ? options.popupContent
-            : [],
-        popupHeaders: metaDataHeaders.length
-          ? metaDataHeaders
-          : options.popupHeaders
-            ? options.popupHeaders
-            : [],
-        program: metaData.program,
-        slug: options.mapID.toLowerCase().replace(/ /g, "-"),
-        table: metaData.table,
-        title: metaData.title,
-        translations: translations,
-        website: metaData.website,
-        widgets: widgets,
-        zoom: metaData.zoom
-      };
+      var properties = {};
+
+      Object.keys(metaData).forEach(function(data) {
+        properties[data] = metaData[data];
+      });
+
+      Object.keys(options).forEach(function(data) {
+        properties[data] = options[data];
+      });
+
+      properties["popup content"] = properties["popup content"]
+        ? properties["popup content"].split(",")
+        : [];
+
+      properties["popup headers"] = properties["popup headers"]
+        ? properties["popup headers"].split(",")
+        : [];
+
+      properties.slug = properties.mapID.toLowerCase().replace(/ /g, "-");
+      properties.translations = translations;
+      properties.widgets = widgets;
 
       makeNodes(properties);
 
@@ -375,7 +359,7 @@ function makeWidgetContent(widgets, x) {
       widgetNodes += "<ul>";
       var keyStyle;
 
-      var legendItems = widgets[x].isGrouped
+      var legendItems = widgets[x].grouping
         ? widgets[x].keys.groupBy("group")
         : widgets[x].keys.groupBy("label");
 
@@ -400,13 +384,14 @@ function makeWidgetContent(widgets, x) {
             keyStyle = styleKey(styleOptions);
             break;
         }
+
         widgetNodes +=
           '<li><label for="' +
           group +
           '"><input class="widget ' +
           widgets[x].input +
           '" type="checkbox" name="' +
-          (legendItems[group].isGrouped ? group : legendItems[group][0].value) +
+          (widgets[x].grouping ? group : legendItems[group][0].value) +
           '" id="' +
           group +
           '" ' +
@@ -441,8 +426,6 @@ function makeWidgets(jsons, options, boxContent) {
       : null;
     options.widgets[x].keys = legendData;
 
-    options.widgets[x].isGrouped = options.widgets[x].grouping;
-
     widgetContent.push(makeWidgetContent(options.widgets, x));
     boxContent +=
       '<section class="widget ' +
@@ -472,7 +455,7 @@ function makeWidgets(jsons, options, boxContent) {
   var map = new Map(container, options).render();
   fetch(
     "https://csis.carto.com/api/v2/sql?api_key=" +
-      map.apiKey +
+      map["api key"] +
       "&format=geojson&q=SELECT%20*%20FROM%20" +
       map.table
   )
@@ -671,7 +654,7 @@ function handleChange(map, element, widgets, x, count, initialized) {
         : function(feature, layers) {
             var bool = true;
 
-            var field = widgets[x].isGrouped
+            var field = widgets[x].grouping
               ? widgets[x].grouping
               : widgets[x].field;
 
@@ -682,10 +665,10 @@ function handleChange(map, element, widgets, x, count, initialized) {
             ) {
               bool = false;
             }
-
-            return bool;
+            if (field === "country") return bool;
           };
-  if (initialized > count) map.removeGroups();
+
+  if (initialized >= count) map.removeGroups();
   if (widgets.length >= x + 1 && initialized >= count) makeGroups(map);
 }
 
@@ -1186,29 +1169,29 @@ function formatPopupContent(feature, map) {
   content = Object.keys(feature.properties)
     .map(function(p) {
       if (feature.properties[p]) {
-        if (map.popupHeaders.length && map.popupContent.length) {
-          return map.popupHeaders.indexOf(p) > -1 &&
-            map.popupContent.indexOf(p) > -1
+        if (map["popup headers"].length && map["popup content"].length) {
+          return map["popup headers"].indexOf(p) > -1 &&
+            map["popup content"].indexOf(p) > -1
             ? '<div class="popupHeaderStyle">' +
                 p.toUpperCase().replace(/_/g, " ") +
                 '</div><div class="popupEntryStyle">' +
                 feature.properties[p] +
                 "</div>"
-            : map.popupContent.indexOf(p) > -1
+            : map["popup content"].indexOf(p) > -1
               ? '<div class="popupEntryStyle">' +
                 feature.properties[p] +
                 "</div>"
               : "";
-        } else if (map.popupHeaders.length) {
-          return map.popupHeaders.indexOf(p) > -1
+        } else if (map["popup headers"].length) {
+          return map["popup headers"].indexOf(p) > -1
             ? '<div class="popupHeaderStyle">' +
                 p.toUpperCase().replace(/_/g, " ") +
                 '</div><div class="popupEntryStyle">' +
                 feature.properties[p] +
                 "</div>"
             : "";
-        } else if (map.popupContent.length) {
-          return map.popupContent.indexOf(p) > -1
+        } else if (map["popup content"].length) {
+          return map["popup content"].indexOf(p) > -1
             ? '<div class="popupEntryStyle">' + feature.properties[p] + "</div>"
             : "";
         } else {
@@ -1370,16 +1353,6 @@ function styleNonPoint(feature, options, index) {
     };
   } else {
     if (colorKey.form === "pattern") {
-      // var re = new RegExp('(fill="#)(?:[0-9a-fA-F]{3}){1,2}', "g");
-      // patternColors = patternColors
-      //   .map(function(string) {
-      //     return string.replace('fill="', "");
-      //   })
-      //   .sort()
-      //   .filter(function(color, pos, ary) {
-      //     return !pos || color != ary[pos - 1];
-      //   });
-
       var pattern;
       switch (true) {
         case colorKey.pattern[0].indexOf("stripe") > -1:
@@ -1393,6 +1366,7 @@ function styleNonPoint(feature, options, index) {
           };
 
           pattern = new L.StripePattern(patternOptions);
+          break;
 
         case colorKey.pattern[0].indexOf("dot") > -1:
           var shapeOptions = {
@@ -1411,6 +1385,7 @@ function styleNonPoint(feature, options, index) {
 
           pattern = new L.Pattern(patternOptions);
           pattern.addShape(shape);
+          break;
       }
 
       pattern.addTo(options.map.map);

@@ -54,15 +54,15 @@
   <script src="js/makeMap.js"></script>
   <script>
     var maps = [
-      {
-        id: "claims-map",
-        sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
-        popupHeaders: [
-          lang ? "name_" + lang : "name",
-          lang ? "description_" + lang : "description",
-          "link"
-        ]
-      }
+      // {
+      //   id: "claims-map",
+      //   sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
+      //   "popup headers": [
+      //     lang ? "name_" + lang : "name",
+      //     lang ? "description_" + lang : "description",
+      //     "link"
+      //   ]
+      // }
       // ,
       // {
       //   id: "venezuela",
@@ -77,17 +77,17 @@
       //   {
       //     id: "resources-map",
       //     sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
-      //     popupHeaders: [
+      //     "popup headers": [
       //       lang ? "name_" + lang : "name",
       //       lang ? "description_" + lang : "description",
       //       "link"
       //     ]
       //   }
       //   ,
-      //   {
-      //   id: "aegis",
-      //   sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
-      // }
+        {
+        id: "aegis",
+        sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
+      }
 
     ];
 
@@ -100,14 +100,14 @@
 
 
       setTimeout(() => {
-        console.log(93);
+        console.log("another one");
         makeMap({
           mapID: map.id,
           googleSheet: map.sheet,
-          mapboxStyle: map.id === "aegis" ? "cjoiv6dmo29kh2rsd2z5qda2p" : mapboxStyle,
-          oceanColor: "#cad2d3",
-          popupHeaders: map.popupHeaders, // Array
-          // popupContent: [],
+          "mapbox style": map.id === "aegis" ? "cjoiv6dmo29kh2rsd2z5qda2p" : mapboxStyle,
+          "ocean color": "#cad2d3",
+          "popup headers": map["popup headers"], // Array
+          // "popup content": [],
           // pointStyle: function(feature,latlng){},
           // nonPointStyle: function(feature){},
           // onEachFeature: {
