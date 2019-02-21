@@ -8,13 +8,7 @@ let map,
   interestsData,
   exclude = ['Introduction', 'Conclusion'],
   nations = ['United States', 'Australia', 'New Zealand', 'France', 'China'],
-  allowedHeaders = [
-    'type',
-    'number-of-ships-permanently-based',
-    'number-of-troops-stationed',
-    'number-of-aircraft-based',
-    'chinese-involvement'
-  ]
+  allowedHeaders = [`port-or-base${window.lang}`, `description${window.lang}`]
 
 const chapterColors = {
   'United States': `#6688b9`,
@@ -24,12 +18,12 @@ const chapterColors = {
   China: `#e06b91`
 }
 
-const spreadsheetID = '115eMJVfot0DDYcv7nhsVM4X5Djihr2ygpMdMYzBSsdc'
+const spreadsheetID = '1gLJo_Bniuy1RoMJCxO_Bj0pOCLLC12mkrCg67m1QTcY'
 
 let islandURL =
   'https://spreadsheets.google.com/feeds/list/' +
   spreadsheetID +
-  '/1/public/values?alt=json'
+  '/2/public/values?alt=json'
 
 const makeMap = () => {
   window.map.on('load', function() {
@@ -83,34 +77,15 @@ function addInterestsLayer() {
 
     for (let i = 0; i < filteredData.length; i++) {
       let a = filteredData[i]
-      let description
-      if (!window.isMobile) {
-        description = Object.keys(a.properties)
-          .filter(p => p !== 'country')
-          .map(p => {
-            if (a.properties[p])
-              return allowedHeaders.indexOf(p) > -1
-                ? `<div class=
-            "popupHeaderStyle">${p
-              .toUpperCase()
-              .replace(/-/g, ' ')
-              .replace('NUMBER', '#')}</div><div class="popupEntryStyle">${
-                    a.properties[p]
-                  }</div>`
-                : `<div class="popupEntryStyle">${a.properties[p]}</div>`
-          })
-          .filter(p => p)
-          .join('')
-      } else {
-        Object.keys(a.properties)
-          .filter(p => p !== 'country')
-          .map(p => {
-            description = `<div class=
-      "popupHeaderStyle">Port or Base</div><div class="popupEntryStyle">${
-        a.properties['port-or-base']
-      }</div>`
-          })
-      }
+      let properties = a.properties
+      let description = Object.keys(properties)
+        .filter(p => p !== 'country')
+        .map(p => {
+          if (properties[p] && allowedHeaders.includes(p))
+            return `<div class="popupEntryStyle">${properties[p]}</div>`
+        })
+        .filter(p => p)
+        .join('')
 
       let nation_marker = L.marker(
         new L.LatLng(a.geometry.coordinates[1], a.geometry.coordinates[0]),

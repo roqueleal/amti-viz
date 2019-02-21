@@ -14,13 +14,7 @@ let map,
   spiderifier,
   exclude = ['Introduction', 'Conclusion'],
   nations = ['United States', 'Australia', 'New Zealand', 'France', 'China'],
-  allowedHeaders = [
-    'type',
-    'number-of-ships-permanently-based',
-    'number-of-troops-stationed',
-    'number-of-aircraft-based',
-    'chinese-involvement'
-  ]
+  allowedHeaders = [`port-or-base${window.lang}`, `description${window.lang}`]
 
 const chapterColors = {
   'United States': `#6688b9`,
@@ -30,12 +24,12 @@ const chapterColors = {
   China: `#e06b91`
 }
 
-const spreadsheetID = '115eMJVfot0DDYcv7nhsVM4X5Djihr2ygpMdMYzBSsdc'
+const spreadsheetID = '1gLJo_Bniuy1RoMJCxO_Bj0pOCLLC12mkrCg67m1QTcY'
 
 const islandURL =
   'https://spreadsheets.google.com/feeds/list/' +
   spreadsheetID +
-  '/1/public/values?alt=json'
+  '/2/public/values?alt=json'
 
 const makeMap = () => {
   //
@@ -91,33 +85,15 @@ function initIslands() {
         let properties = spiderLeg.feature
 
         let description
-        if (window.screen.availWidth > 768) {
-          description = Object.keys(properties)
-            .filter(p => p !== 'country')
-            .map(p => {
-              if (properties[p])
-                return allowedHeaders.includes(p)
-                  ? `<div class=
-              "popupHeaderStyle">${p
-                .toUpperCase()
-                .replace(/-/g, ' ')
-                .replace('NUMBER', '#')}</div><div class="popupEntryStyle">${
-                      properties[p]
-                    }</div>`
-                  : `<div class="popupEntryStyle">${properties[p]}</div>`
-            })
-            .filter(p => p)
-            .join('')
-        } else {
-          Object.keys(properties)
-            .filter(p => p !== 'country')
-            .map(p => {
-              description = `<div class=
-        "popupHeaderStyle">Port or Base</div><div class="popupEntryStyle">${
-          properties['port-or-base']
-        }</div>`
-            })
-        }
+
+        description = Object.keys(properties)
+          .filter(p => p !== 'country')
+          .map(p => {
+            if (properties[p] && allowedHeaders.includes(p))
+              return `<div class="popupEntryStyle">${properties[p]}</div>`
+          })
+          .filter(p => p)
+          .join('')
 
         popup.setHTML(`${description}`)
 
@@ -299,33 +275,15 @@ const clickInterests = e => {
   let properties = e.features[0].properties
 
   let description
-  if (window.screen.availWidth > 768) {
-    description = Object.keys(properties)
-      .filter(p => p !== 'country')
-      .map(p => {
-        if (properties[p])
-          return allowedHeaders.includes(p)
-            ? `<div class=
-        "popupHeaderStyle">${p
-          .toUpperCase()
-          .replace(/-/g, ' ')
-          .replace('NUMBER', '#')}</div><div class="popupEntryStyle">${
-                properties[p]
-              }</div>`
-            : `<div class="popupEntryStyle">${properties[p]}</div>`
-      })
-      .filter(p => p)
-      .join('')
-  } else {
-    Object.keys(properties)
-      .filter(p => p !== 'country')
-      .map(p => {
-        description = `<div class=
-  "popupHeaderStyle">Port or Base</div><div class="popupEntryStyle">${
-    properties['port-or-base']
-  }</div>`
-      })
-  }
+
+  description = Object.keys(properties)
+    .filter(p => p !== 'country')
+    .map(p => {
+      if (properties[p] && allowedHeaders.includes(p))
+        return `<div class="popupEntryStyle">${properties[p]}</div>`
+    })
+    .filter(p => p)
+    .join('')
 
   details
     .setLngLat(coordinates)

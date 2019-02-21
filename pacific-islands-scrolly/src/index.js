@@ -10,29 +10,26 @@ import { fetch as fetchPolyfill } from 'whatwg-fetch'
 
 import './scss/main.scss'
 
-const spreadsheetID = '115eMJVfot0DDYcv7nhsVM4X5Djihr2ygpMdMYzBSsdc'
+const spreadsheetID = '1gLJo_Bniuy1RoMJCxO_Bj0pOCLLC12mkrCg67m1QTcY'
 
-let IE = /*@cc_on!@*/ false || !!document.documentMode
-
-let Edge = !mapboxgl.supported()
-
-window.isIE = IE || Edge
+window.useLeaflet =
+  /*@cc_on!@*/ false || !!document.documentMode || !mapboxgl.supported()
 
 let chapterURL =
   'https://spreadsheets.google.com/feeds/list/' +
   spreadsheetID +
   '/2/public/values?alt=json'
 
-if (window.isIE) {
+if (window.useLeaflet) {
   chapterURL =
     'https://spreadsheets.google.com/feeds/list/' +
     spreadsheetID +
-    '/3/public/values?alt=json'
+    '/4/public/values?alt=json'
 } else {
   chapterURL =
     'https://spreadsheets.google.com/feeds/list/' +
     spreadsheetID +
-    '/2/public/values?alt=json'
+    '/3/public/values?alt=json'
 }
 
 const container = document.getElementById('scrolly-island-interactive')
@@ -45,7 +42,7 @@ let countryColors = [],
   special = ['United States', 'France'],
   currentStep = 0
 
-if (!window.isIE) {
+if (!window.useLeaflet) {
   chinaPopup = new mapboxgl.Popup({
     closeButton: false
   })
@@ -84,14 +81,16 @@ const init = () => {
       interactiveSetup({
         container: container,
         initialDesc: `${
-          window.stepActions[0] ? `${window.stepActions[0].text}` : ``
+          window.stepActions[0]
+            ? `${window.stepActions[0][`text${window.lang}`]}`
+            : ``
         }`,
         steps: values
       })
 
       Scrolling({ stepActions: window.stepActions })
 
-      if (window.isIE) {
+      if (window.useLeaflet) {
         makeLLMap()
       } else {
         makeGLMap()
@@ -134,7 +133,7 @@ const parseChapterData = rawData => {
     }
 
     chapterData.lng =
-      parseFloat(chapterData[lngKey]) < 0 && window.isIE
+      parseFloat(chapterData[lngKey]) < 0 && window.useLeaflet
         ? 360 + parseFloat(chapterData[lngKey])
         : parseFloat(chapterData[lngKey])
 
@@ -142,15 +141,17 @@ const parseChapterData = rawData => {
 
     chapterData.center = [chapterData.lng, chapterData.lat]
 
-    chapterData.text = `<h3 class="title">${chapterData.title}</h3>
-<p class="story">${chapterData.text}</p>`
+    chapterData.text = `<h3 class="title">${
+      chapterData[`title${window.lang}`]
+    }</h3>
+<p class="story">${chapterData[`text${window.lang}`]}</p>`
 
     chapterData.fly = () => {
       fly(chapterData)
 
       window.nation = chapterData.name
 
-      if (window.isIE) {
+      if (window.useLeaflet) {
         highlightLLChapter(chapterData)
         // setLLPopup(chapterData)
       } else {
@@ -195,40 +196,18 @@ const setGLPopup = chapterData => {
   if (feature) {
     let properties = feature.properties
     let allowedHeaders = [
-      'type',
-      'number-of-ships-permanently-based',
-      'number-of-troops-stationed',
-      'number-of-aircraft-based',
-      'chinese-involvement'
+      `port-or-base${window.lang}`,
+      `description${window.lang}`
     ]
-    let description
 
-    if (!isMobile) {
-      description = Object.keys(properties)
-        .filter(p => p !== 'country')
-        .map(p => {
-          if (properties[p])
-            return allowedHeaders.indexOf(p) > -1
-              ? `<div class=
-          "popupHeaderStyle">${p
-            .toUpperCase()
-            .replace(/-/g, ' ')
-            .replace('NUMBER', '#')}</div><div class="popupEntryStyle">${
-                  properties[p]
-                }</div>`
-              : `<div class="popupEntryStyle">${properties[p]}</div>`
-        })
-        .filter(p => p)
-        .join('')
-    } else {
-      Object.keys(properties)
-        .filter(p => p !== 'country')
-        .map(p => {
-          description = `<div class="popupEntryStyle">${
-            properties['port-or-base']
-          }</div>`
-        })
-    }
+    let description = Object.keys(properties)
+      .filter(p => p !== 'country')
+      .map(p => {
+        if (properties[p] && allowedHeaders.includes(p))
+          return `<div class="popupEntryStyle">${properties[p]}</div>`
+      })
+      .filter(p => p)
+      .join('')
 
     chinaPopup
       .setLngLat(feature.geometry.coordinates)
@@ -239,7 +218,7 @@ const setGLPopup = chapterData => {
 }
 
 const fly = chapterData => {
-  if (window.isIE) {
+  if (window.useLeaflet) {
     window.map.flyTo(
       [chapterData.center[1], chapterData.center[0]],
       parseInt(chapterData.zoom, 10) + 1,

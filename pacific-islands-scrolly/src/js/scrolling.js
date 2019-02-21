@@ -36,7 +36,7 @@ const ScrollingControls = {
       return i === response.index
     })
 
-    if (!window.isIE && window.map.getSource('point')) {
+    if (!window.useLeaflet && window.map.getSource('point')) {
       window.animateMarker(0)
     }
 
