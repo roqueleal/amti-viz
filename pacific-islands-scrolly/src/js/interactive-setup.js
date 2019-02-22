@@ -3,9 +3,89 @@ var url =
     ? document.referrer
     : document.location.href
 var href = /lang=([^&]+)/.exec(url)
-window.lang = href ? href[1].split('#')[0] : ''
+window.lang = href ? href[1].split('#')[0] : 'en'
 
+console.log(window.lang)
 let i = 0
+
+const translations = {
+  'Pacific Military Powers': {
+    en: 'Pacific Military Powers',
+    'zh-hans': '太平洋军事力量',
+    'zh-hant': '太平洋軍事力量',
+    ms: 'Kuasa Ketenteraan Pasifik',
+    vi: 'Các Thế lực Quân sự trên Thái Bình Dương'
+  },
+  'Free Assoc. with NZ': {
+    en: 'Free Assoc. with NZ',
+    'zh-hans': '新西兰自由联系国自由联盟',
+    'zh-hant': '紐西蘭自由聯盟',
+    ms: 'Persatuan Bebas dengan New Zealand',
+    vi: 'Liên hợp Tự do với Niu Di-lân'
+  },
+  'Free Assoc. with US': {
+    en: 'Free Assoc. with US',
+    'zh-hans': '美国自由联系国',
+    'zh-hant': '美國自由聯盟',
+    ms: 'Persatuan Bebas dengan Amerika Syarikat',
+    vi: 'Liên hợp Tự do với Hoa Kỳ'
+  },
+  Australia: {
+    en: 'Australia',
+    'zh-hans': '澳大利亚',
+    'zh-hant': '澳洲',
+    ms: 'Australia',
+    vi: 'Úc'
+  },
+  France: {
+    en: 'France',
+    'zh-hans': '法国',
+    'zh-hant': '法國',
+    ms: 'Perancis',
+    vi: 'Pháp'
+  },
+  'New Zealand': {
+    'zh-hans': '新西兰',
+    'zh-hant': '紐西蘭',
+    ms: 'New Zealand',
+    vi: 'Niu Di-lân'
+  },
+  'United States': {
+    en: 'United States',
+    'zh-hans': '美国',
+    'zh-hant': '美國',
+    ms: 'Amerika Syarikat',
+    vi: 'Hoa Kỳ'
+  },
+  Previous: {
+    en: 'Previous',
+    'zh-hans': 'zh-hans',
+    'zh-hant': 'zh-hant',
+    ms: 'ms',
+    vi: 'vi'
+  },
+  Next: {
+    en: 'Next',
+    'zh-hans': 'zh-hans',
+    'zh-hant': 'zh-hant',
+    ms: 'ms',
+    vi: 'vi'
+  },
+  'Scroll Up': {
+    en: 'Scroll Up',
+    'zh-hans': 'zh-hans',
+    'zh-hant': 'zh-hant',
+    ms: 'ms',
+    vi: 'vi'
+  },
+  'Scroll Down': {
+    en: 'Scroll Down',
+    'zh-hans': 'zh-hans',
+    'zh-hant': 'zh-hant',
+    ms: 'ms',
+    vi: 'vi'
+  }
+}
 
 function interactiveSetup({ container, initialDesc, steps }) {
   let cssFiles = [
@@ -28,13 +108,27 @@ function interactiveSetup({ container, initialDesc, steps }) {
   HTML += `<section id="scroll">
   <div class="scroll__graphic sticky">
     <div id="legend">
-    <div class="popupHeaderStyle translate">Pacific Military Powers</div>
-      <div class="legend-label label-base base-au translate">Australia</div>
-      <div class="legend-label label-base base-fr translate">France</div>
-      <div class="legend-label label-base base-nz translate">New Zealand</div>
-      <div class="legend-label label-base base-us translate">United States</div>
-      <div class="legend-label label-pact pact-nz translate">Free Assoc. with NZ</div>
-      <div class="legend-label label-pact pact-us translate">Free Assoc. with US</div>
+    <div class="popupHeaderStyle">${
+      translations['Pacific Military Powers'][window.lang]
+    }</div>
+      <div class="legend-label label-base base-au">${
+        translations['Australia'][window.lang]
+      }</div>
+      <div class="legend-label label-base base-fr">${
+        translations['France'][window.lang]
+      }</div>
+      <div class="legend-label label-base base-nz">${
+        translations['New Zealand'][window.lang]
+      }</div>
+      <div class="legend-label label-base base-us">${
+        translations['United States'][window.lang]
+      }</div>
+      <div class="legend-label label-pact pact-nz">${
+        translations['Free Assoc. with NZ'][window.lang]
+      }</div>
+      <div class="legend-label label-pact pact-us">${
+        translations['Free Assoc. with US'][window.lang]
+      }</div>
     </div>
 
 
@@ -65,7 +159,7 @@ function interactiveSetup({ container, initialDesc, steps }) {
             ? `<div id="chevWrapper">
           <a href="#step${i - 1}">
              <span id="chevron-up">»</span>
-            &nbsp;<span class="translate">Scroll up</span>
+            &nbsp;<span></span>
           </a>
           </div>`
             : ``
@@ -77,7 +171,9 @@ function interactiveSetup({ container, initialDesc, steps }) {
                         ? `<div id="chevWrapper">
                       <a href="#step${i + 1}">
                          <span id="chevron-down">»</span>
-                        &nbsp;<span class="translate">Scroll down</span>
+                        &nbsp;<span>${
+                          translations['Scroll down'][window.lang]
+                        }</span>
                       </a>
                       </div>`
                         : ``
@@ -98,12 +194,14 @@ function interactiveSetup({ container, initialDesc, steps }) {
             <div class="navigator">
               ${
                 !i === 0
-                  ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol translate">Previous</span></button>`
+                  ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol"></span></button>`
                   : ``
               }
               ${
                 i !== steps.length - 1
-                  ? `<button class="scroll-down" aria-label="scroll-down"><span class="symbol translate">Next</span></button>`
+                  ? `<button class="scroll-down" aria-label="scroll-down"><span class="symbol">${
+                      translations['Next'][window.lang]
+                    }</span></button>`
                   : ``
               }
             </div>
@@ -159,19 +257,27 @@ function interactiveSetup({ container, initialDesc, steps }) {
 
       step.querySelector('.navigator').innerHTML = `${
         first
-          ? `<button class="scroll-down" aria-label="scroll-down"><span class="symbol translate">Next</span></button>`
+          ? `<button class="scroll-down" aria-label="scroll-down"><span class="symbol">${
+              translations['Next'][window.lang]
+            }</span></button>`
           : ``
       }
         ${
           last
-            ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol translate">Previous</span></button>`
+            ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol">${
+                translations['Previous'][window.lang]
+              }</span></button>`
             : ``
         }
 
         ${
           !first && !last
-            ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol translate">Previous</span></button>
-            <button class="scroll-down" aria-label="scroll-down"><span class="symbol translate">Next</span></button>`
+            ? `<button class="scroll-up" aria-label="scroll-up"><span class="symbol">${
+                translations['Previous'][window.lang]
+              }</span></button>
+            <button class="scroll-down" aria-label="scroll-down"><span class="symbol">${
+              translations['Next'][window.lang]
+            }</span></button>`
             : ``
         }
       `
@@ -183,43 +289,6 @@ function interactiveSetup({ container, initialDesc, steps }) {
     if (!window.isMobile) {
       scrollText.style.right = `calc(100vw - 160%)`
     }
-  }
-  if (window.lang) {
-    const spreadsheetID = '1gLJo_Bniuy1RoMJCxO_Bj0pOCLLC12mkrCg67m1QTcY'
-
-    fetch(
-      'https://spreadsheets.google.com/feeds/list/' +
-        spreadsheetID +
-        '/' +
-        1 +
-        '/public/values?alt=json'
-    )
-      .then(function(response) {
-        return response.json()
-      })
-      .then(function(json) {
-        var translations = parseLanguageData(json.feed.entry)
-
-        var translatableNodes = Array.from(
-          document.querySelectorAll('.translate')
-        )
-
-        var translatableStrings = Object.keys(translations).sort(function(
-          a,
-          b
-        ) {
-          return b.length - a.length
-        })
-
-        translatableNodes.forEach(function(el, i) {
-          translatableStrings.forEach(function(t) {
-            if (Object.keys(translations[t]).length) {
-              var re = new RegExp('\\b(' + RegExp.escape(t) + ')', 'gi')
-              el.innerHTML = el.innerHTML.replace(re, translations[t])
-            }
-          })
-        })
-      })
   }
 
   load()
