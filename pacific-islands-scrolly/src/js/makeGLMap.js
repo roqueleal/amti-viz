@@ -14,7 +14,7 @@ let map,
   spiderifier,
   exclude = ['Introduction', 'Conclusion'],
   nations = ['United States', 'Australia', 'New Zealand', 'France', 'China'],
-  allowedHeaders = [`port-or-base${window.lang}`, `description${window.lang}`]
+  allowedContent = [`port-or-base${window.lang}`, `description${window.lang}`]
 
 const chapterColors = {
   'United States': `#6688b9`,
@@ -35,9 +35,11 @@ const makeMap = () => {
   //
   window.map.on('load', function() {
     fetch(islandURL)
-      .then(resp => resp.json())
+      .then(function(response) {
+        return response.json()
+      })
       .then(json => {
-        interestsData = parseIslandData(json.feed.entry)
+        interestsData = parseInterestsData(json.feed.entry)
         initIslands()
       })
   })
@@ -87,9 +89,8 @@ function initIslands() {
         let description
 
         description = Object.keys(properties)
-          .filter(p => p !== 'country')
           .map(p => {
-            if (properties[p] && allowedHeaders.includes(p))
+            if (properties[p] && allowedContent.includes(p))
               return `<div class="popupEntryStyle">${properties[p]}</div>`
           })
           .filter(p => p)
@@ -272,26 +273,33 @@ const clickClusters = (e, nation) => {
 const clickInterests = e => {
   let details = new mapboxgl.Popup()
   let coordinates = e.features[0].geometry.coordinates.slice()
-  let properties = e.features[0].properties
+  let feature = interestsData.features.find(
+    feature =>
+      feature.properties['port-or-baseen'] ===
+      e.features[0].properties['port-or-baseen']
+  )
+  let properties = feature.properties
 
-  let description
+  var popup = new mapboxgl.Popup({
+    closeButton: true,
+    closeOnClick: true
+  })
 
-  description = Object.keys(properties)
-    .filter(p => p !== 'country')
+  let description = Object.keys(properties)
     .map(p => {
-      if (properties[p] && allowedHeaders.includes(p))
+      if (properties[p] && allowedContent.includes(p))
         return `<div class="popupEntryStyle">${properties[p]}</div>`
     })
     .filter(p => p)
     .join('')
 
-  details
+  popup
     .setLngLat(coordinates)
     .setHTML(`${description}`)
     .addTo(window.map)
 }
 
-function parseIslandData(rawData) {
+function parseInterestsData(rawData) {
   let featureData = rawData.map(r => {
     let row = r
     let islandData = {}

@@ -5,7 +5,6 @@ var url =
 var href = /lang=([^&]+)/.exec(url)
 window.lang = href ? href[1].split('#')[0] : 'en'
 
-console.log(window.lang)
 let i = 0
 
 const translations = {

@@ -8,7 +8,7 @@ let map,
   interestsData,
   exclude = ['Introduction', 'Conclusion'],
   nations = ['United States', 'Australia', 'New Zealand', 'France', 'China'],
-  allowedHeaders = [`port-or-base${window.lang}`, `description${window.lang}`]
+  allowedContent = [`port-or-base${window.lang}`, `description${window.lang}`]
 
 const chapterColors = {
   'United States': `#6688b9`,
@@ -32,12 +32,8 @@ const makeMap = () => {
         return response.json()
       })
       .then(function(json) {
-        interestsData = parseIslandData(json.feed.entry)
+        interestsData = parseInterestsData(json.feed.entry)
         initIslands()
-        return json
-      })
-      .catch(function(ex) {
-        console.log('mm parsing failed', ex)
       })
   })
   window.map.setView([-12, 180], 4)
@@ -79,9 +75,8 @@ function addInterestsLayer() {
       let a = filteredData[i]
       let properties = a.properties
       let description = Object.keys(properties)
-        .filter(p => p !== 'country')
         .map(p => {
-          if (properties[p] && allowedHeaders.includes(p))
+          if (properties[p] && allowedContent.includes(p))
             return `<div class="popupEntryStyle">${properties[p]}</div>`
         })
         .filter(p => p)
@@ -169,7 +164,7 @@ function pointOnCircle(loc = 0) {
   }
 }
 
-function parseIslandData(rawData) {
+function parseInterestsData(rawData) {
   let featureData = rawData.map(r => {
     let row = r
     let islandData = {}

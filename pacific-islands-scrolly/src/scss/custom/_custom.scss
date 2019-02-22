@@ -77,9 +77,12 @@ button.mapboxgl-popup-close-button {
   margin-bottom: 0.5rem;
 }
 
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
+.leaflet-popup-content-wrapper {
   background-color: #e4e3e3;
+}
+
+.leaflet-popup-tip {
+  border-color: #e4e3e3 transparent transparent;
 }
 
 .leaflet-marker-icon:not(.marker-cluster-small) {
