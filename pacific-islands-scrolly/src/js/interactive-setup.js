@@ -65,31 +65,31 @@ const translations = {
   },
   Previous: {
     en: 'Previous',
-    'zh-hans': 'zh-hans',
-    'zh-hant': 'zh-hant',
-    ms: 'ms',
-    vi: 'vi'
+    'zh-hans': '上一页',
+    'zh-hant': '上一步',
+    ms: 'sebelumnya',
+    vi: 'trước'
   },
   Next: {
     en: 'Next',
-    'zh-hans': 'zh-hans',
-    'zh-hant': 'zh-hant',
-    ms: 'ms',
-    vi: 'vi'
+    'zh-hans': '下一页',
+    'zh-hant': '下一步',
+    ms: 'seterusnya',
+    vi: 'bên cạnh'
   },
   'Scroll Up': {
     en: 'Scroll Up',
-    'zh-hans': 'zh-hans',
-    'zh-hant': 'zh-hant',
-    ms: 'ms',
-    vi: 'vi'
+    'zh-hans': '向上滑动',
+    'zh-hant': '向上滑動',
+    ms: 'tatal ke atas',
+    vi: 'cuộn lên'
   },
   'Scroll Down': {
     en: 'Scroll Down',
-    'zh-hans': 'zh-hans',
-    'zh-hant': 'zh-hant',
-    ms: 'ms',
-    vi: 'vi'
+    'zh-hans': '向下滑动',
+    'zh-hant': '向下滑動',
+    ms: 'tatal ke bawah',
+    vi: 'cuộn xuống'
   }
 }
 
