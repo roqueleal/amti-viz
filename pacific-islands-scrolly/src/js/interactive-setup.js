@@ -9,6 +9,13 @@ console.log(window.lang)
 let i = 0
 
 const translations = {
+  mapboxStyle: {
+    en: 'cjp1vsq4012qc2smt2prznr0i',
+    'zh-hans': 'cjsg6nf3m3piz1fnpwbygnvyp',
+    'zh-hant': 'cjsg8h2ui0qyp1fqi4t5vvpn4',
+    ms: 'cjsg8hg6h18a51gs1lq630ch8',
+    vi: 'cjsg8j9dt2hn21fqqg0nf7sip'
+  },
   'Pacific Military Powers': {
     en: 'Pacific Military Powers',
     'zh-hans': '太平洋军事力量',
@@ -159,7 +166,7 @@ function interactiveSetup({ container, initialDesc, steps }) {
             ? `<div id="chevWrapper">
           <a href="#step${i - 1}">
              <span id="chevron-up">»</span>
-            &nbsp;<span></span>
+            &nbsp;<span>${translations['Scroll Up'][window.lang]}</span>
           </a>
           </div>`
             : ``
@@ -172,7 +179,7 @@ function interactiveSetup({ container, initialDesc, steps }) {
                       <a href="#step${i + 1}">
                          <span id="chevron-down">»</span>
                         &nbsp;<span>${
-                          translations['Scroll down'][window.lang]
+                          translations['Scroll Down'][window.lang]
                         }</span>
                       </a>
                       </div>`
@@ -336,7 +343,9 @@ const load = () => {
     })
 
     L.mapbox
-      .styleLayer('mapbox://styles/ilabmedia/cjp1vsq4012qc2smt2prznr0i')
+      .styleLayer(
+        `mapbox://styles/ilabmedia/${translations['mapboxStyle'][window.lang]}`
+      )
       .addTo(window.map)
 
     let elements = document.querySelectorAll('.sticky')
@@ -347,7 +356,9 @@ const load = () => {
 
     window.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/ilabmedia/cjp1vsq4012qc2smt2prznr0i',
+      style: `mapbox://styles/ilabmedia/${
+        translations['mapboxStyle'][window.lang]
+      }`,
       center: [195, -11.9602541],
       zoom: 2,
       bearing: 0,
