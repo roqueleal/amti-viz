@@ -54,39 +54,44 @@
   <script src="js/makeMap.js"></script>
   <script>
     var maps = [
-      // {
-      //   id: "claims-map",
-      //   sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
-      //   "popup headers": [
-      //     lang ? "name_" + lang : "name",
-      //     lang ? "description_" + lang : "description",
-      //     "link"
-      //   ]
-      // }
-      // ,
-      // {
-      //   id: "venezuela",
-      //   sheet: "13tvoxc7kB8BzSKO67c6kf949kqte_o-WFF5W21h5O98",
-      // }
-      // ,
-      //   {
-      //     id: "features-map",
-      //     sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
-      //   }
-      //   ,
-      //   {
-      //     id: "resources-map",
-      //     sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
-      //     "popup headers": [
-      //       lang ? "name_" + lang : "name",
-      //       lang ? "description_" + lang : "description",
-      //       "link"
-      //     ]
-      //   }
-      //   ,
+      {
+        id: "claims-map",
+        sheet: "14MvucMac-lYCu0-2vD5tcxfCUqIJog2h4-REFkpH3Kw",
+        "popup headers": [
+          lang ? "name_" + lang : "name",
+          lang ? "description_" + lang : "description",
+          "link"
+        ]
+      }
+      ,
+      {
+        id: "venezuela",
+        sheet: "13tvoxc7kB8BzSKO67c6kf949kqte_o-WFF5W21h5O98",
+      }
+      ,
+        {
+          id: "features-map",
+          sheet: "1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc"
+        }
+        ,
+        {
+          id: "resources-map",
+          sheet: "11rUaoISSkqakEKZ6hi4xeVbbiEnfPi1qsRoq4r0SrPA",
+          "popup headers": [
+            lang ? "name_" + lang : "name",
+            lang ? "description_" + lang : "description",
+            "link"
+          ]
+        }
+        ,
         {
         id: "aegis",
         sheet: "15oJSmk0KW3_5D8Uj1eSiz-e-PpW51e9N-XSgLIQtZIk",
+      }
+      ,
+      {
+        id:"wbi-terrorism",
+        sheet:"1d4Ee65KT_S46x0mk62sV6CYDpMZ40c2oYJ6BQs9a_10"
       }
 
     ];
@@ -104,7 +109,8 @@
         makeMap({
           mapID: map.id,
           googleSheet: map.sheet,
-          "mapbox style": map.id === "aegis" ? "cjoiv6dmo29kh2rsd2z5qda2p" : mapboxStyle,
+          "mapbox style": map.id === "aegis" ? "cjoiv6dmo29kh2rsd2z5qda2p" : map.id ===
+          "venezuela" || map.id === "wbi-terrorism" ? "cjrawc1zs2bzc2sq3y9wvt22t" : mapboxStyle,
           "ocean color": "#cad2d3",
           "popup headers": map["popup headers"], // Array
           // "popup content": [],

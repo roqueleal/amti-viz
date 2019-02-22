@@ -116,13 +116,23 @@ function init(dataURL, options, translations) {
         properties[data] = options[data];
       });
 
-      properties["popup content"] = properties["popup content"]
-        ? properties["popup content"].split(",")
-        : [];
+      properties["popup content"] =
+        properties["popup content"] &&
+        typeof properties["popup content"] === "string"
+          ? properties["popup content"].split(",")
+          : properties["popup content"] &&
+            typeof properties["popup content"] === "object"
+            ? properties["popup content"]
+            : [];
 
-      properties["popup headers"] = properties["popup headers"]
-        ? properties["popup headers"].split(",")
-        : [];
+      properties["popup headers"] =
+        properties["popup headers"] &&
+        typeof properties["popup headers"] === "string"
+          ? properties["popup headers"].split(",")
+          : properties["popup headers"] &&
+            typeof properties["popup headers"] === "object"
+            ? properties["popup headers"]
+            : [];
 
       properties.slug = properties.mapID.toLowerCase().replace(/ /g, "-");
       properties.translations = translations;
@@ -327,7 +337,9 @@ function makeWidgetContent(widgets, x) {
         widgets[x].field +
         '"  value="1" checked>Show</label>';
       widgetNodes +=
-        '<label for="$toggle_{widgets[x].field}" class="translate"><input type="radio" name="' +
+        '<label for="$toggle_' +
+        widgets[x].field +
+        '" class="translate"><input type="radio" name="' +
         widgets[x].field +
         '" id="toggle_' +
         widgets[x].field +
@@ -665,7 +677,7 @@ function handleChange(map, element, widgets, x, count, initialized) {
             ) {
               bool = false;
             }
-            if (field === "country") return bool;
+            return bool;
           };
 
   if (initialized >= count) map.removeGroups();
@@ -1126,6 +1138,7 @@ function makeGroups(map) {
         }
       })
     );
+
     geoJsonOptions.forEach(function(option) {
       if (colorKeyWidget) {
         json.features = json.features.sort(function(a, b) {
@@ -1317,11 +1330,13 @@ function styleNonPoint(feature, options, index) {
 
   if (!colorKey && !formKey) {
     return {
-      opacity: 0
+      opacity: 0,
+      fillOpacity: 0
     };
   }
 
   var color = colorKey ? colorKey.color : formKey ? formKey.color : null;
+
   var formKeyForm = formKeyWidget
     ? formKeyWidget.keys.reduce(function(a, c) {
         return c.form;
@@ -1401,13 +1416,35 @@ function styleNonPoint(feature, options, index) {
       };
     }
 
+    var lineColor;
+    var lineWeight;
+    var lineOpacity;
+    switch (true) {
+      case feature.geometry.type.toLowerCase().indexOf("line") > -1:
+        lineColor = chroma(color)
+          .brighten()
+          .hex();
+
+        lineOpacity = 1;
+        lineWeight = 4;
+
+        break;
+      case feature.geometry.type.toLowerCase().indexOf("polygon") > -1:
+        lineColor = defaultColor;
+
+        lineOpacity = 0.5;
+        lineWeight = 2;
+
+        break;
+    }
+
     return {
       fillPattern: pattern,
       fillColor: color,
-      color: defaultColor,
+      color: lineColor,
       fillOpacity: 0.7,
-      opacity: 0.5,
-      weight: 2
+      opacity: lineOpacity,
+      weight: lineWeight
     };
   }
 }
