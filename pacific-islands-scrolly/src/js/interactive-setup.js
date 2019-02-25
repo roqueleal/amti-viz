@@ -51,6 +51,7 @@ const translations = {
     vi: 'Pháp'
   },
   'New Zealand': {
+    en: 'New Zealand',
     'zh-hans': '新西兰',
     'zh-hant': '紐西蘭',
     ms: 'New Zealand',
