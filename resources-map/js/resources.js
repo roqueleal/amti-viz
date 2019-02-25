@@ -211,34 +211,37 @@ function initResources() {
       resourcePopup.openOn(map);
     }
   });
-
-  var resourceHover = L.popup({ closeButton: false });
-
-  resourceLayer.on(carto.layer.events.FEATURE_OVER, function(
-    blockFeatureEvent
-  ) {
-    resourceHover.setLatLng(blockFeatureEvent.latLng);
-    if (!resourcePopup.isOpen()) {
-      var data = blockFeatureEvent.data;
-
-      var sectionTitle = lang ? translations["Block name"] : "Block name";
-
-      resourceHover.setContent(
-        "<div class='popupHeaderStyle'>" +
-          sectionTitle +
-          "</div><div class='popupEntryStyle'>" +
-          data.block_name +
-          "</div>"
-      );
-      resourceHover.openOn(map);
-    }
-  });
-
-  resourceLayer.on(carto.layer.events.FEATURE_OUT, function(blockFeatureEvent) {
-    resourceHover.removeFrom(map);
-  });
-
   client.addLayer(resourceLayer);
+
+  if (window.innerWidth > 768) {
+    var resourceHover = L.popup({ closeButton: false });
+
+    resourceLayer.on(carto.layer.events.FEATURE_OVER, function(
+      blockFeatureEvent
+    ) {
+      resourceHover.setLatLng(blockFeatureEvent.latLng);
+      if (!resourcePopup.isOpen()) {
+        var data = blockFeatureEvent.data;
+
+        var sectionTitle = lang ? translations["Block name"] : "Block name";
+
+        resourceHover.setContent(
+          "<div class='popupHeaderStyle'>" +
+            sectionTitle +
+            "</div><div class='popupEntryStyle'>" +
+            data.block_name +
+            "</div>"
+        );
+        resourceHover.openOn(map);
+      }
+    });
+
+    resourceLayer.on(carto.layer.events.FEATURE_OUT, function(
+      blockFeatureEvent
+    ) {
+      resourceHover.removeFrom(map);
+    });
+  }
 }
 
 function initClaims() {
