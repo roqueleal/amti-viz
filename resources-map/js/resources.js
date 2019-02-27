@@ -45,7 +45,7 @@ L.control
 L.control.zoomslider().addTo(map);
 
 var client = new carto.Client({
-  apiKey: "VI4pmtqRAufq-dba2RF2xQ",
+  apiKey: "VIKGbtgYDbaBvbByM9W8gg",
   username: "csis"
 });
 
@@ -142,7 +142,7 @@ function initResources() {
   });
 
   resources = new carto.source.SQL(
-    "SELECT * FROM oil_and_gas_data_sheet1 ORDER BY country1 DESC"
+    "SELECT * FROM table_2018_allcountries_oilandgas_production ORDER BY country1 DESC"
   );
 
   resources.addFilter(countryDataFilter);
