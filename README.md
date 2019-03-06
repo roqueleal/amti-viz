@@ -1,2 +1,2 @@
 # amti-viz
-Home to data viz projects for the AMTI website.
+Home to maps and data visualizations for the AMTI website.
