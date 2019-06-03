@@ -982,7 +982,7 @@ function makeDropdownOptions(options, x) {
   var choices = Object.keys(groups).map(function(g, z) {
     return {
       id: z,
-      label: g.trim() && parseInt(g, 10) !== NaN ? g : '',
+      label: g.trim() && parseInt(g, 10) === NaN ? g : '',
       disabled: false,
       choices: groups[g]
     }

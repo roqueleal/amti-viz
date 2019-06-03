@@ -28,4 +28,17 @@
       )
     }
   })
+  map.json[15].features.forEach(json => {
+    var myLines = json.geometry
+
+    var myStyle = {
+      color: 'red',
+      weight: 5,
+      opacity: 0.65
+    }
+
+    L.geoJSON(myLines, {
+      style: myStyle
+    }).addTo(map.leaflet)
+  })
 })()
