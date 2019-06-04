@@ -2,6 +2,10 @@ section.widget.name{
   display:none
 }
 
+dialog #dialogContent {
+  font-family: "PT Sans Narrow"
+}
+
 dialog a {
   color: #00b29e;
   text-decoration:none;
