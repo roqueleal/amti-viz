@@ -15,12 +15,17 @@
         .replace(/<a href=/gi, '<a target="_blank" href=')
         .replace(/<\/a>/gi, externalLink + '</a>')
 
+      console.log(feature.properties.observed)
       return (
         '<div class="popupEntryStyle">' +
-        feature.properties.reef +
+        feature.properties.chinese_outposts +
         '<br/>' +
         name +
-        (feature.properties.observed ? '<br/>(expected)' : '') +
+        (feature.properties.observed
+          ? '<br/>(expected)'
+          : feature.properties.observed === false
+            ? '<br />(observed)'
+            : '') +
         '</div>' +
         '<div class="popupEntryStyle">' +
         description +
