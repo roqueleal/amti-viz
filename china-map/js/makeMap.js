@@ -1714,7 +1714,6 @@ function styleNonPoint(feature, options, index) {
     var i = forms.indexOf(feature.properties[formKeyWidget.field])
 
     if (i > -1) {
-      console.log(feature.properties.capabilities, colors[i][index])
       return {
         color:
           colors[i][index] === undefined

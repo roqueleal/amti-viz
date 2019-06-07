@@ -15,12 +15,12 @@
         .replace(/<a href=/gi, '<a target="_blank" href=')
         .replace(/<\/a>/gi, externalLink + '</a>')
 
-      console.log(feature.properties.observed)
+      var outpost = feature.properties.chinese_outposts
       return (
         '<div class="popupEntryStyle">' +
-        feature.properties.chinese_outposts +
-        '<br/>' +
-        name +
+        outpost +
+        (name && outpost ? '<br/>' : '') +
+        (name !== outpost ? name : '') +
         (feature.properties.observed
           ? '<br/>(expected)'
           : feature.properties.observed === false
@@ -33,7 +33,7 @@
       )
     }
   })
-  map.json[15].features.forEach(json => {
+  map.json[map.json.length - 1].features.forEach(json => {
     var myLines = json.geometry
 
     var myStyle = {
