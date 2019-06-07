@@ -33,7 +33,7 @@
       )
     }
   })
-  map.json[map.json.length - 1].features.forEach(json => {
+  map.json[map.json.length - 1].features.forEach(function(json) {
     var myLines = json.geometry
 
     var myStyle = {
