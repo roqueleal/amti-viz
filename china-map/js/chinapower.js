@@ -33,17 +33,4 @@
       )
     }
   })
-  map.json[map.json.length - 1].features.forEach(function(json) {
-    var myLines = json.geometry
-
-    var myStyle = {
-      color: 'red',
-      weight: 5,
-      opacity: 0.65
-    }
-
-    L.geoJSON(myLines, {
-      style: myStyle
-    }).addTo(map.leaflet)
-  })
 })()

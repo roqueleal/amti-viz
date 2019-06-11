@@ -314,24 +314,25 @@ async function initWithSpreadsheet(dataURL, options, translations) {
         Object.keys(options).forEach(function(data) {
           properties[data] = options[data]
         })
-        properties.center =
-          typeof properties.center === 'string'
-            ? properties.center.split(',')
-            : properties.center
-              ? properties.center
-              : [0, 0]
-        properties.swbounds =
-          typeof properties.swbounds === 'string'
-            ? properties.swbounds.split(',')
-            : properties.swbounds
-              ? properties.swbounds
-              : [-90, -180]
-        properties.nebounds =
-          typeof properties.nebounds === 'string'
-            ? properties.nebounds.split(',')
-            : properties.nebounds
-              ? properties.nebounds
-              : [90, 180]
+
+        var twoD_properites = [
+          { name: 'center', default: [0, 0] },
+          { name: 'iconsize', default: [20, 20] },
+          { name: 'iconanchor', default: [5, 5] },
+          { name: 'swbounds', default: [-90, -180] },
+          { name: 'nebounds', default: [90, 180] }
+        ]
+
+        twoD_properites.forEach(function(property) {
+          properties[property.name] =
+            typeof properties[property.name] === 'string'
+              ? properties[property.name].split(',').map(function(v) {
+                  return parseInt(v, 10)
+                })
+              : properties[property.name]
+                ? properties[property.name]
+                : property.default
+        })
         properties.slug = properties.mapID.toLowerCase().replace(/ /g, '-')
         properties.translations = translations
         properties.widgets = widgets
@@ -924,6 +925,7 @@ function handleChange(map, element, widgets, x, count, initialized) {
       ? o.name.toLowerCase()
       : o.value.toLowerCase()
   })
+
   map.filters[widgets[x].id] =
     widgets[x].input === 'toggle'
       ? function(feature) {
@@ -970,6 +972,7 @@ function handleChange(map, element, widgets, x, count, initialized) {
             ) {
               bool = false
             }
+
             return bool
           }
 
@@ -1201,7 +1204,11 @@ function stylePoint(feature, latlng, map, colorKeyWidget, formKeyWidget) {
   var CustomIcon = L.Icon.extend({
     options: {
       iconSize: map.iconsize || [20, 20],
-      iconAnchor: map.iconanchor || [5, 5]
+      iconAnchor: map.iconsize
+        ? map.iconsize / 4
+        : map.iconanchor
+          ? map.iconanchor
+          : [5, 5]
     }
   })
   var pointStyle
@@ -1472,6 +1479,7 @@ function makeGroups(map) {
     var allPoints = json.features.every(function(feature) {
       return feature.geometry && feature.geometry.type.toLowerCase() === 'point'
     })
+
     map.groups.push(
       new L.MarkerClusterGroup({
         showCoverageOnHover: false,
@@ -1693,8 +1701,9 @@ function styleNonPoint(feature, options, index) {
 
   if (!colorKey && !formKey) {
     return {
-      opacity: 0,
-      fillOpacity: 0
+      opacity: 1,
+      fillOpacity: 1,
+      color: 'red'
     }
   }
 
@@ -1951,7 +1960,13 @@ function styleKey(options) {
         svg =
           'data:image/svg+xml;base64,' +
           window.btoa(
-            '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
+            '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="' +
+              map.iconsize[0] / 2 +
+              '" cy="' +
+              map.iconsize[1] / 2 +
+              '" r="' +
+              (map.iconsize[0] + map.iconsize[1]) / 4 +
+              '" fill="' +
               (keyColor || key.color) +
               '"/></svg>'
           )
