@@ -1,14 +1,14 @@
-section.widget.name{
-  display:none
+section.widget.name {
+  display: none;
 }
 
 dialog #dialogContent {
-  font-family: "PT Sans Narrow"
+  font-family: 'PT Sans Narrow';
 }
 
 dialog a {
   color: #00b29e;
-  text-decoration:none;
+  text-decoration: none;
   word-wrap: break-word;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
@@ -19,4 +19,20 @@ dialog a {
 
 dialog a:hover {
   color: #0c8d79;
+}
+
+.chinese_outposts ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chinese_outposts ul li {
+  white-space: nowrap;
+}
+
+.chinese_outposts ul li:nth-child(-n + 12) {
+  flex-basis: 50%;
+}
+#controls li label .itemText {
+  transform: none !important;
 }
