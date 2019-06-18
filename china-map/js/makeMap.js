@@ -479,18 +479,22 @@ function makeNodes(options) {
     var dialogEl = document.getElementById(options.slug + '__dialog')
     var mainEl = document.getElementById('options.slug')
     var dialogTrigger = document.getElementById(options.slug + '__about')
-    var dialogBox = new window.A11yDialog(dialogEl, mainEl)
-    var dialog = dialogBox.dialog
-    dialogBox.show()
-    dialogBox.on('hide', function(dialogEl) {
-      dialogTrigger.style.display = 'block'
-    })
-    dialogBox.on('show', function(dialogEl) {
-      dialogTrigger.style.display = 'none'
-    })
-    dialogTrigger.addEventListener('click', function() {
+
+    if (window.A11yDialog) {
+      var dialogBox = new window.A11yDialog(dialogEl, mainEl)
+
+      var dialog = dialogBox.dialog
       dialogBox.show()
-    })
+      dialogBox.on('hide', function(dialogEl) {
+        dialogTrigger.style.display = 'block'
+      })
+      dialogBox.on('show', function(dialogEl) {
+        dialogTrigger.style.display = 'none'
+      })
+      dialogTrigger.addEventListener('click', function() {
+        dialogBox.show()
+      })
+    }
   }
 
   document.title = options.title + ' | CSIS ' + options.program
