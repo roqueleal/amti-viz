@@ -39,3 +39,17 @@ dialog a:hover {
 #controls li label .itemText {
   transform: none !important;
 }
+
+#logo {
+  display: block;
+  float: right;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 6px;
+  margin-left: 12px;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain;
+  border: 0;
+}
