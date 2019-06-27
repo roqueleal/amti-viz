@@ -29,11 +29,6 @@
         outpost +
         (name && outpost ? '<br/>' : '') +
         (name !== outpost ? name : '') +
-        (feature.properties.observed
-          ? '<br/>(expected)'
-          : feature.properties.observed === false
-            ? '<br />(observed)'
-            : '') +
         '</div>' +
         '<div class="popupEntryStyle">' +
         description +
