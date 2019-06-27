@@ -88,3 +88,8 @@ dialog a:hover {
 .popupEntryStyle a:hover svg {
   fill: #000;
 }
+
+.ui:checked ~ .hamburger span:first-child {
+  -webkit-transform: rotate(45deg) translate(2px, -2px);
+  transform: rotate(45deg) translate(2px, -2px);
+}
