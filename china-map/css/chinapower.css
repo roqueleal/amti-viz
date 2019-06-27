@@ -93,3 +93,13 @@ dialog a:hover {
   -webkit-transform: rotate(45deg) translate(2px, -2px);
   transform: rotate(45deg) translate(2px, -2px);
 }
+
+dialog[open] {
+  top: 0 !important;
+}
+
+@media only screen and (max-width: 768px) {
+  p {
+    font-size: 16px;
+  }
+}
