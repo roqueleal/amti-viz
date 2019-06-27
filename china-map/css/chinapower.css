@@ -60,9 +60,8 @@ dialog a:hover {
     rgba(0, 120, 168, 1) 33%,
     rgba(0, 120, 168, 1) 33%
   );
-  background-position: 0 100%;
   background-repeat: repeat-x;
-  background-position-y: 90%;
+  background-position-y: 95%;
   background-size: 1px 1px;
   -moz-transition: all 200ms ease;
   -o-transition: all 200ms ease;
@@ -72,8 +71,8 @@ dialog a:hover {
 
 .popupEntryStyle a:hover {
   background-image: linear-gradient(
-    rgba(0, 120, 168, 0.5) 33%,
-    rgba(0, 120, 168, 0.5) 33%
+    rgba(0, 120, 168, 0.25) 33%,
+    rgba(0, 120, 168, 0.25) 33%
   );
   background-size: 4px 100%;
 }
@@ -81,8 +80,6 @@ dialog a:hover {
 .popupEntryStyle a svg {
   height: 12px;
   width: 12px;
-  margin-left: 6px;
-  fill: #0078a8;
 }
 
 .popupEntryStyle a:hover svg {
