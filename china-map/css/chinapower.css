@@ -86,13 +86,15 @@ dialog a:hover {
   fill: #000;
 }
 
+@media only screen and (min-width: 768px) {
+  #dialogTitle {
+    text-align: center;
+  }
+}
+
 .ui:checked ~ .hamburger span:first-child {
   -webkit-transform: rotate(45deg) translate(2px, -2px);
   transform: rotate(45deg) translate(2px, -2px);
-}
-
-dialog[open] {
-  top: 0 !important;
 }
 
 @media only screen and (max-width: 768px) {
