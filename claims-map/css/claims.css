@@ -1,0 +1,80 @@
+section.widget.name {
+  display: none;
+}
+
+dialog #dialogContent,
+h1,
+h2,
+h3 {
+  font-family: 'PT Sans Narrow';
+}
+
+dialog a {
+  color: #00b29e;
+  text-decoration: none;
+  word-wrap: break-word;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+dialog a:hover {
+  color: #0c8d79;
+}
+
+.chinese_outposts ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chinese_outposts ul li {
+  white-space: nowrap;
+}
+
+.chinese_outposts ul li:nth-child(-n + 12) {
+  flex-basis: 50%;
+}
+#controls li label .itemText {
+  transform: none !important;
+}
+
+.popupEntryStyle a {
+  color: black;
+  text-decoration: none;
+  background-image: linear-gradient(
+    rgba(0, 120, 168, 1) 33%,
+    rgba(0, 120, 168, 1) 33%
+  );
+  background-repeat: repeat-x;
+  background-position-y: 95%;
+  background-size: 1px 1px;
+  -moz-transition: all 200ms ease;
+  -o-transition: all 200ms ease;
+  -webkit-transition: all 200ms ease;
+  transition: all 200ms ease;
+}
+
+.popupEntryStyle a:hover {
+  background-image: linear-gradient(
+    rgba(0, 120, 168, 0.25) 33%,
+    rgba(0, 120, 168, 0.25) 33%
+  );
+  background-size: 4px 100%;
+}
+
+.popupEntryStyle a svg {
+  height: 12px;
+  width: 12px;
+}
+
+.popupEntryStyle a:hover svg {
+  fill: #000;
+}
+
+@media only screen and (min-width: 768px) {
+  #dialogTitle {
+    text-align: center;
+  }
+}

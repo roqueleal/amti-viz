@@ -1,0 +1,55 @@
+.occupation_status ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+.occupation_status li {
+  flex-basis: 50%;
+}
+.islandTracker {
+  display: flex;
+}
+.islandTracker a {
+  white-space: nowrap;
+  color: #0d7f6d;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.islandTracker svg {
+  margin-left: 0.3rem;
+  fill: #0d7f6d;
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -ms-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.separator {
+  min-height: 1px;
+  background-color: rgba(46, 60, 67, 0.08);
+  margin: 8px 0;
+}
+
+.islandTracker:hover a {
+  color: #17b39a;
+}
+
+.islandTracker:hover svg {
+  fill: #17b39a;
+}
+.popupHeaderStyle {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.popupEntryStyle {
+  font-weight: 600;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+}
