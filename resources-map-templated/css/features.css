@@ -1,0 +1,18 @@
+.popupHeaderStyle {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.popupEntryStyle {
+  font-weight: 600;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+path[fill-opacity] {
+  fill-opacity: 0.35;
+  stroke-width: 1.5;
+  stroke: #ffffff;
+  stroke-opacity: 0.25;
+}

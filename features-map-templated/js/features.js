@@ -5,12 +5,11 @@ var mapboxStyle =
 
 makeMap({
   mapID: 'features-map',
-  externalLinkText: 'View on Island Tracker',
+  externalLinkText: 'View on the Island Tracker',
   googleSheet: '1REFNJ8WZ9fOzShYC8SpUJ7pZQEMkWlqzC2KpMb-wSyc',
   mapboxstyle: mapboxStyle,
   formatPopupContent: function(feature, map) {
     var content
-    var prefix = lang ? '_' + lang : ''
 
     var ignoredHeaders = [
       'cartodb_id',
@@ -56,9 +55,11 @@ makeMap({
 
     content = description + islandTracker
     if (lang) {
-      sortedTranslations.forEach(function(t) {
+      var translatableStrings = Object.keys(translations).sort(function(a, b) {
+        return b.length - a.length
+      })
+      translatableStrings.forEach(function(t) {
         var re = new RegExp('\\b(' + RegExp.escape(t) + ')', 'gi')
-
         content = content.replace(re, translations[t])
       })
     }

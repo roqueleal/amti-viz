@@ -10,11 +10,11 @@ makeMap({
   'ocean color': '#cad2d3',
 
   formatPopupContent: function(feature, map) {
-    var prefix = lang ? '_' + lang : ''
+    var suffix = lang ? '_' + lang.replace(/-/, '_') : ''
 
-    var name = feature.properties['name' + prefix]
+    var name = feature.properties['name' + suffix]
 
-    var description = feature.properties['description' + prefix]
+    var description = feature.properties['description' + suffix]
       .replace(/<a href=/gi, '<a target="_blank" href=')
       .replace(/<\/a>/gi, externalLink + '</a>')
 

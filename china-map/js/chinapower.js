@@ -54,9 +54,9 @@ _asyncToGenerator(
                 }
               },
               formatPopupContent: function formatPopupContent(feature, map) {
-                var prefix = lang ? '_' + lang : ''
-                var name = feature.properties['name' + prefix]
-                var description = feature.properties['description' + prefix]
+                var suffix = lang ? '_' + lang : ''
+                var name = feature.properties['name' + suffix]
+                var description = feature.properties['description' + suffix]
                   .replace(/<a href=/gi, '<a target="_blank" href=')
                   .replace(/<\/a>/gi, externalLink + '</a>')
                 var outpost = feature.properties.chinese_outposts
