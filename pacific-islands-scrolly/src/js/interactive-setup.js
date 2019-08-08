@@ -97,7 +97,7 @@ const translations = {
 function interactiveSetup({ container, initialDesc, steps }) {
   let cssFiles = [
     'https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css',
-    'https://csis-ilab.github.io/amti-viz/amti-pacific-islands/dist/main.css'
+    'https://csis-ilab.github.io/amti-viz/pacific-islands-scrolly/dist/main.css'
   ]
 
   cssFiles.forEach(file => {
