@@ -101,13 +101,12 @@ function interactiveSetup({ container, initialDesc, steps }) {
   ]
 
   cssFiles.forEach(file => {
-    let head = document.head
     let cssLink = document.createElement('link')
 
     cssLink.rel = 'stylesheet'
     cssLink.href = file
 
-    head.appendChild(cssLink)
+    document.head.appendChild(cssLink)
   })
 
   let HTML = ''
