@@ -1133,7 +1133,7 @@ function CustomMap(container, properties) {
     _this.leaflet = L.map(container, {
       minZoom: _this.minzoom || null,
       maxZoom: _this.maxzoom || 20,
-      maxBounds: _this.maxbounds || [_this.swbounds, _this.nebounds],
+      // maxBounds: _this.maxbounds || [_this.swbounds, _this.nebounds],
       scrollWheelZoom: window.innerWidth < 768 ? false : true,
       zoomControl: !_this.hasOwnProperty('zoomslider') || _this.zoomslider ? false : true,
       attributionControl: false
