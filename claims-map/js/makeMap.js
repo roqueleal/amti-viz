@@ -1130,10 +1130,16 @@ function CustomMap(container, properties) {
   };
 
   this.render = function () {
+    // Manual definition of maxBounds coordinates, comment out if relying on line 1141
+    var southWest = L.latLng(-70, 33.0967),
+    northEast = L.latLng(75, 300);
     _this.leaflet = L.map(container, {
       minZoom: _this.minzoom || null,
       maxZoom: _this.maxzoom || 20,
-      // maxBounds: _this.maxbounds || [_this.swbounds, _this.nebounds],
+      maxBounds: [southWest, northEast],
+      // Use next line if dynamic bounding based on mapdata is required
+      //maxBounds: _this.maxbounds || [_this.swbounds, _this.nebounds],
+      worldCopyJump: false,
       scrollWheelZoom: window.innerWidth < 768 ? false : true,
       zoomControl: !_this.hasOwnProperty('zoomslider') || _this.zoomslider ? false : true,
       attributionControl: false
@@ -1142,6 +1148,14 @@ function CustomMap(container, properties) {
     if (_this.addevent) _this.leaflet.on('layeradd', _this.addevent);
     this.leaflet.setView(_this.center, _this.zoom || 2);
     L.tileLayer('https://api.mapbox.com/styles/v1/ilabmedia/' + _this.mapboxstyle + '/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw', {}).addTo(_this.leaflet);
+
+    // Use these lines to visually test maxBounds rule
+
+    // var bounds = L.latLngBounds(southWest, northEast);
+
+    // L.rectangle(bounds, {
+	  //   color: "red"
+    // }).addTo(_this.leaflet);
 
     if (!_this.hasOwnProperty('zoomslider') || _this.zoomslider) {
       L.control.zoomslider().addTo(_this.leaflet);
@@ -3312,7 +3326,7 @@ var url = window.location != window.parent.location ? document.referrer : docume
 var href = /lang=([^&]+)/.exec(url);
 window.lang = href ? href[1] : null;
 var leafletLoaded = 0;
-var primaryJsFiles = ['https://unpkg.com/leaflet@1.3.1/dist/leaflet.js', 'https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js'];
+var primaryJsFiles = ['https://unpkg.com/leaflet@1.5.1/dist/leaflet.js', 'https://unpkg.com/whatwg-fetch@3.0.0/dist/fetch.umd.js'];
 var secondaryJsFiles = ['https://unpkg.com/leaflet.zoomslider@0.7.1/src/L.Control.Zoomslider.js', 'https://unpkg.com/leaflet-fullscreen@1.0.2/dist/Leaflet.fullscreen.min.js', 'https://unpkg.com/chroma-js@2.0.3/chroma.min.js', 'https://csis-ilab.github.io/map-templates/dist/js/vendor/A11y-Dialog.js', 'https://unpkg.com/choices.js@7.0.0/public/assets/scripts/choices.min.js', 'https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js', 'https://csis-ilab.github.io/map-templates/dist/js/vendor/patterns.js', 'https://csis-ilab.github.io/map-templates/dist/js/vendor/latinize.js'];
 
 function handleLoadLeaflet() {
