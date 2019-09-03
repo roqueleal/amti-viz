@@ -119,7 +119,8 @@ function createColorScale(count, index) {
   return scale;
 }
 var lineWeights = [[3, 3], [5, 2], [4, 3.5], [7, 3], [4, 4]];
-var lineDashArrays = [[null, '6,9'], [null, null], [null, '6,12'], [null, null], ['18,24', '18,24']];
+// 9 Dash styles is set by the last pair value in the array, default is '18,24'
+var lineDashArrays = [[null, '6,9'], [null, null], [null, '6,12'], [null, null], [null, null]];
 var externalLink = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path d="M7.49,0V1.67H1.68V13.32H13.32V7.52H15v5.72a1.76,1.76,0,0,1-.42,1.19,1.64,1.64,0,0,1-1.13.56H1.74a1.67,1.67,0,0,1-1.16-.41A1.61,1.61,0,0,1,0,13.48v-.27C0,9.4,0,5.6,0,1.8A1.83,1.83,0,0,1,.58.4a1.53,1.53,0,0,1,1-.39h6Z" transform="translate(0 0)"/><path d="M9.17,1.67V0H15V5.84H13.34v-3h0c-.05.05-.11.1-.16.16l-.45.46-1.3,1.29-.84.84-.89.9-.88.87-.89.9c-.28.29-.57.57-.86.86L6.16,10l-.88.87a1.83,1.83,0,0,1-.13.16L4,9.86l0,0L5.36,8.47l.95-1,.75-.75,1-1L8.87,5l1-.94.85-.86.92-.91.56-.58Z" transform="translate(0 0)"/></svg>';
 var remove = '<svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="#000" fill-rule="evenodd"><path d="M2.592.044l18.364 18.364-2.548 2.548L.044 2.592z"/><path d="M0 18.364L18.364 0l2.548 2.548L2.548 20.912z"/></g></svg>';
 function convertType(value) {
@@ -1134,8 +1135,11 @@ function CustomMap(container, properties) {
     var southWest = L.latLng(-70, 33.0967),
     northEast = L.latLng(75, 300);
     _this.leaflet = L.map(container, {
-      minZoom: _this.minzoom || null,
-      maxZoom: _this.maxzoom || 20,
+      // Use next two lines if dynamic zoom levels needed
+      //minZoom: _this.minzoom || null,
+      //maxZoom: _this.maxzoom || 20,
+      minZoom: 3,
+      maxZoom: 10,
       maxBounds: [southWest, northEast],
       // Use next line if dynamic bounding based on mapdata is required
       //maxBounds: _this.maxbounds || [_this.swbounds, _this.nebounds],
