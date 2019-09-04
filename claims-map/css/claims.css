@@ -78,3 +78,7 @@ dialog a:hover {
     text-align: center;
   }
 }
+
+.choices__input--cloned {
+  width: 100% !important;
+}
