@@ -213,6 +213,18 @@ function initResources() {
   });
   client.addLayer(resourceLayer);
 
+  var lat, lng;
+  
+  map.addEventListener("mousemove", function(e) {
+    var cb = document.getElementById("coordinates-box");
+    
+
+    lat = e.latlng.lat;
+    lng = e.latlng.lng;
+
+    cb.innerText = '{"lng": ' + lng + ", " + '"lat" : ' + lat  + "}"
+  })
+
   if (window.innerWidth > 768) {
     var resourceHover = L.popup({ closeButton: false });
 
