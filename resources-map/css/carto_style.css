@@ -106,10 +106,12 @@ div#results {
   position: relative;
   margin: 0px auto;
   width: 30%;
-  padding: 5px;
+  padding: 12px;
   border: none;
   text-align: center;
   background: #fff;
+  min-width: 400px;
+  max-width: 550px;
 }
 
 aside.toolbox {
