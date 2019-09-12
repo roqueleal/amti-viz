@@ -61,20 +61,20 @@ var sortedTranslations;
 
 if (lang) {
   fetch(translationsURL)
-    .then(function(response) {
+    .then(function (response) {
       return response.json();
     })
-    .then(function(json) {
+    .then(function (json) {
       translations = parseData(json.feed.entry);
-      sortedTranslations = Object.keys(translations).sort(function(a, b) {
+      sortedTranslations = Object.keys(translations).sort(function (a, b) {
         return b.length - a.length;
       });
 
-      Array.from(document.querySelectorAll(".translate")).forEach(function(
+      Array.from(document.querySelectorAll(".translate")).forEach(function (
         el,
         i
       ) {
-        sortedTranslations.forEach(function(t) {
+        sortedTranslations.forEach(function (t) {
           if (Object.keys(translations[t]).length) {
             var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
             el.innerHTML = el.innerHTML.replace(re, translations[t]);
@@ -92,7 +92,7 @@ if (lang) {
 
       return json;
     })
-    .catch(function(ex) {
+    .catch(function (ex) {
       console.log("mm parsing failed", ex);
     });
 } else {
@@ -105,16 +105,16 @@ if (lang) {
     .addTo(map);
 }
 
-RegExp.escape = function(s) {
+RegExp.escape = function (s) {
   return s.replace(/[\/\\^$*+?.()|[\]{}]/g, "\\$&");
 };
 
 function parseData(data) {
   var languageData = {};
 
-  data.forEach(function(row) {
+  data.forEach(function (row) {
     var key;
-    Object.keys(row).forEach(function(column, i) {
+    Object.keys(row).forEach(function (column, i) {
       if (column.indexOf("gsx$") > -1) {
         var columnName = column.replace("gsx$", "");
         if (columnName === "en") {
@@ -166,7 +166,7 @@ function initResources() {
 
   var resourcePopup = L.popup({ closeButton: true });
 
-  resourceLayer.on(carto.layer.events.FEATURE_CLICKED, function(
+  resourceLayer.on(carto.layer.events.FEATURE_CLICKED, function (
     blockFeatureEvent
   ) {
     resourcePopup.setLatLng(blockFeatureEvent.latLng);
@@ -183,10 +183,10 @@ function initResources() {
 
       var stakeHolders = formatStakeholders(data);
       var content = Object.keys(data)
-        .filter(function(d) {
+        .filter(function (d) {
           return allowed.includes(d) && data[d].trim();
         })
-        .map(function(d) {
+        .map(function (d) {
           return (
             '<div class="popupHeaderStyle">' +
             d.replace(/_/g, " ") +
@@ -200,7 +200,7 @@ function initResources() {
       content += "" + stakeHolders;
 
       if (lang) {
-        sortedTranslations.forEach(function(t) {
+        sortedTranslations.forEach(function (t) {
           var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
 
           content = content.replace(re, translations[t]);
@@ -214,21 +214,22 @@ function initResources() {
   client.addLayer(resourceLayer);
 
   var lat, lng;
-  
-  map.addEventListener("mousemove", function(e) {
+
+  function coordinatesOnHover(e) {
     var cb = document.getElementById("coordinates-box");
-    
 
-    lat = e.latlng.lat;
-    lng = e.latlng.lng;
+    lat = e.latlng.lat.toFixed(4);
+    lng = e.latlng.lng.toFixed(4);
 
-    cb.innerText = '{"lng": ' + lng + ", " + '"lat" : ' + lat  + "}"
-  })
+    cb.innerText = '("lng": ' + lng + ", " + '"lat" : ' + lat + ")";
+  }
+
+  map.addEventListener("mousemove", coordinatesOnHover, true);
 
   if (window.innerWidth > 768) {
     var resourceHover = L.popup({ closeButton: false });
 
-    resourceLayer.on(carto.layer.events.FEATURE_OVER, function(
+    resourceLayer.on(carto.layer.events.FEATURE_OVER, function (
       blockFeatureEvent
     ) {
       resourceHover.setLatLng(blockFeatureEvent.latLng);
@@ -239,16 +240,16 @@ function initResources() {
 
         resourceHover.setContent(
           "<div class='popupHeaderStyle'>" +
-            sectionTitle +
-            "</div><div class='popupEntryStyle'>" +
-            data.block_name +
-            "</div>"
+          sectionTitle +
+          "</div><div class='popupEntryStyle'>" +
+          data.block_name +
+          "</div>"
         );
         resourceHover.openOn(map);
       }
     });
 
-    resourceLayer.on(carto.layer.events.FEATURE_OUT, function(
+    resourceLayer.on(carto.layer.events.FEATURE_OUT, function (
       blockFeatureEvent
     ) {
       resourceHover.removeFrom(map);
@@ -268,23 +269,23 @@ function initClaims() {
 
   var claimsPopup = L.popup({ closeButton: false });
 
-  claimsLayer.on(carto.layer.events.FEATURE_OVER, function(claimFeatureEvent) {
+  claimsLayer.on(carto.layer.events.FEATURE_OVER, function (claimFeatureEvent) {
     claimsPopup.setLatLng(claimFeatureEvent.latLng);
     if (!claimsPopup.isOpen()) {
       var sectionTitle = lang ? translations["Claim"] : "Claim";
 
       claimsPopup.setContent(
         "<div class='popupHeaderStyle'>" +
-          sectionTitle +
-          "</div><div class='popupEntryStyle'>" +
-          claimFeatureEvent.data.name +
-          "</div>"
+        sectionTitle +
+        "</div><div class='popupEntryStyle'>" +
+        claimFeatureEvent.data.name +
+        "</div>"
       );
       claimsPopup.openOn(map);
     }
   });
 
-  claimsLayer.on(carto.layer.events.FEATURE_OUT, function(claimFeatureEvent) {
+  claimsLayer.on(carto.layer.events.FEATURE_OUT, function (claimFeatureEvent) {
     claimsPopup.removeFrom(map);
   });
 
@@ -296,19 +297,19 @@ function capitalize(string) {
 }
 
 function formatStakeholders(data) {
-  var partnerColKeys = Object.keys(data).filter(function(k) {
+  var partnerColKeys = Object.keys(data).filter(function (k) {
     return k.indexOf("partner") > -1;
   });
 
   var stakeholderArray = [];
 
-  partnerColKeys.forEach(function(k) {
+  partnerColKeys.forEach(function (k) {
     return stakeholderArray.push(data[k]);
   });
 
   var stakeholderString = void 0;
 
-  stakeholderArray = stakeholderArray.filter(function(s) {
+  stakeholderArray = stakeholderArray.filter(function (s) {
     return !!s.trim();
   });
   switch (true) {
@@ -320,7 +321,7 @@ function formatStakeholders(data) {
       );
       break;
     case stakeholderArray.length > 1:
-      stakeholderLIs = stakeholderArray.map(function(s) {
+      stakeholderLIs = stakeholderArray.map(function (s) {
         return "<li>" + s + "</li>";
       });
       return (
@@ -338,7 +339,7 @@ function formatStakeholders(data) {
 function getCountryData() {
   var values = [];
 
-  Array.from(document.querySelectorAll("#controls input")).forEach(function(
+  Array.from(document.querySelectorAll("#controls input")).forEach(function (
     input
   ) {
     return input.checked ? values.push(input.value) : null;
@@ -362,15 +363,15 @@ function setNone() {
   );
 }
 
-Array.from(document.querySelectorAll("#controls input")).forEach(function(
+Array.from(document.querySelectorAll("#controls input")).forEach(function (
   input
 ) {
-  return input.addEventListener("click", function() {
+  return input.addEventListener("click", function () {
     applyFilters();
   });
 });
 
-document.querySelector("#query").addEventListener("keyup", function() {
+document.querySelector("#query").addEventListener("keyup", function () {
   var q = document.querySelector("#query").value;
   var filterArray = [];
 
@@ -400,7 +401,7 @@ document.querySelector("#query").addEventListener("keyup", function() {
   } else {
     var columnArray = resourceLayer["_featureClickColumns"];
     columnArray.push("country1");
-    columnArray.map(function(c) {
+    columnArray.map(function (c) {
       filterArray.push(capital(c, q), lower(c, q), upper(c, q));
     });
   }
@@ -410,7 +411,7 @@ document.querySelector("#query").addEventListener("keyup", function() {
   resources
     .getFilters()
     .slice(1)
-    .forEach(function(f) {
+    .forEach(function (f) {
       return resources.removeFilter(f);
     });
 
@@ -433,12 +434,12 @@ var upper = function upper(c, q) {
   });
 };
 
-document.querySelector("#resetButton").addEventListener("click", function(e) {
+document.querySelector("#resetButton").addEventListener("click", function (e) {
   document.querySelector("#query").value = "";
   resources
     .getFilters()
     .slice(1)
-    .forEach(function(f) {
+    .forEach(function (f) {
       return resources.removeFilter(f);
     });
   applyFilters();

@@ -114,6 +114,12 @@ div#results {
   max-width: 550px;
 }
 
+@media screen and (max-width: 480px) {
+  .coordinates-box {
+    display: none !important;
+  }
+}
+
 aside.toolbox {
   display: block;
   top: -24px;
