@@ -221,7 +221,7 @@ function initResources() {
     lat = e.latlng.lat.toFixed(4);
     lng = e.latlng.lng.toFixed(4);
 
-    cb.innerText = '("lng": ' + lng + ", " + '"lat" : ' + lat + ")";
+    cb.innerText = 'Lat: ' + lat + ", " + 'Long: ' + lng + "";
   }
 
   map.addEventListener("mousemove", coordinatesOnHover, true);
