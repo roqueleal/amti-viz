@@ -112,6 +112,8 @@ div#results {
   margin-left: 2%;
   font-family: "Open Sans Condensed", sans-serif; 
   font-size: 1.1em;
+  font-weight: 600;
+  color: #2e3c43;
   box-shadow: 0 0px 16px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
 }
