@@ -113,6 +113,7 @@ div#results {
   font-family: "Open Sans Condensed", sans-serif; 
   font-size: 1.1em;
   box-shadow: 0 0px 16px rgba(0, 0, 0, 0.24);
+  border-radius: 4px;
 }
 
 @media screen and (max-width: 480px) {
