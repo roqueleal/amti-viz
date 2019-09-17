@@ -106,14 +106,12 @@ div#results {
   bottom: 30px;
   padding: 12px;
   text-align: center;
-  min-width: 250px;
-  max-width: 480px;
+  min-width: 200px;
+  max-width: 350px;
   background: #fff;
   margin-left: 2%;
-  font-family: "Open Sans Condensed", sans-serif; 
-  font-size: 1.1em;
-  font-weight: 600;
-  color: #2e3c43;
+  font-family: "Open Sans", sans-serif; 
+  font-size: 12px;
   box-shadow: 0 0px 16px rgba(0, 0, 0, 0.24);
   border-radius: 4px;
 }
