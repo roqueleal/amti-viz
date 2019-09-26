@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['timeline']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var container = document.getElementById('timeline-tooltip');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Location' });
+        dataTable.addColumn({ type: 'string', id: 'Name' });
+        dataTable.addColumn({ type: 'date', id: 'Start' });
+        dataTable.addColumn({ type: 'date', id: 'End' });
+        dataTable.addRows([
+ [ 'Second Thomas Shoal',  'Haijing 5403', new Date(2018, 8, 17), new Date(2018, 8, 20) ],
+      [ 'Second Thomas Shoal',  'Haijing 5402', new Date(2018, 9, 28), new Date(2018, 10, 3) ],
+      [ 'Second Thomas Shoal',  'Haijing 3306', new Date(2018, 10, 11), new Date(2018, 11, 8) ],
+      [ 'Second Thomas Shoal',  'Haijing 5401', new Date(2018, 11, 17), new Date(2019, 0, 7) ],
+      [ 'Second Thomas Shoal',  'Haijing 5402', new Date(2019, 0, 27), new Date(2019, 1, 24) ],
+      [ 'Second Thomas Shoal',  'Haijing 3308', new Date(2019, 1, 24), new Date(2019, 2, 21) ],
+      [ 'Second Thomas Shoal',  'Haijing 5401', new Date(2019, 3, 18), new Date(2019, 4, 10) ],
+      [ 'Second Thomas Shoal',  'Haijing 3305', new Date(2019, 4, 27), new Date(2019, 4, 31) ],
+      [ 'Second Thomas Shoal',  'Haijing 3307', new Date(2019, 6, 7), new Date(2019, 7, 2) ],
+      [ 'Second Thomas Shoal',  'Haijing 3306', new Date(2019, 6, 31), new Date(2019, 7, 31) ],
+      [ 'Luconia Shoals',  'Haijing 3306', new Date(2018, 8, 21), new Date(2018, 9, 16)],
+      [ 'Luconia Shoals',  'Haijing 3307', new Date(2018, 10, 7), new Date(2018, 11, 3)],
+      [ 'Luconia Shoals',  'Haijing 3308', new Date(2018, 11, 2), new Date(2019, 0, 2)],
+      [ 'Luconia Shoals',  'Haijing 5402', new Date(2018, 11, 4), new Date(2018, 11, 6)],
+      [ 'Luconia Shoals',  'Haijing 5403', new Date(2018, 11, 27), new Date(2019, 0, 27)],
+      [ 'Luconia Shoals',  'Haijing 3306', new Date(2019, 0, 26), new Date(2019, 1, 24)],
+      [ 'Luconia Shoals',  'Haijing 5401', new Date(2019, 1, 26), new Date(2019, 2, 25)],
+      [ 'Luconia Shoals',  'Haijing 35111', new Date(2019, 4, 10), new Date(2019, 4, 27)],
+      [ 'Luconia Shoals',  'Haijing 46302', new Date(2019, 5, 22), new Date(2019, 7, 2)],
+      [ 'Luconia Shoals',  'Haijing 5402', new Date(2019, 7, 20), new Date(2019, 8, 25)],
+      [ 'Scarborough Shoal',  'Haijing 5402', new Date(2018, 9, 12), new Date(2018, 9, 28)],
+      [ 'Scarborough Shoal',  'Haijing 5403', new Date(2018, 10, 7), new Date(2018, 11, 1)],
+      [ 'Scarborough Shoal',  'Haijing 3307', new Date(2019, 0, 25), new Date(2019, 1, 23)],
+      [ 'Scarborough Shoal',  'Haijing 4203', new Date(2019, 0, 26), new Date(2019, 1, 23)],
+      [ 'Scarborough Shoal',  'Haijing 5403', new Date(2019, 1, 24), new Date(2019, 2, 23)],
+      [ 'Scarborough Shoal',  'Haijing 3171', new Date(2019, 3, 21), new Date(2019, 4, 6)],
+      [ 'Scarborough Shoal',  'Haijing 3307', new Date(2019, 3, 22), new Date(2019, 4, 7)],
+      [ 'Scarborough Shoal',  'Haijing 4203', new Date(2019, 4, 6), new Date(2019, 4, 17)],
+      [ 'Scarborough Shoal',  'Haijing 46303', new Date(2019, 4, 15), new Date(2019, 4, 17)],
+      [ 'Scarborough Shoal',  'Haijing 46111', new Date(2019, 5, 8), new Date(2019, 5, 11)],
+      [ 'Scarborough Shoal',  'Haijing 3171', new Date(2019, 6, 7), new Date(2019, 6, 28)],
+      [ 'Scarborough Shoal',  'Haijing 3171', new Date(2019, 7, 22), new Date(2019, 7, 26)],
+      [ 'Scarborough Shoal',  'Haijing 3171', new Date(2019, 8, 8), new Date(2019, 8, 25)],
+      [ 'Scarborough Shoal',  'Haijing 3102', new Date(2019, 8, 8), new Date(2019, 8, 25)],
+    ]);
+
+var options = {
+				colors: ['#58a897', '#83badc', '#3b75bb'],
+        timeline: {
+        	rowLabelStyle: {
+        		fontName: 'Arial',
+            fontSize: 14,
+            color: '#455a64'
+        	},
+        showBarLabels: false,
+        colorByRowLabel: true
+        }
+      };
+
+        chart.draw(dataTable, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="timeline-tooltip" style="height: 400px;"></div>
+    <div id="timeline" style="height: 180px;"></div>
+  </body>
+</html>
