@@ -64,8 +64,8 @@ _asyncToGenerator(
                 var outpost = feature.properties.chinese_outposts;
                 return (
                   '<div class="popupEntryStyle">' +
-                  outpost +
-                  (name && outpost ? "<br/>" : "") +
+                  (!lang ? outpost : "") +
+                  (name && outpost && !lang ? "<br/>" : "") +
                   (name !== outpost ? name : "") +
                   "</div>" +
                   '<div class="popupEntryStyle">' +
