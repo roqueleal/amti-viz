@@ -6,45 +6,44 @@ Highcharts.chart('hcContainer', {
     },
     // General Chart Options
     chart: {
-      zoomType: 'x',
       type: 'column'
     },
     // Chart Title and Subtitle
     title: {
-      text: "Interactive Title"
+      text: "Research Ships in the South China Sea"
     },
     subtitle: {
-      text: "Click and drag to zoom in"
+      text: "Some explainer text goes here"
     },
     // Credits
     credits: {
       enabled: true,
       href: false,
-      text: "CSIS Project Name | Source: NAME"
+      text: "Source: Asia Maritime Transparency Initiative | CSIS"
     },
     // Chart Legend
-    legend: {
-      title: {
-        text: 'Legend Title<br/><span style="font-size: 12px; color: #808080; font-weight: normal">(Click to hide)</span>'
-      },
-      align: 'center',
-      verticalAlign: 'bottom',
-      layout: 'horizontal'
-    },
+    //legend: {
+    //  title: {
+    //    text: 'Ships<br/><span style="font-size: 12px; color: #808080; font-weight: normal">(Click to hide)</span>'
+    //  },
+    //  align: 'center',
+    //  verticalAlign: 'bottom',
+    //  layout: 'horizontal'
+    //},
     // Y Axis
     yAxis: {
       title: {
-        text: "Y Axis Title"
+        text: "Number of Ships (Per Country)"
       },
     },
     // Additional Plot Options
     plotOptions:
     {
       column: {
-        stacking: null, // Normal bar graph
-        // stacking: "normal", // Stacked bar graph
+        //stacking: null, // Normal bar graph
+        stacking: "normal", // Stacked bar graph
         dataLabels: {
-            enabled: false,
+            enabled: true,
         }
       }
     }
