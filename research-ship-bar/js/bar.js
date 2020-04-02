@@ -10,7 +10,7 @@ Highcharts.chart('hcContainer', {
     },
     // Chart Title and Subtitle
     title: {
-      text: "Research Ships in the South China Sea"
+      text: "Research Ships in the Pacific"
     },
     subtitle: {
       text: "Some explainer text goes here"
