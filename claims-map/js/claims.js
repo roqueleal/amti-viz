@@ -9,7 +9,7 @@ makeMap({
   'mapbox style': mapboxStyle,
   'ocean color': '#cad2d3',
 
-  formatPopupContent: function(feature, map) {
+  formatPopupContent: function (feature, map) {
     var suffix = lang ? '_' + lang.replace(/-/, '_') : ''
 
     var name = feature.properties['name' + suffix]
