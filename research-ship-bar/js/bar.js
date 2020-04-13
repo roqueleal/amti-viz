@@ -10,10 +10,10 @@ Highcharts.chart('hcContainer', {
     },
     // Chart Title and Subtitle
     title: {
-      text: "Research Ships in the Pacific"
+      text: "Research Ships in the Indo-Pacific"
     },
     subtitle: {
-      text: "Some explainer text goes here"
+      text: "Government vessels operating beyond their areas of national jurisdiction, Apr 2019 – Mar 2020"
     },
     // Credits
     credits: {
@@ -31,9 +31,12 @@ Highcharts.chart('hcContainer', {
     //  layout: 'horizontal'
     //},
     // Y Axis
+    legend: {
+        enabled: false
+    },
     yAxis: {
       title: {
-        text: "Number of Ships (Per Country)"
+        text: "Number of Ships"
       },
     },
     // Additional Plot Options
