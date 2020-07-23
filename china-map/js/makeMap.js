@@ -1,4 +1,4 @@
-/******/ (function(modules) {
+/******/ (function (modules) {
   // webpackBootstrap
   /******/ // The module cache
   /******/ var installedModules = {}; // The require function
@@ -35,29 +35,29 @@
   /******/
   /******/ /******/ __webpack_require__.c = installedModules; // define getter function for harmony exports
   /******/
-  /******/ /******/ __webpack_require__.d = function(exports, name, getter) {
+  /******/ /******/ __webpack_require__.d = function (exports, name, getter) {
     /******/ if (!__webpack_require__.o(exports, name)) {
       /******/ Object.defineProperty(exports, name, {
-        enumerable: true,
-        get: getter
-      });
+    enumerable: true,
+    get: getter
+  });
       /******/
     }
     /******/
   }; // define __esModule on exports
   /******/
-  /******/ /******/ __webpack_require__.r = function(exports) {
+  /******/ /******/ __webpack_require__.r = function (exports) {
     /******/ if (typeof Symbol !== "undefined" && Symbol.toStringTag) {
       /******/ Object.defineProperty(exports, Symbol.toStringTag, {
-        value: "Module"
-      });
+    value: "Module"
+  });
       /******/
     }
     /******/ Object.defineProperty(exports, "__esModule", { value: true });
     /******/
   }; // create a fake namespace object // mode & 1: value is a module id, require it // mode & 2: merge all properties of value into the ns // mode & 4: return value when already ns object // mode & 8|1: behave like require
   /******/
-  /******/ /******/ /******/ /******/ /******/ /******/ __webpack_require__.t = function(
+  /******/ /******/ /******/ /******/ /******/ /******/ __webpack_require__.t = function (
     value,
     mode
   ) {
@@ -73,15 +73,15 @@
     /******/ var ns = Object.create(null);
     /******/ __webpack_require__.r(ns);
     /******/ Object.defineProperty(ns, "default", {
-      enumerable: true,
-      value: value
-    });
+        enumerable: true,
+        value: value
+      });
     /******/ if (mode & 2 && typeof value != "string")
       for (var key in value)
         __webpack_require__.d(
           ns,
           key,
-          function(key) {
+          function (key) {
             return value[key];
           }.bind(null, key)
         );
@@ -89,21 +89,21 @@
     /******/
   }; // getDefaultExport function for compatibility with non-harmony modules
   /******/
-  /******/ /******/ __webpack_require__.n = function(module) {
+  /******/ /******/ __webpack_require__.n = function (module) {
     /******/ var getter =
       module && module.__esModule
         ? /******/ function getDefault() {
-            return module["default"];
-          }
+          return module["default"];
+        }
         : /******/ function getModuleExports() {
-            return module;
-          };
+          return module;
+        };
     /******/ __webpack_require__.d(getter, "a", getter);
     /******/ return getter;
     /******/
   }; // Object.prototype.hasOwnProperty.call
   /******/
-  /******/ /******/ __webpack_require__.o = function(object, property) {
+  /******/ /******/ __webpack_require__.o = function (object, property) {
     return Object.prototype.hasOwnProperty.call(object, property);
   }; // __webpack_public_path__
   /******/
@@ -114,40 +114,40 @@
   /******/
 })(
   /************************************************************************/
-  /******/ [
+  /******/[
     /* 0 */
     /*!***************************!*\
   !*** ./src/js/helpers.js ***!
   \***************************/
     /*! exports provided: createColorScale, lineWeights, lineDashArrays, externalLink, remove, convertType, capitalize, load, makeDropdownOptions */
     /*! exports used: capitalize, convertType, createColorScale, externalLink, lineDashArrays, lineWeights, load, makeDropdownOptions */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "c",
-        function() {
+        function () {
           return createColorScale;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "f",
-        function() {
+        function () {
           return lineWeights;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "e",
-        function() {
+        function () {
           return lineDashArrays;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "d",
-        function() {
+        function () {
           return externalLink;
         }
       );
@@ -155,28 +155,28 @@
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "b",
-        function() {
+        function () {
           return convertType;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return capitalize;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "g",
-        function() {
+        function () {
           return load;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "h",
-        function() {
+        function () {
           return makeDropdownOptions;
         }
       );
@@ -227,14 +227,14 @@
         return !isNaN(v)
           ? v
           : value.toLowerCase() === "undefined"
-          ? undefined
-          : value.toLowerCase() === "null"
-          ? null
-          : value.toLowerCase() === "true"
-          ? true
-          : value.toLowerCase() === "false"
-          ? false
-          : value;
+            ? undefined
+            : value.toLowerCase() === "null"
+              ? null
+              : value.toLowerCase() === "true"
+                ? true
+                : value.toLowerCase() === "false"
+                  ? false
+                  : value;
       }
       function capitalize(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -247,7 +247,7 @@
       }
       function makeDropdownOptions(options, x) {
         var groups = options.widgets[x].keys.groupBy("group");
-        var choices = Object.keys(groups).map(function(g, z) {
+        var choices = Object.keys(groups).map(function (g, z) {
           return {
             id: z,
             label: g.trim() && Number.isNaN(parseInt(g, 10)) ? g : "",
@@ -266,14 +266,14 @@
 
             return {
               item: function item(classNames, data) {
-                var key = options.widgets[x].keys.find(function(v) {
+                var key = options.widgets[x].keys.find(function (v) {
                   return v.value.toLowerCase() === data.value.toLowerCase();
                 });
                 var keyStyle;
 
                 switch (options.widgets[x].type) {
                   case "form":
-                    var forms = options.widgets[x].keys.map(function(k) {
+                    var forms = options.widgets[x].keys.map(function (k) {
                       return k.value.toLowerCase();
                     });
                     var i = forms.indexOf(key.value.toLowerCase());
@@ -331,14 +331,14 @@
                 return template(markup);
               },
               choice: function choice(classNames, data) {
-                var key = options.widgets[x].keys.find(function(v) {
+                var key = options.widgets[x].keys.find(function (v) {
                   return v.value.toLowerCase() === data.value.toLowerCase();
                 });
                 var keyStyle;
 
                 switch (options.widgets[x].type) {
                   case "form":
-                    var forms = options.widgets[x].keys.map(function(k) {
+                    var forms = options.widgets[x].keys.map(function (k) {
                       return k.value.toLowerCase();
                     });
                     var styleOptions = {
@@ -411,12 +411,12 @@
   \****************************/
     /*! exports provided: default */
     /*! exports used: default */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return styleKey;
         }
       );
@@ -432,7 +432,7 @@
           index = options.index,
           forms = options.forms,
           iconSize = map.iconsize,
-          dividers = iconSize.map(function(size) {
+          dividers = iconSize.map(function (size) {
             return size / 12;
           });
         var colors, keyColor;
@@ -453,47 +453,47 @@
 
             if (feature) {
               var colorKey = colorKeyWidget
-                ? colorKeyWidget.keys.find(function(k) {
-                    return !k.value
-                      ? true
-                      : k.value.toLowerCase() ===
-                          feature.properties[
-                            colorKeyWidget.field
-                          ].toLowerCase();
-                  })
+                ? colorKeyWidget.keys.find(function (k) {
+                  return !k.value
+                    ? true
+                    : k.value.toLowerCase() ===
+                    feature.properties[
+                      colorKeyWidget.field
+                    ].toLowerCase();
+                })
                 : null;
               var formKey = formKeyWidget
-                ? formKeyWidget.keys.find(function(k) {
-                    return !k.value
-                      ? true
-                      : k.value.toLowerCase() ===
-                          feature.properties[formKeyWidget.field].toLowerCase();
-                  })
+                ? formKeyWidget.keys.find(function (k) {
+                  return !k.value
+                    ? true
+                    : k.value.toLowerCase() ===
+                    feature.properties[formKeyWidget.field].toLowerCase();
+                })
                 : null;
               keyColor = colorKey
                 ? colorKey.color
                 : formKey
-                ? formKey.color
-                : null;
-              iconSize = iconSize.map(function(size) {
-                return size / 1;
+                  ? formKey.color
+                  : null;
+              iconSize = iconSize.map(function (size) {
+                return size / 1.8;
               });
             } else {
-              iconSize = iconSize.map(function(size, i) {
+              iconSize = iconSize.map(function (size, i) {
                 return size / dividers[i];
               });
             }
 
             key.color =
               group &&
-              group.every(function(g) {
-                return g.color;
-              })
+                group.every(function (g) {
+                  return g.color;
+                })
                 ? chroma.average(
-                    group.map(function(g) {
-                      return g.color;
-                    })
-                  )
+                  group.map(function (g) {
+                    return g.color;
+                  })
+                )
                 : key.color;
 
             switch (key.form) {
@@ -501,8 +501,8 @@
                 keyColor = key.color
                   ? key.color
                   : options.map.oceancolor
-                  ? options.map.oceancolor
-                  : null;
+                    ? options.map.oceancolor
+                    : null;
 
                 if (forms && forms.length) {
                   var svg;
@@ -553,7 +553,7 @@
                       ? "18,12"
                       : _helpers_js__WEBPACK_IMPORTED_MODULE_0__[
                           /* lineDashArrays */ "e"
-                        ][index][0]) +
+                      ][index][0]) +
                     "'/><line x1='0' x2='48' y1='50%' y2='50%' stroke='" +
                     colors[1] +
                     "' stroke-width='" +
@@ -565,7 +565,7 @@
                       ? "18,12"
                       : _helpers_js__WEBPACK_IMPORTED_MODULE_0__[
                           /* lineDashArrays */ "e"
-                        ][index][1]) +
+                      ][index][1]) +
                     "'/></svg>";
                 } else {
                   svg =
@@ -598,7 +598,7 @@
                     );
                     svgContent = svgContent.replace(
                       /(<circle |<rectangle |<ellipse |<polygon |<path )/g,
-                      function(match, p1, p2, p3) {
+                      function (match, p1, p2, p3) {
                         return match.replace(
                           match,
                           match + 'fill="' + keyColor + '" '
@@ -613,14 +613,14 @@
                     "data:image/svg+xml;base64," +
                     window.btoa(
                       '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="' +
-                        iconSize[0] / 2 +
-                        '" cy="' +
-                        iconSize[1] / 2 +
-                        '" r="' +
-                        (iconSize[0] + iconSize[1]) / 4 +
-                        '" fill="' +
-                        (keyColor || key.color) +
-                        '"/></svg>'
+                      iconSize[0] / 2 +
+                      '" cy="' +
+                      iconSize[1] / 2 +
+                      '" r="' +
+                      (iconSize[0] + iconSize[1]) / 4 +
+                      '" fill="' +
+                      (keyColor || key.color) +
+                      '"/></svg>'
                     );
                 }
 
@@ -641,20 +641,20 @@
                       "data:image/svg+xml;base64," +
                       window.btoa(
                         '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><polygon points="5.73 0 4.67 0 0 4.66 0 5.71 5.73 0" fill="' +
-                          colorOne +
-                          '"/><polygon points="2.28 0 1.22 0 0 1.22 0 2.27 2.28 0" fill="' +
-                          colorTwo +
-                          '"/><polygon points="8.85 0 7.79 0 0 7.77 0 8.82 8.85 0" fill="' +
-                          colorTwo +
-                          '"/><polygon points="12 0 11.24 0 0 11.2 0 12 0.26 12 12 0.3 12 0" fill="' +
-                          colorOne +
-                          '"/><polygon points="12 10.12 12 9.06 9.05 12 10.11 12 12 10.12" fill="' +
-                          colorTwo +
-                          '"/><polygon points="12 3.52 12 2.46 2.43 12 3.49 12 12 3.52" fill="' +
-                          colorTwo +
-                          '"/><polygon points="12 6.96 12 5.9 5.88 12 6.94 12 12 6.96" fill="' +
-                          colorOne +
-                          '"/></svg>'
+                        colorOne +
+                        '"/><polygon points="2.28 0 1.22 0 0 1.22 0 2.27 2.28 0" fill="' +
+                        colorTwo +
+                        '"/><polygon points="8.85 0 7.79 0 0 7.77 0 8.82 8.85 0" fill="' +
+                        colorTwo +
+                        '"/><polygon points="12 0 11.24 0 0 11.2 0 12 0.26 12 12 0.3 12 0" fill="' +
+                        colorOne +
+                        '"/><polygon points="12 10.12 12 9.06 9.05 12 10.11 12 12 10.12" fill="' +
+                        colorTwo +
+                        '"/><polygon points="12 3.52 12 2.46 2.43 12 3.49 12 12 3.52" fill="' +
+                        colorTwo +
+                        '"/><polygon points="12 6.96 12 5.9 5.88 12 6.94 12 12 6.96" fill="' +
+                        colorOne +
+                        '"/></svg>'
                       );
                     break;
 
@@ -663,8 +663,8 @@
                       "data:image/svg+xml;base64," +
                       window.btoa(
                         '<svg xmlns="http://www.w3.org/2000/svg" width="13.06" height="15.1" viewBox="0 0 12 12"><title>stripes</title><path d="M5.49,1A1.16,1.16,0,1,1,4.33-.16,1.16,1.16,0,0,1,5.49,1ZM4.33,3.77A1.16,1.16,0,1,0,5.49,4.93,1.15,1.15,0,0,0,4.33,3.77Zm0,3.93A1.16,1.16,0,1,0,5.49,8.86,1.15,1.15,0,0,0,4.33,7.7Zm0,3.93a1.16,1.16,0,1,0,1.16,1.16A1.15,1.15,0,0,0,4.33,11.63ZM11.5-.16A1.16,1.16,0,1,0,12.66,1,1.16,1.16,0,0,0,11.5-.16Zm0,3.93a1.16,1.16,0,1,0,1.16,1.16A1.16,1.16,0,0,0,11.5,3.77Zm0,3.93a1.16,1.16,0,1,0,1.16,1.16A1.16,1.16,0,0,0,11.5,7.7Zm0,3.93a1.16,1.16,0,1,0,1.16,1.16A1.16,1.16,0,0,0,11.5,11.63ZM7.92-1.16A1.16,1.16,0,0,0,6.76,0,1.16,1.16,0,0,0,7.92,1.16,1.16,1.16,0,0,0,9.07,0,1.16,1.16,0,0,0,7.92-1.16Zm0,3.93A1.16,1.16,0,1,0,9.07,3.93,1.16,1.16,0,0,0,7.92,2.77Zm0,3.93A1.16,1.16,0,1,0,9.07,7.86,1.16,1.16,0,0,0,7.92,6.7Zm0,3.93a1.16,1.16,0,1,0,1.15,1.16A1.16,1.16,0,0,0,7.92,10.63ZM.75-1.16A1.16,1.16,0,0,0-.41,0,1.16,1.16,0,0,0,.75,1.16,1.16,1.16,0,0,0,1.91,0,1.16,1.16,0,0,0,.75-1.16Zm0,3.93A1.16,1.16,0,1,0,1.91,3.93,1.16,1.16,0,0,0,.75,2.77Zm0,3.93A1.16,1.16,0,0,0-.41,7.86,1.15,1.15,0,0,0,.75,9,1.15,1.15,0,0,0,1.91,7.86,1.16,1.16,0,0,0,.75,6.7Zm0,3.93a1.16,1.16,0,1,0,1.16,1.16A1.16,1.16,0,0,0,.75,10.63Z" transform="translate(0.7 2)" fill="' +
-                          colorOne +
-                          '"/></svg>'
+                        colorOne +
+                        '"/></svg>'
                       );
                     break;
 
@@ -673,8 +673,8 @@
                       "data:image/svg+xml;base64," +
                       window.btoa(
                         '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="5" fill="' +
-                          keyColor +
-                          '"/></svg>'
+                        keyColor +
+                        '"/></svg>'
                       );
                 }
 
@@ -685,10 +685,10 @@
 
               case "shape":
                 if (feature) {
-                  var colorKeyWidget = map.widgets.find(function(w) {
+                  var colorKeyWidget = map.widgets.find(function (w) {
                     return w.type === "color";
                   });
-                  var colorKey = colorKeyWidget.keys.find(function(k) {
+                  var colorKey = colorKeyWidget.keys.find(function (k) {
                     return (
                       k.value.toLowerCase() ===
                       feature.properties[colorKeyWidget.field].toLowerCase()
@@ -697,8 +697,8 @@
                   keyColor = colorKey
                     ? colorKey.color
                     : keyColor
-                    ? keyColor
-                    : null;
+                      ? keyColor
+                      : null;
                 }
 
                 var svg;
@@ -755,14 +755,14 @@
                   "data:image/svg+xml;base64," +
                   window.btoa(
                     '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="' +
-                      iconSize[0] / 2 +
-                      '" cy="' +
-                      iconSize[1] / 2 +
-                      '" r="' +
-                      (iconSize[0] + iconSize[1]) / 4 +
-                      '" fill="' +
-                      (keyColor || key.color) +
-                      '"/></svg>'
+                    iconSize[0] / 2 +
+                    '" cy="' +
+                    iconSize[1] / 2 +
+                    '" r="' +
+                    (iconSize[0] + iconSize[1]) / 4 +
+                    '" fill="' +
+                    (keyColor || key.color) +
+                    '"/></svg>'
                   );
                 return {
                   svg: svg,
@@ -796,7 +796,7 @@
     /*! exports used: default */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/helpers.js because of ./src/index.js */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/styleKey.js because of ./src/index.js */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       // EXTERNAL MODULE: ./src/js/helpers.js
@@ -808,11 +808,11 @@
         var eventOptions = map.oneachfeature
           ? map.oneachfeature
           : {
-              click: function click() {
-                handleLayerClick(feature, layer, map.leaflet);
-              }
-            };
-        Object.keys(eventOptions).forEach(function(listener) {
+            click: function click() {
+              handleLayerClick(feature, layer, map.leaflet);
+            }
+          };
+        Object.keys(eventOptions).forEach(function (listener) {
           layer.on(listener, eventOptions[listener]);
         });
         var popupContent =
@@ -825,34 +825,34 @@
       function formatPopupContent(feature, map) {
         var content;
         content = Object.keys(feature.properties)
-          .map(function(p) {
+          .map(function (p) {
             if (feature.properties[p]) {
               if (map.popupheaders.length && map.popupcontent.length) {
                 return map.popupheaders.indexOf(p) > -1 &&
                   map.popupcontent.indexOf(p) > -1
                   ? '<div class="popupHeaderStyle">' +
-                      p.toUpperCase().replace(/_/g, " ") +
-                      '</div><div class="popupEntryStyle">' +
-                      feature.properties[p] +
-                      "</div>"
+                  p.toUpperCase().replace(/_/g, " ") +
+                  '</div><div class="popupEntryStyle">' +
+                  feature.properties[p] +
+                  "</div>"
                   : map.popupcontent.indexOf(p) > -1
-                  ? '<div class="popupEntryStyle">' +
+                    ? '<div class="popupEntryStyle">' +
                     feature.properties[p] +
                     "</div>"
-                  : "";
+                    : "";
               } else if (map.popupheaders.length) {
                 return map.popupheaders.indexOf(p) > -1
                   ? '<div class="popupHeaderStyle">' +
-                      p.toUpperCase().replace(/_/g, " ") +
-                      '</div><div class="popupEntryStyle">' +
-                      feature.properties[p] +
-                      "</div>"
+                  p.toUpperCase().replace(/_/g, " ") +
+                  '</div><div class="popupEntryStyle">' +
+                  feature.properties[p] +
+                  "</div>"
                   : "";
               } else if (map.popupcontent.length) {
                 return map.popupcontent.indexOf(p) > -1
                   ? '<div class="popupEntryStyle">' +
-                      feature.properties[p] +
-                      "</div>"
+                  feature.properties[p] +
+                  "</div>"
                   : "";
               } else {
                 return (
@@ -865,7 +865,7 @@
               }
             }
           })
-          .filter(function(p) {
+          .filter(function (p) {
             return p;
           })
           .join("");
@@ -873,23 +873,23 @@
         var externalLinkContent =
           link && link.trim()
             ? '<div class="separator"></div><div class="hyperlink popupEntryStyle"><a class="translate" href=' +
-              link.trim() +
-              ' target="_blank">' +
-              map.externallinktext +
-              "</a>" +
-              helpers["d" /* externalLink */] +
-              "</div>"
+            link.trim() +
+            ' target="_blank">' +
+            map.externallinktext +
+            "</a>" +
+            helpers["d" /* externalLink */] +
+            "</div>"
             : "";
         content += externalLinkContent;
 
         if (lang) {
-          var translatableStrings = Object.keys(map.translations).sort(function(
+          var translatableStrings = Object.keys(map.translations).sort(function (
             a,
             b
           ) {
             return b.length - a.length;
           });
-          translatableStrings.forEach(function(t) {
+          translatableStrings.forEach(function (t) {
             var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
             content = content.replace(re, map.translations[t]);
           });
@@ -902,24 +902,24 @@
         var isSpiderfied = false;
 
         if (!layer._preSpiderfyLatlng) {
-          Object.keys(leaflet._layers).forEach(function(l, i) {
+          Object.keys(leaflet._layers).forEach(function (l, i) {
             if (leaflet._layers[l].unspiderfy) leaflet._layers[l].unspiderfy();
           });
 
           if (layer.__parent) {
             Object.values(layer.__parent._group._featureGroup._layers).forEach(
-              function(v) {
+              function (v) {
                 if (v._group && v._group._spiderfied) isSpiderfied = true;
               }
             );
             Array.from(
               document.querySelectorAll("div.leaflet-marker-icon")
-            ).forEach(function(d) {
+            ).forEach(function (d) {
               return (d.style.opacity = isSpiderfied ? 0.33 : 1);
             });
             Array.from(
               document.querySelectorAll("img.leaflet-marker-icon")
-            ).forEach(function(d) {
+            ).forEach(function (d) {
               return (d.style.opacity = isSpiderfied ? 0.33 : 1);
             });
           }
@@ -940,28 +940,28 @@
             iconAnchor: map.iconsize
               ? map.iconsize / 4
               : map.iconanchor
-              ? map.iconanchor
-              : [5, 5]
+                ? map.iconanchor
+                : [5, 5]
           }
         });
         var nonPointStyle, key, divIcon;
-        var colorKeyWidget = map.widgets.find(function(w) {
+        var colorKeyWidget = map.widgets.find(function (w) {
           if (!w.keys) return;
-          var key = w.keys.find(function(k) {
+          var key = w.keys.find(function (k) {
             return !k.value
               ? true
               : k.value.toLowerCase() ===
-                  feature.properties[w.field].toLowerCase();
+              feature.properties[w.field].toLowerCase();
           });
           return key && w.type === "color";
         });
-        var formKeyWidget = map.widgets.find(function(w) {
+        var formKeyWidget = map.widgets.find(function (w) {
           if (!w.keys) return;
-          var key = w.keys.find(function(k) {
+          var key = w.keys.find(function (k) {
             return !k.value
               ? true
               : k.value.toLowerCase() ===
-                  feature.properties[w.field].toLowerCase();
+              feature.properties[w.field].toLowerCase();
           });
           return key && w.type === "form";
         });
@@ -979,46 +979,46 @@
             var thisFormKeyWidget = w.type === "form" ? w : formKeyWidget;
             var thisColorKeyWidget = w.type === "color" ? w : null;
             var colorKey = thisColorKeyWidget
-              ? thisColorKeyWidget.keys.find(function(k) {
-                  return !k.value
-                    ? true
-                    : k.value.toLowerCase() ===
-                        feature.properties[
-                          thisColorKeyWidget.field
-                        ].toLowerCase();
-                })
+              ? thisColorKeyWidget.keys.find(function (k) {
+                return !k.value
+                  ? true
+                  : k.value.toLowerCase() ===
+                  feature.properties[
+                    thisColorKeyWidget.field
+                  ].toLowerCase();
+              })
               : null;
             var formKey = thisFormKeyWidget
-              ? thisFormKeyWidget.keys.find(function(k) {
-                  return !k.value
-                    ? true
-                    : k.value.toLowerCase() ===
-                        feature.properties[
-                          thisFormKeyWidget.field
-                        ].toLowerCase();
-                })
+              ? thisFormKeyWidget.keys.find(function (k) {
+                return !k.value
+                  ? true
+                  : k.value.toLowerCase() ===
+                  feature.properties[
+                    thisFormKeyWidget.field
+                  ].toLowerCase();
+              })
               : null;
             var color = colorKey
               ? colorKey.color
               : formKey
-              ? formKey.color
-              : null;
+                ? formKey.color
+                : null;
 
             if (
               thisFormKeyWidget &&
               feature.properties[thisFormKeyWidget.field]
             ) {
-              var forms = thisFormKeyWidget.keys.map(function(k) {
+              var forms = thisFormKeyWidget.keys.map(function (k) {
                 return k.value.toLowerCase();
               });
               var i = forms.indexOf(
                 feature.properties[thisFormKeyWidget.field].toLowerCase()
               );
-              key = thisFormKeyWidget.keys.find(function(k) {
+              key = thisFormKeyWidget.keys.find(function (k) {
                 return !k.value
                   ? true
                   : k.value.toLowerCase() ===
-                      feature.properties[thisFormKeyWidget.field].toLowerCase();
+                  feature.properties[thisFormKeyWidget.field].toLowerCase();
               });
               if (!key) break;
               var styleOptions = {
@@ -1051,13 +1051,13 @@
               thisColorKeyWidget &&
               feature.properties[thisColorKeyWidget.field]
             ) {
-              key = thisColorKeyWidget.keys.find(function(k) {
+              key = thisColorKeyWidget.keys.find(function (k) {
                 return !k.value
                   ? true
                   : k.value.toLowerCase() ===
-                      feature.properties[
-                        thisColorKeyWidget.field
-                      ].toLowerCase();
+                  feature.properties[
+                    thisColorKeyWidget.field
+                  ].toLowerCase();
               });
               if (!key) break;
               var styleOptions = {
@@ -1109,23 +1109,23 @@
           colors = [],
           forms = [],
           sort = ["form", "color"];
-        var colorKeyWidget = map.widgets.find(function(w) {
+        var colorKeyWidget = map.widgets.find(function (w) {
           if (!w.keys) return;
-          var key = w.keys.find(function(k) {
+          var key = w.keys.find(function (k) {
             return !k.value
               ? true
               : k.value.toLowerCase() ===
-                  feature.properties[w.field].toLowerCase();
+              feature.properties[w.field].toLowerCase();
           });
           return key && w.type === "color";
         });
-        var formKeyWidget = map.widgets.find(function(w) {
+        var formKeyWidget = map.widgets.find(function (w) {
           if (!w.keys) return;
-          var key = w.keys.find(function(k) {
+          var key = w.keys.find(function (k) {
             return !k.value
               ? true
               : k.value.toLowerCase() ===
-                  feature.properties[w.field].toLowerCase();
+              feature.properties[w.field].toLowerCase();
           });
           return key && w.type === "form";
         });
@@ -1141,47 +1141,47 @@
           ) {
             var w = _step.value;
             var colorKey = colorKeyWidget
-              ? colorKeyWidget.keys.find(function(k) {
-                  return !k.value
-                    ? true
-                    : k.value.toLowerCase() ===
-                        feature.properties[colorKeyWidget.field].toLowerCase();
-                })
+              ? colorKeyWidget.keys.find(function (k) {
+                return !k.value
+                  ? true
+                  : k.value.toLowerCase() ===
+                  feature.properties[colorKeyWidget.field].toLowerCase();
+              })
               : null;
             var formKey = formKeyWidget
-              ? formKeyWidget.keys.find(function(k) {
-                  return !k.value
-                    ? true
-                    : k.value.toLowerCase() ===
-                        feature.properties[formKeyWidget.field].toLowerCase();
-                })
+              ? formKeyWidget.keys.find(function (k) {
+                return !k.value
+                  ? true
+                  : k.value.toLowerCase() ===
+                  feature.properties[formKeyWidget.field].toLowerCase();
+              })
               : null;
             var color = colorKey
               ? colorKey.color
               : formKey
-              ? formKey.color
-              : null;
+                ? formKey.color
+                : null;
             var formKeyForm = formKeyWidget
-              ? formKeyWidget.keys.reduce(function(a, c) {
-                  return c.form;
-                })
+              ? formKeyWidget.keys.reduce(function (a, c) {
+                return c.form;
+              })
               : null;
             var colorKeyForm = colorKeyWidget
-              ? colorKeyWidget.keys.reduce(function(a, c) {
-                  return c.form;
-                })
+              ? colorKeyWidget.keys.reduce(function (a, c) {
+                return c.form;
+              })
               : null;
             var form = formKeyWidget
-              ? formKeyWidget.keys.reduce(function(a, c) {
-                  return c.form;
-                })
+              ? formKeyWidget.keys.reduce(function (a, c) {
+                return c.form;
+              })
               : null;
 
             if (formKeyWidget && form === "line") {
-              forms = formKeyWidget.keys.map(function(f) {
+              forms = formKeyWidget.keys.map(function (f) {
                 return f.value;
               });
-              forms.forEach(function(f, i) {
+              forms.forEach(function (f, i) {
                 switch (i) {
                   case 0:
                     colors.push(["transparent", null]);
@@ -1219,8 +1219,8 @@
                       colors[i][index] === undefined
                         ? "#cad2d3"
                         : colors[i][index] !== null
-                        ? colors[i][index]
-                        : color,
+                          ? colors[i][index]
+                          : color,
                     weight: helpers["f" /* lineWeights */][i][index],
                     lineCap: "square",
                     dashArray: helpers["e" /* lineDashArrays */][i]
@@ -1291,8 +1291,8 @@
                 case feature.geometry.type.toLowerCase().indexOf("line") > -1:
                   lineColor = color
                     ? chroma(color)
-                        .brighten()
-                        .hex()
+                      .brighten()
+                      .hex()
                     : null;
                   lineOpacity = 1;
                   lineWeight = 4;
@@ -1341,10 +1341,10 @@
       function makeGeoJsonOptions(map, colorKeyWidgets, formKeyWidgets) {
         function filter(feature) {
           return map.filters
-            .map(function(f) {
+            .map(function (f) {
               return f(feature);
             })
-            .every(function(f) {
+            .every(function (f) {
               return f !== false;
             });
         }
@@ -1358,12 +1358,12 @@
           onEachFeature: onEachFeature,
           pointToLayer:
             map.pointStyle ||
-            function(feature, latlng) {
+            function (feature, latlng) {
               return stylePoint(feature, latlng, map);
             },
           style:
             map.nonPointStyle ||
-            function(feature) {
+            function (feature) {
               return styleNonPoint(feature, map, 0);
             }
         };
@@ -1372,12 +1372,12 @@
           onEachFeature: onEachFeature,
           pointToLayer:
             map.pointStyle ||
-            function(feature, latlng) {
+            function (feature, latlng) {
               return stylePoint(feature, latlng, map);
             },
           style:
             map.nonPointStyle ||
-            function(feature) {
+            function (feature) {
               return styleNonPoint(feature, map, 1);
             }
         };
@@ -1387,7 +1387,7 @@
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return makeLayers;
         }
       );
@@ -1397,10 +1397,10 @@
           formKeyWidgets = [];
 
         if (map.widgets) {
-          colorKeyWidgets = map.widgets.filter(function(w) {
+          colorKeyWidgets = map.widgets.filter(function (w) {
             return w.type === "color";
           });
-          formKeyWidgets = map.widgets.filter(function(w) {
+          formKeyWidgets = map.widgets.filter(function (w) {
             return w.type === "form";
           });
         }
@@ -1408,14 +1408,14 @@
         var geoJsonOptions = map.geojsonoptions
           ? map.geojsonoptions(map)
           : makeGeoJsonOptions(map);
-        map.json.forEach(function(json, i) {
+        map.json.forEach(function (json, i) {
           var clusterColor, colorKeyWidget;
 
           if (colorKeyWidgets.length) {
             var colorKeys = colorKeyWidgets
-              .map(function(widget) {
+              .map(function (widget) {
                 var collectionName = json.features[0].properties[widget.field];
-                var key = widget.keys.find(function(key) {
+                var key = widget.keys.find(function (key) {
                   return (
                     key.value.toLowerCase() === collectionName.toLowerCase()
                   );
@@ -1427,7 +1427,7 @@
 
                 return key;
               })
-              .filter(function(colorKey) {
+              .filter(function (colorKey) {
                 return colorKey;
               });
             clusterColor = colorKeys[0] ? colorKeys[0].color : "#000000";
@@ -1435,7 +1435,7 @@
             clusterColor = "#000000";
           }
 
-          var allPoints = json.features.every(function(feature) {
+          var allPoints = json.features.every(function (feature) {
             return (
               feature.geometry &&
               feature.geometry.type.toLowerCase() === "point"
@@ -1462,15 +1462,15 @@
               }
             })
           );
-          var hasLineFeatures = json.features.some(function(feature) {
+          var hasLineFeatures = json.features.some(function (feature) {
             return (
               feature.geometry &&
               feature.geometry.type.toLowerCase().indexOf("line") > -1
             );
           });
-          geoJsonOptions.forEach(function(option, index) {
+          geoJsonOptions.forEach(function (option, index) {
             if (colorKeyWidget) {
-              json.features = json.features.sort(function(a, b) {
+              json.features = json.features.sort(function (a, b) {
                 return b.properties[colorKeyWidget.field].localeCompare(
                   a.properties[colorKeyWidget.field]
                 );
@@ -1490,7 +1490,7 @@
 
           if (map.groups[i].getLayers().length) {
             map.leaflet.addLayer(map.groups[i]);
-            map.groups[i].on("clusterclick", function(e) {
+            map.groups[i].on("clusterclick", function (e) {
               handleClusterClick(e, map, i);
             });
           }
@@ -1500,36 +1500,36 @@
       function handleClusterClick(e, map, i) {
         map.leaflet._layers[e.layer._leaflet_id].spiderfy();
 
-        Object.keys(map.leaflet._layers).forEach(function(layer, i) {
+        Object.keys(map.leaflet._layers).forEach(function (layer, i) {
           if (parseInt(layer, 10) !== e.layer._leaflet_id) {
             if (map.leaflet._layers[layer].unspiderfy)
               map.leaflet._layers[layer].unspiderfy();
           }
         });
         var isSpiderfied = false;
-        Object.values(map.groups[i]._featureGroup._layers).forEach(function(v) {
+        Object.values(map.groups[i]._featureGroup._layers).forEach(function (v) {
           if (v._group && v._group._spiderfied) isSpiderfied = true;
         });
         Array.from(
           document.querySelectorAll("div.leaflet-marker-icon")
-        ).forEach(function(d) {
+        ).forEach(function (d) {
           return (d.style.opacity = isSpiderfied ? 0.33 : 1);
         });
         Array.from(
           document.querySelectorAll("img.leaflet-marker-icon")
-        ).forEach(function(d) {
+        ).forEach(function (d) {
           return (d.style.opacity = isSpiderfied ? 0.33 : 1);
         });
-        Object.values(map.groups[i]._featureGroup._layers).filter(function(v) {
+        Object.values(map.groups[i]._featureGroup._layers).filter(function (v) {
           e.layer
             .getAllChildMarkers()
-            .map(function(m) {
+            .map(function (m) {
               return m.getElement();
             })
-            .filter(function(m) {
+            .filter(function (m) {
               return m;
             })
-            .forEach(function(m) {
+            .forEach(function (m) {
               return (m.style.opacity = 1);
             });
         });
@@ -1543,33 +1543,33 @@
   \***************************/
     /*! exports provided: parseLanguageData, parseLegendData, parseMetaData, parseWidgetData */
     /*! exports used: parseLanguageData, parseLegendData, parseMetaData, parseWidgetData */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return parseLanguageData;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "b",
-        function() {
+        function () {
           return parseLegendData;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "c",
-        function() {
+        function () {
           return parseMetaData;
         }
       );
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "d",
-        function() {
+        function () {
           return parseWidgetData;
         }
       );
@@ -1579,9 +1579,9 @@
 
       function parseLanguageData(data) {
         var languageData = {};
-        data.forEach(function(row) {
+        data.forEach(function (row) {
           var key;
-          Object.keys(row).forEach(function(column, i) {
+          Object.keys(row).forEach(function (column, i) {
             if (column.indexOf("gsx$") > -1) {
               var columnName = column.replace("gsx$", "");
 
@@ -1603,9 +1603,9 @@
           _helpers_js__WEBPACK_IMPORTED_MODULE_0__[/* createColorScale */ "c"]
         )(json.length);
         var legendItems = [];
-        json.forEach(function(row, x) {
+        json.forEach(function (row, x) {
           var data = {};
-          Object.keys(row).forEach(function(column, y) {
+          Object.keys(row).forEach(function (column, y) {
             if (column.indexOf("gsx$") > -1) {
               var columnName = column.replace("gsx$", "");
 
@@ -1629,8 +1629,8 @@
                 data.color = colorVal
                   ? colorVal
                   : data.form === "line"
-                  ? defaultColor
-                  : colorScale[x];
+                    ? defaultColor
+                    : colorScale[x];
                 data.icon = row[Object.keys(row)[y + 6]]["$t"];
                 data.pattern = row[Object.keys(row)[y + 7]]["$t"].split(",");
 
@@ -1648,8 +1648,8 @@
       }
       function parseMetaData(json) {
         var data = {};
-        json.forEach(function(row, x) {
-          Object.keys(row).forEach(function(column, y) {
+        json.forEach(function (row, x) {
+          Object.keys(row).forEach(function (column, y) {
             if (column.indexOf("gsx$") > -1) {
               var columnName = column.replace("gsx$", "");
 
@@ -1688,17 +1688,17 @@
           "style"
         ];
         Object.keys(metaData)
-          .filter(function(k) {
+          .filter(function (k) {
             return k.toLowerCase().indexOf("widget") > -1;
           })
-          .forEach(function(k) {
+          .forEach(function (k) {
             var index = k.match(/\d+/)[0];
             widgets[index - 1] = widgets[index - 1] || {};
-            properties.forEach(function(property) {
+            properties.forEach(function (property) {
               process(k, index, property);
             });
           });
-        widgets.forEach(function(w, i) {
+        widgets.forEach(function (w, i) {
           w.field = w.field.replace(/ /g, "_");
           w.id = i;
         });
@@ -1713,12 +1713,12 @@
   \*****************************/
     /*! exports provided: default */
     /*! exports used: default */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return CustomMap;
         }
       );
@@ -1732,7 +1732,7 @@
 
         var _this = this;
 
-        Object.keys(properties).forEach(function(property) {
+        Object.keys(properties).forEach(function (property) {
           _this[property.toLowerCase().replace(/ /g, "")] =
             properties[property];
         });
@@ -1745,30 +1745,30 @@
           _this.popupcontent && typeof _this.popupcontent === "string"
             ? _this.popupcontent.split(",")
             : _this.popupcontent && this.popupcontent === "object"
-            ? _this.popupcontent
-            : [];
+              ? _this.popupcontent
+              : [];
         _this.popupheaders =
           _this.popupheaders && typeof _this.popupheaders === "string"
             ? _this.popupheaders.split(",")
             : _this.popupheaders && _this.popupheaders === "object"
-            ? _this.popupheaders
-            : [];
+              ? _this.popupheaders
+              : [];
         CustomMap.all = CustomMap.all || [];
         CustomMap.all.push(this);
 
-        _this.resetFilters = function() {
+        _this.resetFilters = function () {
           _this.filters = [];
         };
 
-        _this.removeGroups = function() {
-          _this.groups.forEach(function(group) {
+        _this.removeGroups = function () {
+          _this.groups.forEach(function (group) {
             _this.leaflet.removeLayer(group);
           });
 
           _this.groups = [];
         };
 
-        this.render = function() {
+        this.render = function () {
           _this.leaflet = L.map(container, {
             minZoom: _this.minzoom || null,
             maxZoom: _this.maxzoom || 20,
@@ -1785,8 +1785,8 @@
           this.leaflet.setView(_this.center, _this.zoom || 2);
           L.tileLayer(
             "https://api.mapbox.com/styles/v1/ilabmedia/" +
-              _this.mapboxstyle +
-              "/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
+            _this.mapboxstyle +
+            "/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWxhYm1lZGlhIiwiYSI6ImNpbHYycXZ2bTAxajZ1c2tzdWU1b3gydnYifQ.AHxl8pPZsjsqoz95-604nw",
             {}
           ).addTo(_this.leaflet);
 
@@ -1821,12 +1821,12 @@
   \*************************************/
     /*! exports provided: default */
     /*! exports used: default */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return makeDocumentNodes;
         }
       );
@@ -1851,15 +1851,15 @@
           '<div id="controls"><div class="loader"></div></div><footer><div class="hidden"></div></footer></div></aside>';
         newSectionHTML += options.titlecardcontent
           ? '<button id="' +
-            options.slug +
-            '__about" class="about-trigger translate">ABOUT THIS MAP</button>'
+          options.slug +
+          '__about" class="about-trigger translate">ABOUT THIS MAP</button>'
           : "";
         newSectionHTML += "</section>";
         document.body.innerHTML += newSectionHTML;
         var translatableStrings;
 
         if (lang) {
-          translatableStrings = Object.keys(options.translations).sort(function(
+          translatableStrings = Object.keys(options.translations).sort(function (
             a,
             b
           ) {
@@ -1886,7 +1886,7 @@
           newDialogHTML += "</div>";
 
           if (lang) {
-            translatableStrings.forEach(function(t) {
+            translatableStrings.forEach(function (t) {
               var re = new RegExp("\\b(" + RegExp.escape(t) + ")", "gi");
               newDialogHTML = newDialogHTML.replace(
                 re,
@@ -1903,13 +1903,13 @@
           var dialogBox = new A11yDialog(dialogEl, mainEl);
           var dialog = dialogBox.dialog;
           dialogBox.show();
-          dialogBox.on("hide", function(dialogEl) {
+          dialogBox.on("hide", function (dialogEl) {
             dialogTrigger.style.display = "block";
           });
-          dialogBox.on("show", function(dialogEl) {
+          dialogBox.on("show", function (dialogEl) {
             dialogTrigger.style.display = "none";
           });
-          dialogTrigger.addEventListener("click", function() {
+          dialogTrigger.addEventListener("click", function () {
             dialogBox.show();
           });
         }
@@ -1974,8 +1974,8 @@
           document.querySelector(
             "#" + options.slug + " header a"
           ).style.backgroundImage = options.logo
-            ? "url(" + options.logo + ")"
-            : "";
+              ? "url(" + options.logo + ")"
+              : "";
           document.querySelector(
             "#" + options.slug + " header a"
           ).href = options.website ? options.website : "";
@@ -1998,7 +1998,7 @@
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/makeLayers.js because of ./src/js/initWithoutSpreadsheet.js */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/parsers.js because of ./src/index.js */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/styleKey.js because of ./src/index.js */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
 
       // EXTERNAL MODULE: ./src/js/styleKey.js
@@ -2038,10 +2038,10 @@
       }
 
       function _asyncToGenerator(fn) {
-        return function() {
+        return function () {
           var self = this,
             args = arguments;
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var gen = fn.apply(self, args);
             function _next(value) {
               asyncGeneratorStep(
@@ -2092,35 +2092,35 @@
                     ).render();
                     return _context.abrupt(
                       "return",
-                      new Promise(function(resolve, reject) {
-                        var tables = Object.keys(options).filter(function(k) {
+                      new Promise(function (resolve, reject) {
+                        var tables = Object.keys(options).filter(function (k) {
                           return k.toLowerCase().indexOf("table") > -1;
                         });
                         Promise.all(
-                          tables.map(function(table) {
+                          tables.map(function (table) {
                             return fetch(
                               "https://csis.carto.com/api/v2/sql?api_key=" +
-                                map.apikey +
-                                "&format=geojson&q=SELECT%20*%20FROM%20" +
-                                options[table]
+                              map.apikey +
+                              "&format=geojson&q=SELECT%20*%20FROM%20" +
+                              options[table]
                             );
                           })
                         )
-                          .then(function(responses) {
+                          .then(function (responses) {
                             return Promise.all(
-                              responses.map(function(response) {
+                              responses.map(function (response) {
                                 return response.json();
                               })
                             );
                           })
-                          .then(function(jsons) {
-                            var json = jsons.reduce(function(a, b) {
+                          .then(function (jsons) {
+                            var json = jsons.reduce(function (a, b) {
                               return {
                                 type: "FeatureCollection",
                                 features: a.features.concat(b.features)
                               };
                             });
-                            var colorKeyWidget = map.widgets.find(function(w) {
+                            var colorKeyWidget = map.widgets.find(function (w) {
                               return w.type === "color";
                             });
                             map.json = [json];
@@ -2132,16 +2132,16 @@
                                 "properties"
                               );
                               Object.keys(featureGroups)
-                                .sort(function(a, b) {
+                                .sort(function (a, b) {
                                   return featureGroups[b][0].properties[
                                     colorKeyWidget.field
                                   ].localeCompare(
                                     featureGroups[a][0].properties[
-                                      colorKeyWidget.field
+                                    colorKeyWidget.field
                                     ]
                                   );
                                 })
-                                .map(function(feature) {
+                                .map(function (feature) {
                                   map.json.push({
                                     type: "FeatureCollection",
                                     features: featureGroups[feature]
@@ -2158,12 +2158,12 @@
                             }
 
                             var initialized = 0;
-                            options.widgets.forEach(function(w, x) {
+                            options.widgets.forEach(function (w, x) {
                               var element = document.querySelector(
                                 "#" +
-                                  options.slug +
-                                  " .widget." +
-                                  options.widgets[x].field
+                                options.slug +
+                                " .widget." +
+                                options.widgets[x].field
                               );
 
                               if (
@@ -2181,7 +2181,7 @@
                               ) {
                                 element
                                   .querySelector("#resetButton")
-                                  .addEventListener("click", function() {
+                                  .addEventListener("click", function () {
                                     handleReset(element, map, x);
                                   });
                               }
@@ -2216,9 +2216,9 @@
                               }
 
                               var count = inputs.length;
-                              inputs.forEach(function(input) {
+                              inputs.forEach(function (input) {
                                 if (input.type === "text") {
-                                  input.addEventListener("keyup", function() {
+                                  input.addEventListener("keyup", function () {
                                     handleChange(
                                       map,
                                       element,
@@ -2229,7 +2229,7 @@
                                     );
                                   });
                                 } else {
-                                  input.addEventListener("change", function() {
+                                  input.addEventListener("change", function () {
                                     handleChange(
                                       map,
                                       element,
@@ -2259,11 +2259,11 @@
                               );
                               var translatableStrings = Object.keys(
                                 map.translations
-                              ).sort(function(a, b) {
+                              ).sort(function (a, b) {
                                 return b.length - a.length;
                               });
-                              translatableNodes.forEach(function(el, i) {
-                                translatableStrings.forEach(function(t) {
+                              translatableNodes.forEach(function (el, i) {
+                                translatableStrings.forEach(function (t) {
                                   if (Object.keys(map.translations[t]).length) {
                                     var re = new RegExp(
                                       "\\b(" + RegExp.escape(t) + ")",
@@ -2298,7 +2298,7 @@
         element.querySelector("input[type='text']").value = "";
         if (map.groups.length) map.removeGroups();
 
-        map.filters[x] = function() {
+        map.filters[x] = function () {
           return true;
         };
 
@@ -2310,49 +2310,49 @@
         var options = element.querySelector("select")
           ? Array.from(element.querySelector("select").options)
           : element.querySelector("input[type='text']")
-          ? Array.from(element.querySelectorAll("input[type='text']"))
-          : Array.from(element.querySelectorAll("input"));
+            ? Array.from(element.querySelectorAll("input[type='text']"))
+            : Array.from(element.querySelectorAll("input"));
         var selections = element.querySelector("select")
           ? Array.from(element.querySelector("select").options)
           : element.querySelector("input[type='text']")
-          ? Array.from(element.querySelectorAll("input[type='text']"))
-          : Array.from(element.querySelectorAll("input:checked"));
+            ? Array.from(element.querySelectorAll("input[type='text']"))
+            : Array.from(element.querySelectorAll("input:checked"));
         var possibleChecks = Array.from(element.querySelectorAll("input")).map(
-          function(o) {
+          function (o) {
             return o.name.toLowerCase();
           }
         );
         var possibleOptions, possibleQueries;
 
         if (keylessWidgets.indexOf(widgets[x].input) < 0) {
-          possibleOptions = widgets[x].keys.map(function(key) {
+          possibleOptions = widgets[x].keys.map(function (key) {
             return key.value.toLowerCase();
           });
           possibleQueries = possibleChecks.concat(possibleOptions);
         }
 
-        var query = Array.from(selections).map(function(o) {
+        var query = Array.from(selections).map(function (o) {
           return element.querySelector("input[type='checkbox']")
             ? o.name.toLowerCase()
             : o.value.toLowerCase();
         });
         map.filters[widgets[x].id] =
           widgets[x].input === "toggle"
-            ? function(feature) {
-                var bool = true;
+            ? function (feature) {
+              var bool = true;
 
-                if (feature.properties.toggle) {
-                  bool = Object(helpers["b" /* convertType */])(query[0])
-                    ? true
-                    : false;
-                } else {
-                  bool = true;
-                }
-
-                return bool;
+              if (feature.properties.toggle) {
+                bool = Object(helpers["b" /* convertType */])(query[0])
+                  ? true
+                  : false;
+              } else {
+                bool = true;
               }
+
+              return bool;
+            }
             : widgets[x].field === "all"
-            ? function(feature) {
+              ? function (feature) {
                 var bool = true;
                 var withDiacritics = Object.values(feature.properties)
                   .join("")
@@ -2371,7 +2371,7 @@
 
                 return bool;
               }
-            : function(feature, layers) {
+              : function (feature, layers) {
                 var bool = true;
                 var field = widgets[x].grouping
                   ? widgets[x].grouping
@@ -2399,7 +2399,7 @@
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "a",
-        function() {
+        function () {
           return makeWidgets;
         }
       );
@@ -2427,10 +2427,10 @@
       }
 
       function makeWidgets_asyncToGenerator(fn) {
-        return function() {
+        return function () {
           var self = this,
             args = arguments;
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var gen = fn.apply(self, args);
             function _next(value) {
               makeWidgets_asyncGeneratorStep(
@@ -2474,14 +2474,14 @@
                 switch ((_context.prev = _context.next)) {
                   case 0:
                     widgetContent = [];
-                    options.widgets.forEach(function(w, x) {
+                    options.widgets.forEach(function (w, x) {
                       if (!w.hasOwnProperty("id")) w.id = x;
                       var legendData = w.reference
                         ? Object(parsers["b" /* parseLegendData */])(
-                            options,
-                            jsons[x].feed.entry,
-                            w.type
-                          )
+                          options,
+                          jsons[x].feed.entry,
+                          w.type
+                        )
                         : w.keys;
                       options.widgets[x].keys = legendData;
                       widgetContent.push(formatWidgets(options, x));
@@ -2500,7 +2500,7 @@
                       var labelText = document.querySelectorAll(
                         "#" + options.slug + " .itemText"
                       );
-                      Array.from(labelText).forEach(function(itemText) {
+                      Array.from(labelText).forEach(function (itemText) {
                         var height = itemText.offsetHeight;
                         var fontSize = window.getComputedStyle(itemText)[
                           "font-size"
@@ -2582,10 +2582,10 @@
             var legendItems = options.widgets[x].grouping
               ? options.widgets[x].keys.groupBy("group")
               : options.widgets[x].keys.groupBy("label");
-            Object.keys(legendItems).forEach(function(group, i) {
+            Object.keys(legendItems).forEach(function (group, i) {
               switch (options.widgets[x].type) {
                 case "form":
-                  var forms = options.widgets[x].keys.map(function(f) {
+                  var forms = options.widgets[x].keys.map(function (f) {
                     return f.value;
                   });
                   var styleOptions = {
@@ -2637,10 +2637,10 @@
             var legendItems = options.widgets[x].grouping
               ? options.widgets[x].keys.groupBy("group")
               : options.widgets[x].keys.groupBy("label");
-            Object.keys(legendItems).forEach(function(group, i) {
+            Object.keys(legendItems).forEach(function (group, i) {
               switch (options.widgets[x].type) {
                 case "form":
-                  var forms = options.widgets[x].keys.map(function(f) {
+                  var forms = options.widgets[x].keys.map(function (f) {
                     return f.value;
                   });
                   var styleOptions = {
@@ -2695,13 +2695,13 @@
     /*! exports provided: default */
     /*! all exports used */
     /*! ModuleConcatenation bailout: Module is referenced from these modules with unsupported syntax: ./src/js/makeMap.js (referenced with cjs require) */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       __webpack_require__.r(__webpack_exports__);
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "default",
-        function() {
+        function () {
           return initWithSpreadsheet;
         }
       );
@@ -2738,10 +2738,10 @@
       }
 
       function _asyncToGenerator(fn) {
-        return function() {
+        return function () {
           var self = this,
             args = arguments;
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var gen = fn.apply(self, args);
             function _next(value) {
               asyncGeneratorStep(
@@ -2789,18 +2789,18 @@
                   case 0:
                     return _context2.abrupt(
                       "return",
-                      new Promise(function(resolve, reject) {
+                      new Promise(function (resolve, reject) {
                         return fetch(
                           dataURL +
-                            options.googleSheet +
-                            "/" +
-                            2 +
-                            "/public/values?alt=json"
+                          options.googleSheet +
+                          "/" +
+                          2 +
+                          "/public/values?alt=json"
                         )
-                          .then(function(response) {
+                          .then(function (response) {
                             return response.json();
                           })
-                          .then(function(json) {
+                          .then(function (json) {
                             var metaData = Object(
                               _parsers_js__WEBPACK_IMPORTED_MODULE_0__[
                                 /* parseMetaData */ "c"
@@ -2812,10 +2812,10 @@
                               ]
                             )(metaData);
                             var properties = {};
-                            Object.keys(metaData).forEach(function(data) {
+                            Object.keys(metaData).forEach(function (data) {
                               properties[data] = metaData[data];
                             });
-                            Object.keys(options).forEach(function(data) {
+                            Object.keys(options).forEach(function (data) {
                               properties[data] = options[data];
                             });
                             var twoD_properites = [
@@ -2840,17 +2840,17 @@
                                 default: [90, 180]
                               }
                             ];
-                            twoD_properites.forEach(function(property) {
+                            twoD_properites.forEach(function (property) {
                               properties[property.name] =
                                 typeof properties[property.name] === "string"
                                   ? properties[property.name]
-                                      .split(",")
-                                      .map(function(v) {
-                                        return parseInt(v, 10);
-                                      })
+                                    .split(",")
+                                    .map(function (v) {
+                                      return parseInt(v, 10);
+                                    })
                                   : properties[property.name]
-                                  ? properties[property.name]
-                                  : property.default;
+                                    ? properties[property.name]
+                                    : property.default;
                             });
                             properties.slug = properties.mapID
                               .toLowerCase()
@@ -2862,14 +2862,14 @@
                                 /* default */ "a"
                               ]
                             )(properties);
-                            var referenceSheets = widgets.filter(function(w) {
+                            var referenceSheets = widgets.filter(function (w) {
                               return w.reference;
                             });
 
                             if (referenceSheets) {
                               var boxContent = "";
                               var referenceSheetURLS = widgets
-                                .map(function(w) {
+                                .map(function (w) {
                                   if (w.reference) {
                                     return (
                                       dataURL +
@@ -2880,24 +2880,24 @@
                                     );
                                   }
                                 })
-                                .filter(function(u) {
+                                .filter(function (u) {
                                   return u;
                                 });
                               Promise.all(
-                                referenceSheetURLS.map(function(url) {
+                                referenceSheetURLS.map(function (url) {
                                   return fetch(url);
                                 })
                               )
-                                .then(function(responses) {
+                                .then(function (responses) {
                                   return Promise.all(
-                                    responses.map(function(response) {
+                                    responses.map(function (response) {
                                       return response.json();
                                     })
                                   );
                                 })
                                 .then(
                                   /*#__PURE__*/
-                                  (function() {
+                                  (function () {
                                     var _ref = _asyncToGenerator(
                                       /*#__PURE__*/
                                       regeneratorRuntime.mark(function _callee(
@@ -2908,7 +2908,7 @@
                                           function _callee$(_context) {
                                             while (1) {
                                               switch (
-                                                (_context.prev = _context.next)
+                                              (_context.prev = _context.next)
                                               ) {
                                                 case 0:
                                                   _context.next = 2;
@@ -2938,13 +2938,13 @@
                                                     penUltimateNode =
                                                       document.querySelector(
                                                         "#" +
-                                                          properties.slug +
-                                                          " #controls"
+                                                        properties.slug +
+                                                        " #controls"
                                                       ) ||
                                                       document.querySelector(
                                                         "#" +
-                                                          properties.slug +
-                                                          "header"
+                                                        properties.slug +
+                                                        "header"
                                                       );
                                                     penUltimateNode.parentNode.insertBefore(
                                                       footerNode,
@@ -2965,7 +2965,7 @@
                                       })
                                     );
 
-                                    return function(_x4) {
+                                    return function (_x4) {
                                       return _ref.apply(this, arguments);
                                     };
                                   })()
@@ -3021,7 +3021,7 @@
   \****************************/
     /*! no static exports found */
     /*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-    /***/ function(module, exports, __webpack_require__) {
+    /***/ function (module, exports, __webpack_require__) {
       var content = __webpack_require__(
         /*! !../../node_modules/mini-css-extract-plugin/dist/loader.js!../../node_modules/css-loader??ref--5-2!../../node_modules/postcss-loader/src??postcss!../../node_modules/sass-loader/lib/loader.js??ref--5-4!./main.scss */ 9
       );
@@ -3054,7 +3054,7 @@
     /*! no static exports found */
     /*! all exports used */
     /*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-    /***/ function(module, exports, __webpack_require__) {
+    /***/ function (module, exports, __webpack_require__) {
       // extracted by mini-css-extract-plugin
       /***/
     },
@@ -3065,7 +3065,7 @@
     /*! no static exports found */
     /*! all exports used */
     /*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-    /***/ function(module, exports, __webpack_require__) {
+    /***/ function (module, exports, __webpack_require__) {
       /*
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
@@ -3073,16 +3073,16 @@
 
       var stylesInDom = {};
 
-      var memoize = function(fn) {
+      var memoize = function (fn) {
         var memo;
 
-        return function() {
+        return function () {
           if (typeof memo === "undefined") memo = fn.apply(this, arguments);
           return memo;
         };
       };
 
-      var isOldIE = memoize(function() {
+      var isOldIE = memoize(function () {
         // Test for IE <= 9 as proposed by Browserhacks
         // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
         // Tests for existence of standard globals is to allow style-loader
@@ -3091,17 +3091,17 @@
         return window && document && document.all && !window.atob;
       });
 
-      var getTarget = function(target, parent) {
+      var getTarget = function (target, parent) {
         if (parent) {
           return parent.querySelector(target);
         }
         return document.querySelector(target);
       };
 
-      var getElement = (function(fn) {
+      var getElement = (function (fn) {
         var memo = {};
 
-        return function(target, parent) {
+        return function (target, parent) {
           // If passing function in options, then use it for resolve "head" element.
           // Useful for Shadow Root style i.e
           // {
@@ -3137,7 +3137,7 @@
 
       var fixUrls = __webpack_require__(/*! ./urls */ 11);
 
-      module.exports = function(list, options) {
+      module.exports = function (list, options) {
         if (typeof DEBUG !== "undefined" && DEBUG) {
           if (typeof document !== "object")
             throw new Error(
@@ -3324,7 +3324,7 @@
       }
 
       function addAttrs(el, attrs) {
-        Object.keys(attrs).forEach(function(key) {
+        Object.keys(attrs).forEach(function (key) {
           el.setAttribute(key, attrs[key]);
         });
       }
@@ -3353,7 +3353,7 @@
           } else {
             // If the transform function returns a falsy value, don't add this css.
             // This allows conditional loading of css
-            return function() {
+            return function () {
               // noop
             };
           }
@@ -3376,7 +3376,7 @@
         ) {
           style = createLinkElement(options);
           update = updateLink.bind(null, style, options);
-          remove = function() {
+          remove = function () {
             removeStyleElement(style);
 
             if (style.href) URL.revokeObjectURL(style.href);
@@ -3384,7 +3384,7 @@
         } else {
           style = createStyleElement(options);
           update = applyToTag.bind(null, style);
-          remove = function() {
+          remove = function () {
             removeStyleElement(style);
           };
         }
@@ -3408,10 +3408,10 @@
         };
       }
 
-      var replaceText = (function() {
+      var replaceText = (function () {
         var textStore = [];
 
-        return function(index, replacement) {
+        return function (index, replacement) {
           textStore[index] = replacement;
 
           return textStore.filter(Boolean).join("\n");
@@ -3499,7 +3499,7 @@
     /*! no static exports found */
     /*! all exports used */
     /*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-    /***/ function(module, exports) {
+    /***/ function (module, exports) {
       /**
        * When source maps are enabled, `style-loader` uses a link element with a data-uri to
        * embed the css on the page. This breaks all relative urls because now they are relative to a
@@ -3513,7 +3513,7 @@
        *
        */
 
-      module.exports = function(css) {
+      module.exports = function (css) {
         // get current location
         var location = typeof window !== "undefined" && window.location;
 
@@ -3557,14 +3557,14 @@
 	 */
         var fixedCss = css.replace(
           /url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,
-          function(fullMatch, origUrl) {
+          function (fullMatch, origUrl) {
             // strip quotes (if they exist)
             var unquotedOrigUrl = origUrl
               .trim()
-              .replace(/^"(.*)"$/, function(o, $1) {
+              .replace(/^"(.*)"$/, function (o, $1) {
                 return $1;
               })
-              .replace(/^'(.*)'$/, function(o, $1) {
+              .replace(/^'(.*)'$/, function (o, $1) {
                 return $1;
               });
 
@@ -3608,7 +3608,7 @@
   \*****************************************************/
     /*! no static exports found */
     /*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-    /***/ function(module, exports, __webpack_require__) {
+    /***/ function (module, exports, __webpack_require__) {
       /**
        * Copyright (c) 2014-present, Facebook, Inc.
        *
@@ -3616,7 +3616,7 @@
        * LICENSE file in the root directory of this source tree.
        */
 
-      var runtime = (function(exports) {
+      var runtime = (function (exports) {
         "use strict";
 
         var Op = Object.prototype;
@@ -3675,14 +3675,14 @@
         // .constructor.prototype properties for functions that return Generator
         // objects. For full spec compliance, you may wish to configure your
         // minifier not to mangle the names of these two functions.
-        function Generator() {}
-        function GeneratorFunction() {}
-        function GeneratorFunctionPrototype() {}
+        function Generator() { }
+        function GeneratorFunction() { }
+        function GeneratorFunctionPrototype() { }
 
         // This is a polyfill for %IteratorPrototype% for environments that
         // don't natively support it.
         var IteratorPrototype = {};
-        IteratorPrototype[iteratorSymbol] = function() {
+        IteratorPrototype[iteratorSymbol] = function () {
           return this;
         };
 
@@ -3711,24 +3711,24 @@
         // Helper for defining the .next, .throw, and .return methods of the
         // Iterator interface in terms of a single ._invoke method.
         function defineIteratorMethods(prototype) {
-          ["next", "throw", "return"].forEach(function(method) {
-            prototype[method] = function(arg) {
+          ["next", "throw", "return"].forEach(function (method) {
+            prototype[method] = function (arg) {
               return this._invoke(method, arg);
             };
           });
         }
 
-        exports.isGeneratorFunction = function(genFun) {
+        exports.isGeneratorFunction = function (genFun) {
           var ctor = typeof genFun === "function" && genFun.constructor;
           return ctor
             ? ctor === GeneratorFunction ||
-                // For the native GeneratorFunction constructor, the best we can
-                // do is to check its .name property.
-                (ctor.displayName || ctor.name) === "GeneratorFunction"
+            // For the native GeneratorFunction constructor, the best we can
+            // do is to check its .name property.
+            (ctor.displayName || ctor.name) === "GeneratorFunction"
             : false;
         };
 
-        exports.mark = function(genFun) {
+        exports.mark = function (genFun) {
           if (Object.setPrototypeOf) {
             Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
           } else {
@@ -3745,7 +3745,7 @@
         // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
         // `hasOwn.call(value, "__await")` to determine if the yielded value is
         // meant to be awaited.
-        exports.awrap = function(arg) {
+        exports.awrap = function (arg) {
           return { __await: arg };
         };
 
@@ -3763,24 +3763,24 @@
                 hasOwn.call(value, "__await")
               ) {
                 return Promise.resolve(value.__await).then(
-                  function(value) {
+                  function (value) {
                     invoke("next", value, resolve, reject);
                   },
-                  function(err) {
+                  function (err) {
                     invoke("throw", err, resolve, reject);
                   }
                 );
               }
 
               return Promise.resolve(value).then(
-                function(unwrapped) {
+                function (unwrapped) {
                   // When a yielded Promise is resolved, its final value becomes
                   // the .value of the Promise<{value,done}> result for the
                   // current iteration.
                   result.value = unwrapped;
                   resolve(result);
                 },
-                function(error) {
+                function (error) {
                   // If a rejected Promise was yielded, throw the rejection back
                   // into the async generator function so it can be handled there.
                   return invoke("throw", error, resolve, reject);
@@ -3793,7 +3793,7 @@
 
           function enqueue(method, arg) {
             function callInvokeWithMethodAndArg() {
-              return new Promise(function(resolve, reject) {
+              return new Promise(function (resolve, reject) {
                 invoke(method, arg, resolve, reject);
               });
             }
@@ -3813,11 +3813,11 @@
               // important to get this right, even though it requires care.
               previousPromise
                 ? previousPromise.then(
-                    callInvokeWithMethodAndArg,
-                    // Avoid propagating failures to Promises returned by later
-                    // invocations of the iterator.
-                    callInvokeWithMethodAndArg
-                  )
+                  callInvokeWithMethodAndArg,
+                  // Avoid propagating failures to Promises returned by later
+                  // invocations of the iterator.
+                  callInvokeWithMethodAndArg
+                )
                 : callInvokeWithMethodAndArg());
           }
 
@@ -3827,7 +3827,7 @@
         }
 
         defineIteratorMethods(AsyncIterator.prototype);
-        AsyncIterator.prototype[asyncIteratorSymbol] = function() {
+        AsyncIterator.prototype[asyncIteratorSymbol] = function () {
           return this;
         };
         exports.AsyncIterator = AsyncIterator;
@@ -3835,16 +3835,16 @@
         // Note that simple async functions are implemented on top of
         // AsyncIterator objects; they just return a Promise for the value of
         // the final result produced by the iterator.
-        exports.async = function(innerFn, outerFn, self, tryLocsList) {
+        exports.async = function (innerFn, outerFn, self, tryLocsList) {
           var iter = new AsyncIterator(
             wrap(innerFn, outerFn, self, tryLocsList)
           );
 
           return exports.isGeneratorFunction(outerFn)
             ? iter // If outerFn is a generator, return the full iterator.
-            : iter.next().then(function(result) {
-                return result.done ? result.value : iter.next();
-              });
+            : iter.next().then(function (result) {
+              return result.done ? result.value : iter.next();
+            });
         };
 
         function makeInvokeMethod(innerFn, self, context) {
@@ -4016,11 +4016,11 @@
         // iterator prototype chain incorrectly implement this, causing the Generator
         // object to not be returned from this call. This ensures that doesn't happen.
         // See https://github.com/facebook/regenerator/issues/274 for more details.
-        Gp[iteratorSymbol] = function() {
+        Gp[iteratorSymbol] = function () {
           return this;
         };
 
-        Gp.toString = function() {
+        Gp.toString = function () {
           return "[object Generator]";
         };
 
@@ -4055,7 +4055,7 @@
           this.reset(true);
         }
 
-        exports.keys = function(object) {
+        exports.keys = function (object) {
           var keys = [];
           for (var key in object) {
             keys.push(key);
@@ -4126,7 +4126,7 @@
         Context.prototype = {
           constructor: Context,
 
-          reset: function(skipTempReset) {
+          reset: function (skipTempReset) {
             this.prev = 0;
             this.next = 0;
             // Resetting context._sent for legacy support of Babel's
@@ -4154,7 +4154,7 @@
             }
           },
 
-          stop: function() {
+          stop: function () {
             this.done = true;
 
             var rootEntry = this.tryEntries[0];
@@ -4166,7 +4166,7 @@
             return this.rval;
           },
 
-          dispatchException: function(exception) {
+          dispatchException: function (exception) {
             if (this.done) {
               throw exception;
             }
@@ -4223,7 +4223,7 @@
             }
           },
 
-          abrupt: function(type, arg) {
+          abrupt: function (type, arg) {
             for (var i = this.tryEntries.length - 1; i >= 0; --i) {
               var entry = this.tryEntries[i];
               if (
@@ -4260,7 +4260,7 @@
             return this.complete(record);
           },
 
-          complete: function(record, afterLoc) {
+          complete: function (record, afterLoc) {
             if (record.type === "throw") {
               throw record.arg;
             }
@@ -4278,7 +4278,7 @@
             return ContinueSentinel;
           },
 
-          finish: function(finallyLoc) {
+          finish: function (finallyLoc) {
             for (var i = this.tryEntries.length - 1; i >= 0; --i) {
               var entry = this.tryEntries[i];
               if (entry.finallyLoc === finallyLoc) {
@@ -4289,7 +4289,7 @@
             }
           },
 
-          catch: function(tryLoc) {
+          catch: function (tryLoc) {
             for (var i = this.tryEntries.length - 1; i >= 0; --i) {
               var entry = this.tryEntries[i];
               if (entry.tryLoc === tryLoc) {
@@ -4307,7 +4307,7 @@
             throw new Error("illegal catch attempt");
           },
 
-          delegateYield: function(iterable, resultName, nextLoc) {
+          delegateYield: function (iterable, resultName, nextLoc) {
             this.delegate = {
               iterator: values(iterable),
               resultName: resultName,
@@ -4361,13 +4361,13 @@
     /*! exports provided: default */
     /*! all exports used */
     /*! ModuleConcatenation bailout: Module is referenced from these modules with unsupported syntax: ./src/js/makeMap.js (referenced with cjs require) */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       __webpack_require__.r(__webpack_exports__);
       /* harmony export (binding) */ __webpack_require__.d(
         __webpack_exports__,
         "default",
-        function() {
+        function () {
           return initWithoutSpreadsheet;
         }
       );
@@ -4407,10 +4407,10 @@
       }
 
       function _asyncToGenerator(fn) {
-        return function() {
+        return function () {
           var self = this,
             args = arguments;
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var gen = fn.apply(self, args);
             function _next(value) {
               asyncGeneratorStep(
@@ -4476,15 +4476,15 @@
                         default: [90, 180]
                       }
                     ];
-                    twoD_properites.forEach(function(property) {
+                    twoD_properites.forEach(function (property) {
                       options[property.name] =
                         typeof options[property.name] === "string"
-                          ? options[property.name].split(",").map(function(v) {
-                              return parseInt(v, 10);
-                            })
+                          ? options[property.name].split(",").map(function (v) {
+                            return parseInt(v, 10);
+                          })
                           : options[property.name]
-                          ? options[property.name]
-                          : property.default;
+                            ? options[property.name]
+                            : property.default;
                     });
                     options.slug = options.mapID
                       .toLowerCase()
@@ -4509,17 +4509,17 @@
                     ](container, options).render();
                     return _context2.abrupt(
                       "return",
-                      new Promise(function(resolve, reject) {
+                      new Promise(function (resolve, reject) {
                         return fetch(
                           "https://csis.carto.com/api/v2/sql?api_key=" +
-                            map.apikey +
-                            "&format=geojson&q=SELECT%20*%20FROM%20" +
-                            map.table
+                          map.apikey +
+                          "&format=geojson&q=SELECT%20*%20FROM%20" +
+                          map.table
                         )
-                          .then(function(resp) {
+                          .then(function (resp) {
                             return resp.json();
                           })
-                          .then(function(json) {
+                          .then(function (json) {
                             map.json = [json];
                             var box = document.querySelector(
                               "#" + options.slug + " #controls"
@@ -4538,21 +4538,21 @@
                   case 11:
                     return _context2.abrupt(
                       "return",
-                      new Promise(function(resolve, reject) {
+                      new Promise(function (resolve, reject) {
                         return fetch(
                           "https://csis.carto.com/api/v2/sql?api_key=" +
-                            (options.apikey ||
-                              options.apiKey ||
-                              options["api key"]) +
-                            "&format=geojson&q=SELECT%20*%20FROM%20" +
-                            options.table
+                          (options.apikey ||
+                            options.apiKey ||
+                            options["api key"]) +
+                          "&format=geojson&q=SELECT%20*%20FROM%20" +
+                          options.table
                         )
-                          .then(function(resp) {
+                          .then(function (resp) {
                             return resp.json();
                           })
                           .then(
                             /*#__PURE__*/
-                            (function() {
+                            (function () {
                               var _ref = _asyncToGenerator(
                                 /*#__PURE__*/
                                 regeneratorRuntime.mark(function _callee(json) {
@@ -4565,7 +4565,7 @@
                                     function _callee$(_context) {
                                       while (1) {
                                         switch (
-                                          (_context.prev = _context.next)
+                                        (_context.prev = _context.next)
                                         ) {
                                           case 0:
                                             options.json = [json];
@@ -4622,8 +4622,8 @@
                                               penUltimateNode =
                                                 document.querySelector(
                                                   "#" +
-                                                    options.slug +
-                                                    " #controls"
+                                                  options.slug +
+                                                  " #controls"
                                                 ) ||
                                                 document.querySelector(
                                                   "#" + options.slug + "header"
@@ -4647,7 +4647,7 @@
                                 })
                               );
 
-                              return function(_x3) {
+                              return function (_x3) {
                                 return _ref.apply(this, arguments);
                               };
                             })()
@@ -4676,7 +4676,7 @@
     /*! all exports used */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/helpers.js because of ./src/js/initWithoutSpreadsheet.js */
     /*! ModuleConcatenation bailout: Cannot concat with ./src/js/parsers.js because of ./src/js/initWithSpreadsheet.js */
-    /***/ function(module, __webpack_exports__, __webpack_require__) {
+    /***/ function (module, __webpack_exports__, __webpack_require__) {
       "use strict";
       __webpack_require__.r(__webpack_exports__);
 
@@ -4714,10 +4714,10 @@
       }
 
       function _asyncToGenerator(fn) {
-        return function() {
+        return function () {
           var self = this,
             args = arguments;
-          return new Promise(function(resolve, reject) {
+          return new Promise(function (resolve, reject) {
             var gen = fn.apply(self, args);
             function _next(value) {
               asyncGeneratorStep(
@@ -4769,14 +4769,14 @@
       ];
 
       function handleLoadLeaflet() {
-        return new Promise(function(resolve, reject) {
-          secondaryJsFiles.forEach(function(file) {
+        return new Promise(function (resolve, reject) {
+          secondaryJsFiles.forEach(function (file) {
             var head = document.head;
             var jsLink = document.createElement("script");
             jsLink.src = file;
             head.appendChild(jsLink);
 
-            jsLink.onload = function() {
+            jsLink.onload = function () {
               leafletLoaded++;
 
               if (
@@ -4805,13 +4805,13 @@
                   case 0:
                     return _context.abrupt(
                       "return",
-                      new Promise(function(resolve, reject) {
-                        primaryJsFiles.forEach(function(file) {
+                      new Promise(function (resolve, reject) {
+                        primaryJsFiles.forEach(function (file) {
                           var head = document.head;
                           var jsLink = document.createElement("script");
                           jsLink.src = file;
 
-                          jsLink.onload = function() {
+                          jsLink.onload = function () {
                             leafletLoaded++;
 
                             if (leafletLoaded === primaryJsFiles.length) {
@@ -4857,7 +4857,7 @@
                     _context3.next = 3;
                     return importFiles().then(
                       /*#__PURE__*/
-                      (function() {
+                      (function () {
                         var _ref = _asyncToGenerator(
                           /*#__PURE__*/
                           regeneratorRuntime.mark(function _callee2(
@@ -4884,11 +4884,11 @@
                                 }
                               }
                             },
-                            _callee2);
+                              _callee2);
                           })
                         );
 
-                        return function(_x3) {
+                        return function (_x3) {
                           return _ref.apply(this, arguments);
                         };
                       })()
@@ -4944,17 +4944,17 @@
 
                     fetch(
                       dataURL +
-                        options.googleSheet +
-                        "/" +
-                        3 +
-                        "/public/values?alt=json"
+                      options.googleSheet +
+                      "/" +
+                      3 +
+                      "/public/values?alt=json"
                     )
-                      .then(function(response) {
+                      .then(function (response) {
                         return response.json();
                       })
                       .then(
                         /*#__PURE__*/
-                        (function() {
+                        (function () {
                           var _ref2 = _asyncToGenerator(
                             /*#__PURE__*/
                             regeneratorRuntime.mark(function _callee4(json) {
@@ -4990,11 +4990,11 @@
                                   }
                                 }
                               },
-                              _callee4);
+                                _callee4);
                             })
                           );
 
-                          return function(_x4) {
+                          return function (_x4) {
                             return _ref2.apply(this, arguments);
                           };
                         })()
@@ -5048,19 +5048,19 @@
       // arcticJamming()
       // examples()
 
-      window.convertType = function(value) {
+      window.convertType = function (value) {
         var v = Number(value);
         return !isNaN(v)
           ? v
           : value.toLowerCase() === "undefined"
-          ? undefined
-          : value.toLowerCase() === "null"
-          ? null
-          : value.toLowerCase() === "true"
-          ? true
-          : value.toLowerCase() === "false"
-          ? false
-          : value;
+            ? undefined
+            : value.toLowerCase() === "null"
+              ? null
+              : value.toLowerCase() === "true"
+                ? true
+                : value.toLowerCase() === "false"
+                  ? false
+                  : value;
       };
 
       if (typeof window.CustomEvent !== "function") {
@@ -5084,23 +5084,23 @@
         window.CustomEvent = CustomEvent;
       }
 
-      Array.prototype.groupBy = function(property1, property2) {
+      Array.prototype.groupBy = function (property1, property2) {
         return property2
-          ? this.reduce(function(groups, item) {
-              var val = item[property2][property1];
-              groups[val] = groups[val] || [];
-              groups[val].push(item);
-              return groups;
-            }, {})
-          : this.reduce(function(groups, item) {
-              var val = item[property1];
-              groups[val] = groups[val] || [];
-              groups[val].push(item);
-              return groups;
-            }, {});
+          ? this.reduce(function (groups, item) {
+            var val = item[property2][property1];
+            groups[val] = groups[val] || [];
+            groups[val].push(item);
+            return groups;
+          }, {})
+          : this.reduce(function (groups, item) {
+            var val = item[property1];
+            groups[val] = groups[val] || [];
+            groups[val].push(item);
+            return groups;
+          }, {});
       };
 
-      RegExp.escape = function(s) {
+      RegExp.escape = function (s) {
         return s.replace(/[\/\\^$*+?.()|[\]{}]/g, "\\$&");
       };
 
