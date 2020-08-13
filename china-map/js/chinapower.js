@@ -16,10 +16,10 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
 }
 
 function _asyncToGenerator(fn) {
-  return function() {
+  return function () {
     var self = this,
       args = arguments;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var gen = fn.apply(self, args);
       function _next(value) {
         asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
@@ -42,8 +42,9 @@ _asyncToGenerator(
           case 0:
             _context.next = 2;
             return makeMap({
-              googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
+              // googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
               mapID: "chinapower",
+              googleSheet: "1GqZPakx0URrj-Mbz3cPS_ypsz-iurY6r_m5e1J6Ck-w",
               mapboxStyle:
                 lang && lang.indexOf("zh-") > -1
                   ? "citui3waw00162jo1zcsf1urj"
@@ -51,7 +52,7 @@ _asyncToGenerator(
               onEachFeature: {
                 mouseover: function mouseover(e) {
                   this.openPopup(e.latlng);
-                }
+                },
               },
               formatPopupContent: function formatPopupContent(feature, map) {
                 var suffix = lang ? "_" + lang : "";
@@ -65,14 +66,14 @@ _asyncToGenerator(
                 return (
                   '<div class="popupEntryStyle">' +
                   (!lang ? outpost : "") +
-                  (name && outpost && !lang ? "<br/>" : "") +
+                  (name && outpost && !lang ? "" : "") +
                   (name !== outpost ? name : "") +
                   "</div>" +
                   '<div class="popupEntryStyle">' +
                   description +
                   "</div>"
                 );
-              }
+              },
             });
 
           case 2:

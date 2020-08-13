@@ -24,6 +24,11 @@ dialog a:hover {
   color: #0c8d79;
 }
 
+.chinese_outposts {
+  display: none;
+  visibility: hidden;
+}
+
 .chinese_outposts ul {
   display: flex;
   flex-wrap: wrap;
