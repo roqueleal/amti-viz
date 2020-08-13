@@ -42,8 +42,9 @@ _asyncToGenerator(
           case 0:
             _context.next = 2;
             return makeMap({
-              googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
+              // googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
               mapID: "chinapower",
+              googleSheet: "1GqZPakx0URrj-Mbz3cPS_ypsz-iurY6r_m5e1J6Ck-w",
               mapboxStyle:
                 lang && lang.indexOf("zh-") > -1
                   ? "citui3waw00162jo1zcsf1urj"
@@ -51,7 +52,7 @@ _asyncToGenerator(
               onEachFeature: {
                 mouseover: function mouseover(e) {
                   this.openPopup(e.latlng);
-                }
+                },
               },
               formatPopupContent: function formatPopupContent(feature, map) {
                 var suffix = lang ? "_" + lang : "";
@@ -65,14 +66,14 @@ _asyncToGenerator(
                 return (
                   '<div class="popupEntryStyle">' +
                   (!lang ? outpost : "") +
-                  (name && outpost && !lang ? "<br/>" : "") +
+                  (name && outpost && !lang ? "" : "") +
                   (name !== outpost ? name : "") +
                   "</div>" +
                   '<div class="popupEntryStyle">' +
                   description +
                   "</div>"
                 );
-              }
+              },
             });
 
           case 2:
