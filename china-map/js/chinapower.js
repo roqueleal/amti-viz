@@ -44,7 +44,7 @@ _asyncToGenerator(
             return makeMap({
               // googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
               mapID: "chinapower",
-              googleSheet: "1GqZPakx0URrj-Mbz3cPS_ypsz-iurY6r_m5e1J6Ck-w",
+              googleSheet: "1YIL0jtAK3Btc5JfbgHX0pGV-L4Bgxo6YtUfEX2vvryQ",
               mapboxStyle:
                 lang && lang.indexOf("zh-") > -1
                   ? "citui3waw00162jo1zcsf1urj"
@@ -58,11 +58,12 @@ _asyncToGenerator(
                 var suffix = lang ? "_" + lang : "";
                 suffix = suffix.replace("-", "_");
                 var name = feature.properties["name" + suffix];
-
                 var description = feature.properties["description" + suffix];
+
                 // .replace(/<a href=/gi, '<a target="_blank" href=')
                 // .replace(/<\/a>/gi, externalLink + '</a>')
                 var outpost = feature.properties.chinese_outposts;
+
                 return (
                   '<div class="popupEntryStyle">' +
                   (!lang ? outpost : "") +
