@@ -42,7 +42,6 @@ _asyncToGenerator(
           case 0:
             _context.next = 2;
             return makeMap({
-              // googleSheet: "1R9J3haGLDsRPhtT1P1JvQL_XzaPZZsa33vBFO6xs6g4",
               mapID: "chinapower",
               googleSheet: "1YIL0jtAK3Btc5JfbgHX0pGV-L4Bgxo6YtUfEX2vvryQ",
               mapboxStyle:
@@ -59,9 +58,6 @@ _asyncToGenerator(
                 suffix = suffix.replace("-", "_");
                 var name = feature.properties["name" + suffix];
                 var description = feature.properties["description" + suffix];
-
-                // .replace(/<a href=/gi, '<a target="_blank" href=')
-                // .replace(/<\/a>/gi, externalLink + '</a>')
                 var outpost = feature.properties.chinese_outposts;
 
                 return (
